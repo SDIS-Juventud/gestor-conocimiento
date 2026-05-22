@@ -10,6 +10,13 @@ forjar/
 !datos/equipo_forjar.xlsx
 !datos/forjar_proceso_operativo.xlsx
 !enlaces/enlaces.xlsx
+# Excels indispensables del modelo de ejes (los scripts los leen).
+!ejes/Políticas/Configuracion_politicas_*.xlsx
+!ejes/Políticas/Mapeo_Politicas_*.xlsx
+!ejes/Políticas/Reporte Política Pública Distrital de Juventud.xlsx
+!ejes/Políticas/Reportes Externos Subdirección Juventud 2026.xlsx
+!ejes/oferta 2026/Oferta 2026.xlsx
+!ejes/oferta 2026/Mapeo_SIRBE_*.xlsx
 *.csv
 *.xls
 *.pptx
@@ -20,9 +27,31 @@ Documentación JCO/
 __pycache__/
 .ipynb_checkpoints/
 *.bak
-# Backups locales con fecha (ej: estilos_backup_2026-05-07.py, gestor_backup.html)
+# Backups locales con fecha (ej: SIDICU.html.bak.20260521, estilos_backup_2026-05-07.py).
+*.bak.*
 *_backup_*.py
 *_backup_*.html
+# Atajos de Google Drive (no son archivos reales).
+*.gsheet
+*.gdoc
+*.gslides
+# Carpetas locales de ofertas que cada equipo mantiene en su propio Drive
+# (en Windows el filesystem es case-insensitive, así que listamos cada
+# carpeta para no colisionar con `ejes/oferta 2026/` que sí va al repo).
+ejes/Oferta SIDICU/
+ejes/Oferta bienestar/
+ejes/Oferta cultura/
+ejes/Oferta inclusión social y productiva/
+ejes/Oferta participación/
+ejes/descripcion/Oferta SIDICU/
+ejes/descripcion/Oferta bienestar/
+ejes/descripcion/Oferta cultura/
+ejes/descripcion/Oferta inclusión social y productiva/
+ejes/descripcion/Oferta participación/
+# Workspaces locales de NotebookLM y auxiliares del flujo.
+notebooklm/
+# PDFs generados como auxiliar de trabajo (no son fuente del repositorio).
+Preguntas_pendientes_*.pdf
 .DS_Store
 Thumbs.db
 ppt/

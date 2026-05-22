@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIDICU - Sistema Distrital de Cuidado | Gestion del Conocimiento SDIS</title>
+    <title>Liderazgo y Participación - Casas de Juventud | Gestor de conocimiento SDIS</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Antonio:wght@700&family=Figtree:wght@400;600&display=swap" rel="stylesheet">
     <style>
@@ -70,16 +70,6 @@
         .filter-btn { padding: 8px 18px; border: 2px solid #253C5C; border-radius: 25px; background: white; color: #253C5C; font-family: inherit; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
         .filter-btn:hover { background: #EAEFF5; }
         .filter-btn.active { background: #253C5C; color: white; }
-        /* --- Estructura SIRBE tipo arbol --- */
-        .tree-level {{ margin-left: 25px; padding: 8px 0; }}
-        .tree-label {{ font-weight: 600; color: var(--accent-text); }}
-        .tree-sublabel {{ color: #666; font-size: 0.9rem; margin-left: 10px; }}
-        .tree-item {{
-            padding: 6px 15px;
-            border-left: 2px solid var(--accent-light);
-            margin-left: 20px;
-            margin-top: 4px;
-        }}
         @media (max-width: 768px) {
             .container { flex-direction: column; }
             .sidebar { width: 100%; border-right: none; border-bottom: 1px solid #e0e0e0; }
@@ -87,12 +77,285 @@
             .stats-imagen-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
             .stats-imagen-card { aspect-ratio: 2.4 / 1 !important; }
         }
-    </style>
+
+        /* Categorías de ofertas: títulos grandes Anton con línea inferior accent */
+        .categoria { margin: 36px 0 18px; padding-bottom: 8px; border-bottom: 2px solid #253C5C; }
+        .categoria:first-of-type { margin-top: 24px; }
+        .categoria-titulo { font-family: 'Anton', 'Segoe UI', sans-serif; font-size: 1.7rem; color: #253C5C; text-transform: uppercase; letter-spacing: 0.02em; margin: 0; line-height: 1.1; }
+        .categoria-descripcion { font-size: 0.88rem; color: #555; margin: 8px 0 0; line-height: 1.6; }
+
+        /* Cada oferta como acordeón individual sobrio (sin sombras, sin bandas) */
+        .ofertas-lista { margin-top: 4px; }
+        .oferta { border-bottom: 1px solid #e0e0e0; }
+        .oferta:last-child { border-bottom: none; }
+        .oferta-header { padding: 18px 0; cursor: pointer; display: flex; align-items: flex-start; gap: 14px; }
+        .oferta-header:hover .oferta-titulo { opacity: 0.75; }
+        .oferta-titulo-wrap { flex: 1; min-width: 0; }
+        .oferta-modalidad { font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.06em; color: #888; margin: 0 0 2px; }
+        .oferta-titulo { font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; text-transform: uppercase; font-size: 1rem; color: #253C5C; line-height: 1.25; margin: 0; transition: opacity 0.18s ease; }
+        .oferta-chevron { width: 10px; height: 10px; border-top: 2px solid #253C5C; border-right: 2px solid #253C5C; transform: rotate(135deg); transition: transform 0.2s ease; align-self: center; flex-shrink: 0; margin-right: 4px; }
+        .oferta.abierta .oferta-chevron { transform: rotate(-45deg); }
+        .oferta-cuerpo { display: none; padding: 0 0 22px 0; }
+        .oferta.abierta .oferta-cuerpo { display: block; }
+        .oferta-desc { font-size: 0.88rem; color: #3a3a3a; line-height: 1.7; margin: 0 0 12px; }
+        .oferta-desc:last-child { margin-bottom: 0; }
+        .oferta-desc strong { color: #253C5C; }
+        .oferta-meta { display: grid; grid-template-columns: 110px 1fr; gap: 6px 14px; margin-top: 14px; font-size: 0.82rem; padding-top: 14px; border-top: 1px dashed #e0e0e0; }
+        .oferta-meta dt { font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; color: #253C5C; text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.72rem; padding-top: 2px; }
+        .oferta-meta dd { color: #555; margin: 0; line-height: 1.55; }
+        .oferta-subexp { margin-top: 14px; padding: 14px 18px; background: #f5efd2; border-radius: 8px; }
+        .oferta-subexp-titulo { font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; color: #253C5C; margin: 0 0 8px; letter-spacing: 0.04em; }
+        .oferta-subexp ul { margin: 0; padding-left: 18px; font-size: 0.85rem; color: #3a3a3a; line-height: 1.6; }
+        .oferta-subexp li { margin-bottom: 3px; }
+        @media (max-width: 720px) {
+            .oferta-cuerpo { padding-left: 40px; }
+            .oferta-meta { grid-template-columns: 1fr; gap: 2px; }
+            .oferta-meta dt { padding-top: 8px; }
+            .oferta-meta dt:first-child { padding-top: 0; }
+        }
+
+        /* Sección Tipos y formatos */
+        .tipos-intro { font-size: 0.92rem; color: #3a3a3a; line-height: 1.65; margin: 8px 0 22px; }
+        .tipos-section-titulo { font-family: 'Anton', 'Segoe UI', sans-serif; font-size: 1.5rem; color: #253C5C; text-transform: uppercase; letter-spacing: 0.02em; margin: 32px 0 14px; padding-bottom: 6px; border-bottom: 2px solid #253C5C; line-height: 1.1; }
+
+        /* Tipos de oferta: bandas chevron compactas, solo nombre */
+        .tipos-banda-list { display: flex; flex-direction: column; gap: 18px; margin-bottom: 18px; }
+        .tipo-bloque { display: flex; flex-direction: column; gap: 8px; }
+        .tipo-descripcion { font-family: 'Figtree', 'Segoe UI', sans-serif; font-size: 0.88rem; color: #3a3a3a; line-height: 1.65; margin: 0 0 0 56px; max-width: 760px; }
+        .tipo-descripcion strong { color: #2F3E3C; font-weight: 700; }
+        @media (max-width: 720px) { .tipo-descripcion { margin-left: 0; } }
+        .tipos-banda { display: flex; align-items: stretch; }
+        .tipos-banda-flag { width: 56px; flex-shrink: 0; clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%); display: flex; align-items: center; justify-content: center; padding-right: 16px; font-family: 'Anton', 'Segoe UI', sans-serif; color: #fff; font-size: 1.5rem; line-height: 1; letter-spacing: 0.02em; }
+        .tipos-banda-titulo { background: #2F3E3C; color: #f5efd2; flex: 1; padding: 14px 22px 14px 26px; font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; font-size: 1rem; margin-left: -16px; display: flex; align-items: center; border-radius: 0 8px 8px 0; }
+
+        /* Clasificaciones: círculo crema con ícono Lucide + barra del color */
+        .clasif-list { display: flex; flex-direction: column; gap: 16px; margin-bottom: 18px; }
+        .clasif-card { display: flex; align-items: center; }
+        .clasif-icono { width: 72px; height: 72px; border-radius: 50%; background: #f5efd2; border: 3px solid; display: flex; align-items: center; justify-content: center; flex-shrink: 0; z-index: 2; }
+        .clasif-icono svg { width: 28px; height: 28px; stroke-width: 1.8; }
+        .clasif-banda { flex: 1; padding: 16px 22px 16px 36px; border-radius: 8px; margin-left: -20px; color: #fff; }
+        .clasif-titulo { font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; text-transform: uppercase; font-size: 1rem; margin: 0 0 4px; color: #fff; letter-spacing: 0.03em; }
+        .clasif-desc { font-size: 0.83rem; line-height: 1.55; margin: 0; color: rgba(255,255,255,0.95); }
+        .clasif-desc strong { color: #fff; font-weight: 700; }
+        @media (max-width: 720px) {
+            .clasif-card { flex-direction: column; align-items: stretch; gap: 0; }
+            .clasif-icono { align-self: flex-start; margin-bottom: -16px; margin-left: 14px; }
+            .clasif-banda { margin-left: 0; padding: 28px 22px 18px 22px; }
+        }
+
+        .tipos-cita { font-size: 0.82rem; color: #555; margin-top: 28px; padding: 0; line-height: 1.7; }
+        .tipos-cita strong { color: #253C5C; }
+    
+/* === CSS chips de filtros (generado) === */
+/* Intro de la sección Ofertas 2026: párrafo + lista de 5 códigos SIRBE
+   con esbozo + nota a Datos SIRBE 2025. Sin bandas, sin sombras
+   dramáticas; jerarquía dada por la tipografía y el espaciado. */
+.bn-intro { margin-bottom: 32px; }
+.bn-intro > p { font-family: 'Figtree', sans-serif; font-size: 0.92rem; color: #3a3a3a; line-height: 1.65; margin: 0 0 18px; max-width: 820px; }
+.bn-codigos-lista { display: flex; flex-direction: column; gap: 14px; margin: 20px 0 22px; }
+.bn-codigo-item { display: grid; grid-template-columns: 80px 1fr; gap: 18px; align-items: start; padding: 14px 0; }
+.bn-codigo-item + .bn-codigo-item { padding-top: 14px; }
+.bn-codigo-num { font-family: 'Anton', 'Segoe UI', sans-serif; font-size: 2.1rem; color: #253C5C; margin: 0; line-height: 1; letter-spacing: 0.01em; }
+.bn-codigo-cuerpo { min-width: 0; }
+.bn-codigo-nombre { font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; text-transform: uppercase; font-size: 0.86rem; color: #2F3E3C; letter-spacing: 0.03em; margin: 0 0 5px; line-height: 1.3; }
+.bn-codigo-desc { font-family: 'Figtree', sans-serif; font-size: 0.86rem; color: #555; line-height: 1.55; margin: 0; }
+.bn-codigo-desc strong { color: #2F3E3C; font-weight: 700; }
+.bn-intro-nota { font-family: 'Figtree', sans-serif; font-size: 0.86rem; color: #555; line-height: 1.6; margin: 18px 0 0; padding-top: 14px; max-width: 820px; }
+.bn-intro-nota a { color: #253C5C; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 720px) {
+    .bn-codigo-item { grid-template-columns: 1fr; gap: 4px; }
+    .bn-codigo-num { font-size: 1.7rem; }
+}
+
+/* Tarjetas horizontales de ofertas Bienestar: contenido principal a la
+   izquierda, bloque SIRBE con el código de reporte a la derecha. Fondo
+   crema, sin bandas. Hover sutil. */
+.bn-grid { display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }
+.bn-card { background: #f5efd2; border-radius: 12px; padding: 20px 22px; display: grid; grid-template-columns: 1fr 280px; gap: 24px; align-items: stretch; box-shadow: 0 2px 8px rgba(0,0,0,0.04); transition: transform 0.18s ease, box-shadow 0.18s ease; }
+.bn-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.07); }
+.bn-card.oculta { display: none; }
+.bn-card-main { min-width: 0; }
+.bn-kicker { font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; font-size: 0.7rem; color: #888; margin: 0 0 8px; line-height: 1.3; }
+.bn-titulo { font-family: 'Antonio', 'Anton', 'Segoe UI', sans-serif; font-weight: 700; font-size: 1.05rem; text-transform: uppercase; letter-spacing: 0.02em; margin: 0 0 10px; line-height: 1.22; }
+.bn-texto { font-family: 'Figtree', 'Segoe UI', sans-serif; font-weight: 500; font-size: 0.83rem; color: #3a3a3a; line-height: 1.6; margin: 0; }
+.bn-texto strong { font-weight: 700; color: #2f3e3c; }
+
+/* Mini-ficha de metadatos al pie de la tarjeta: lista label/valor en
+   dos columnas, estilo editorial. Etiqueta en Antonio Bold pequeña,
+   valor en Figtree. Sin cápsulas, sin colores de fondo. */
+.bn-meta { display: grid; grid-template-columns: 110px 1fr; gap: 4px 14px; margin: 14px 0 0; padding-top: 12px; font-size: 0.8rem; }
+.bn-meta dt { font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; color: #2F3E3C; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.7rem; padding-top: 2px; }
+.bn-meta dd { color: #555; margin: 0; line-height: 1.5; }
+@media (max-width: 600px) {
+    .bn-meta { grid-template-columns: 1fr; gap: 1px; }
+    .bn-meta dt { padding-top: 8px; }
+    .bn-meta dt:first-of-type { padding-top: 2px; }
+}
+
+/* Bloque SIRBE a la derecha de cada tarjeta: sin caja, sin bordes ni
+   bandas; la separación visual la da el grid y la tipografía. */
+.bn-sirbe { padding: 4px 0; display: flex; flex-direction: column; justify-content: center; gap: 14px; }
+.bn-sirbe-label { font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.66rem; color: #888; margin: 0; }
+.bn-sirbe-item { margin: 0; }
+.bn-sirbe-codigo { font-family: 'Anton', 'Segoe UI', sans-serif; font-size: 1.55rem; color: #253C5C; margin: 0 0 4px; line-height: 1; letter-spacing: 0.01em; }
+.bn-sirbe-actividad { font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; text-transform: uppercase; font-size: 0.72rem; color: #2F3E3C; letter-spacing: 0.03em; margin: 0 0 4px; line-height: 1.3; }
+.bn-sirbe-uso { font-family: 'Figtree', 'Segoe UI', sans-serif; font-size: 0.78rem; color: #555; line-height: 1.5; margin: 0; }
+.bn-sirbe-pendiente { font-family: 'Figtree', 'Segoe UI', sans-serif; font-size: 0.82rem; color: #aaa; margin: 0; }
+
+@media (max-width: 900px) {
+    .bn-card { grid-template-columns: 1fr; }
+    .bn-sirbe { padding-top: 10px; margin-top: 6px; }
+}
+
+/* Sección "Reporte a políticas": tarjetas horizontales tipo bn-card.
+   Mismo lenguaje visual que las tarjetas de "Ofertas 2026" pero con
+   datos invertidos: izquierda = código SIRBE, derecha = productos
+   agrupados por política. */
+.rp-card { background: #f5efd2; border-radius: 12px; padding: 22px 24px; display: grid; grid-template-columns: 1fr 2fr; gap: 28px; align-items: start; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); transition: transform 0.18s ease, box-shadow 0.18s ease; }
+.rp-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.07); }
+.rp-card-codigo { min-width: 0; }
+.rp-card-label { font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.66rem; color: #888; margin: 0 0 6px; }
+.rp-card-num { font-family: 'Anton', 'Segoe UI', sans-serif; font-size: 2.4rem; color: #253C5C; margin: 0 0 6px; line-height: 1; letter-spacing: 0.01em; }
+.rp-card-nombre { font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; text-transform: uppercase; font-size: 0.88rem; color: #2F3E3C; letter-spacing: 0.03em; margin: 0 0 10px; line-height: 1.3; }
+.rp-card-desc { font-family: 'Figtree', sans-serif; font-size: 0.83rem; color: #555; line-height: 1.55; margin: 0; }
+.rp-card-grupos { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.rp-grupo { margin: 0; }
+.rp-grupo-tipo { font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.66rem; color: #888; margin: 0 0 2px; }
+.rp-grupo-tema { font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; text-transform: uppercase; font-size: 0.86rem; color: #253C5C; letter-spacing: 0.02em; margin: 0 0 8px; line-height: 1.3; }
+.rp-prods { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.rp-prod { font-family: 'Figtree', sans-serif; font-size: 0.84rem; color: #3a3a3a; line-height: 1.55; padding-left: 14px; position: relative; }
+.rp-prod::before { content: '·'; position: absolute; left: 0; top: -2px; color: #253C5C; font-weight: 700; font-size: 1.2rem; line-height: 1; }
+.rp-vacio { font-family: 'Figtree', sans-serif; font-size: 0.85rem; color: #aaa; font-style: italic; margin: 0; }
+
+/* Tarjeta "Productos que se reportan por cruce de variables": misma
+   estética pero con cruce explicado bajo cada producto. */
+.rp-card-cruce { grid-template-columns: 1fr; }
+.rp-card-cruce .rp-card-codigo { border-bottom: 1px solid rgba(47,62,60,0.12); padding-bottom: 14px; margin-bottom: 4px; }
+.rp-card-cruce .rp-card-num { font-size: 1.6rem; color: #555; }
+.rp-aclaracion { font-family: 'Figtree', sans-serif; font-size: 0.85rem; color: #555; line-height: 1.6; margin: 0 0 12px; max-width: 760px; }
+.rp-aclaracion strong, .rp-aclaracion em { color: #253C5C; }
+.rp-cruce { font-family: 'Figtree', sans-serif; font-size: 0.8rem; color: #555; line-height: 1.55; margin: 6px 0 12px 14px; padding: 8px 12px; background: rgba(255,255,255,0.55); border-radius: 6px; }
+.rp-cruce strong { color: #253C5C; font-weight: 700; }
+.rp-cruce em { color: #2F3E3C; font-style: italic; }
+/* Nota pendiente de feedback de Daniela Correa: tono gris neutro,
+   sin colores de alarma — la urgencia visual no debe sobrepasar la
+   urgencia real (mientras llega el feedback, simplemente está en cola). */
+.rp-cruce-pendiente { background: #ececec; color: #555; }
+.rp-cruce-pendiente strong { color: #2F3E3C; font-weight: 700; }
+
+@media (max-width: 720px) {
+    .rp-card { grid-template-columns: 1fr; gap: 14px; }
+}
+@media (max-width: 600px) {
+    .rp-codigo-header, .rp-item { grid-template-columns: 1fr; gap: 4px; }
+    .rp-producto { grid-column: 1; }
+    .rp-vacio { padding-left: 0; }
+}
+
+/* Fix overflow de la sección Datos SIRBE 2025: las tablas y el árbol de
+   cursos tienen textos largos que sobrepasan el ancho del .card. Esto
+   confina las tablas a su contenedor y permite scroll horizontal si hace
+   falta. También fuerza word-wrap en celdas. */
+#datos_sirbe .card { overflow-x: auto; }
+#datos_sirbe table { table-layout: auto; max-width: 100%; }
+#datos_sirbe table td, #datos_sirbe table th { word-break: break-word; overflow-wrap: break-word; }
+#datos_sirbe [id^="cursos_LID_"] { overflow-x: auto; }
+/* === fin CSS chips === */
+
+/* ============================================================
+   RESPONSIVE GLOBAL — para tablet y móvil
+   Cubre: imágenes decorativas que se superponen, tablas Datos SIRBE,
+   tarjetas que pasan a una sola columna, paddings que se reducen.
+   ============================================================ */
+
+/* Tablet — hasta 900px */
+@media (max-width: 900px) {
+    /* Imágenes decorativas de esquina (la chica, la mano, el megáfono)
+       se reducen para no chocar con el texto. */
+    .content-section .card > img[src*="/elementos/"],
+    .content-section .card > img[src*="/manos/"] {
+        height: 160px !important;
+        opacity: 0.7 !important;
+    }
+    .main-content { padding: 24px 20px; max-width: 100%; }
+    .card { padding: 20px; }
+}
+
+/* Móvil — hasta 720px */
+@media (max-width: 720px) {
+    /* En móvil las imágenes pasan al flujo normal del documento (en lugar
+       de quedarse pegadas en la esquina superior derecha con position:
+       absolute). Quedan arriba del título, centradas, con un tamaño
+       razonable para celular. Así no se superponen con el texto. */
+    .content-section .card > img[src*="/elementos/"],
+    .content-section .card > img[src*="/manos/"] {
+        position: static !important;
+        display: block !important;
+        height: 140px !important;
+        margin: 0 auto 14px !important;
+        opacity: 0.95 !important;
+        top: auto !important;
+        right: auto !important;
+    }
+
+    /* Headers y títulos compactos */
+    .header { padding: 14px 16px; }
+    .header h1 { font-size: 1.4rem; }
+    .card-title { font-size: 1.4rem; }
+    .main-content { padding: 16px 12px; }
+    .card { padding: 16px; }
+
+    /* Tipos de oferta: bandas chevron compactas */
+    .tipos-banda-flag { width: 44px; font-size: 1.2rem; }
+    .tipos-banda-titulo { font-size: 0.88rem; padding: 12px 16px 12px 22px; }
+
+    /* Tablas de Datos SIRBE 2025: scroll horizontal y fuente más pequeña */
+    #datos_sirbe table { font-size: 0.78rem !important; min-width: 480px; }
+    #datos_sirbe table th, #datos_sirbe table td { padding: 6px 8px !important; }
+    #datos_sirbe .card { padding: 14px; }
+
+    /* Las cards con árbol de cursos SIRBE: scroll horizontal interior */
+    #datos_sirbe [id^="cursos_LID_"] { padding: 0 10px 8px !important; }
+
+    /* Tarjetas Ofertas (bn-card): grid a 1 columna, padding más bajo */
+    .bn-card { padding: 16px 18px; gap: 12px; }
+    .bn-titulo { font-size: 0.98rem; }
+    .bn-sirbe { padding-top: 12px; margin-top: 4px; border-top: 1px solid rgba(47,62,60,0.12); }
+
+    /* Tarjetas Reporte a políticas (rp-card): ya colapsan, pero ajusto padding */
+    .rp-card { padding: 16px 18px; gap: 14px; }
+    .rp-card-num { font-size: 2rem; }
+
+    /* Mini-ficha bn-meta: 1 columna, etiquetas con margen superior */
+    .bn-meta { grid-template-columns: 1fr !important; gap: 2px; }
+    .bn-meta dt { padding-top: 8px; }
+    .bn-meta dt:first-of-type { padding-top: 2px; }
+
+    /* Quick links / cards estadísticos del HTML original */
+    .stats-imagen-grid { grid-template-columns: 1fr !important; max-width: 100% !important; }
+}
+
+/* Móvil pequeño — hasta 480px */
+@media (max-width: 480px) {
+    .header { padding: 12px 12px; flex-wrap: wrap; gap: 10px; }
+    .header h1 { font-size: 1.2rem; }
+    .card-title { font-size: 1.2rem; line-height: 1.15; }
+    .main-content { padding: 12px 10px; }
+    .card { padding: 14px; border-radius: 8px; }
+
+    /* Códigos SIRBE: se reducen porque ocupan 2rem */
+    .bn-sirbe-codigo { font-size: 1.3rem !important; }
+    .rp-card-num { font-size: 1.6rem; }
+
+    /* Tabla Datos SIRBE aún más compacta */
+    #datos_sirbe table { font-size: 0.74rem !important; }
+}
+</style>
 </head>
 <body>
     <header class="header">
         <div>
-            <h1>Liderazgo y participación</h1>
+            <h1>Liderazgo y Participación</h1>
         </div>
         <div class="header-right">
             <a href="../gestion_conocimiento_juventud_2025.html" style="display:inline-flex; align-items:center; gap:10px; background:transparent; color:#fff; text-decoration:none; font-size:0.9rem; font-weight:500;"><span>← Volver a</span><img src="../imagenes/servicios/casas-de-juventud.png" alt="Casas de Juventud" style="height:38px; border-radius:10px; object-fit:contain;"></a>
@@ -102,93 +365,677 @@
     <div class="container">
         <nav class="sidebar">
             <div class="sidebar-item active" onclick="showContent('que_es')">Resumen del eje</div>
+            <div class="sidebar-item" onclick="showContent('tipos_formatos')">Tipos y formatos</div>
             <div class="sidebar-item" onclick="showContent('ofertas_2026')">Ofertas 2026</div>
+            <div class="sidebar-item" onclick="showContent('reporte_politicas')">Reporte a políticas</div>
             <div class="sidebar-item" onclick="showContent('datos_sirbe')">Datos SIRBE 2025</div>
         </nav>
 
         <main class="main-content">
-            <div class="content-section active" id="que_es" style="display:block;"><div class="card">
-                <h2 class="card-title">Liderazgo y participación</h2>
-                <p style="line-height:1.7;">Socialización de política pública de juventud, asesoría jurídica, liderazgo juvenil, derechos humanos, voluntariado intergeneracional y participación ciudadana.</p>
-                <div class="stats-imagen-grid" style="display:grid; grid-template-columns:1fr; gap:20px; margin:25px auto 0; max-width:50%;">
-                    <div class="stats-imagen-card" style="position:relative; aspect-ratio: 1.83 / 1;">
-                        <img src="../imagenes/Recuadro%201.png" alt="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:fill; display:block;">
-                        <div style="position:absolute; inset:0; padding:9% 8% 8% 8%; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
-                            <div style="font-size:clamp(2.6rem, 5.5vw, 4.2rem); font-weight:800; line-height:1; color:#2d3a33;">8</div>
-                            <div style="display:inline-block; background:#2d3a33; padding:7px 18px; margin-top:14px;">
-                                <h3 style="color:#ead9a7; font-size:clamp(1rem, 1.5vw, 1.25rem); font-weight:700; margin:0; white-space:nowrap;">Ofertas planeadas</h3>
-                            </div>
+            <div class="content-section active" id="que_es" style="display:block;"><div class="card" style="position:relative; overflow:hidden;">
+                <img src="../imagenes/elementos/4.png" alt="" style="position:absolute; top:18px; right:clamp(40px, 10%, 200px); height:360px; opacity:0.92; pointer-events:none; z-index:0;">
+                <div style="position:relative; z-index:1;">
+                <h2 class="card-title">Liderazgo y Participación</h2>
+                <p style="line-height:1.7; max-width:680px;">El eje de Liderazgo y Participación acompaña los procesos en los que las y los jóvenes se reconocen como <strong>sujetos de derechos</strong> y se convierten en <strong>agentes de transformación</strong> de su comunidad. Su propósito central es fortalecer la ciudadanía juvenil, el liderazgo individual y colectivo, y la participación activa de las juventudes en la vida pública del Distrito.</p>
+                <p style="line-height:1.7; margin-top:14px; max-width:680px;">Para lograr este propósito, el eje articula procesos formativos, talleres, escuelas de liderazgo y escenarios de diálogo intergeneracional. Combina la <strong>formación en derechos humanos y mecanismos de participación</strong> con el <strong>fortalecimiento de las organizaciones juveniles</strong> y la <strong>socialización de la Política Pública Distrital de Juventud</strong>.</p>
+                <p style="line-height:1.7; margin-top:14px; max-width:680px;">El eje opera a través de cinco líneas: <strong>escuelas de liderazgo</strong> (Potencia Joven con GOYN, Raíces en Movimiento), <strong>formación en derechos humanos y participación</strong> (oratoria, debate, activismo digital), <strong>socialización de la Política Pública de Juventud</strong> (Escape Room, MAPA de mis Derechos), <strong>voluntariado intergeneracional</strong> y <strong>atención jurídica</strong> a jóvenes.</p>
+                </div>
+            </div></div>
+
+            <div class="content-section" id="tipos_formatos" style="display:none;"><div class="card" style="position:relative; overflow:hidden;">
+                <img src="../imagenes/elementos/8.png" alt="" style="position:absolute; top:18px; right:24px; height:140px; opacity:0.85; pointer-events:none; z-index:0;">
+                <div style="position:relative; z-index:1;">
+                    <h2 class="card-title">Tipos y formatos de oferta</h2>
+                    <p class="tipos-intro" style="max-width:560px;">Las ofertas del eje de Liderazgo y Participación se organizan en <strong>dos dimensiones complementarias</strong>: el <strong>tipo de oferta</strong> (qué busca lograr en la trayectoria del joven) y la <strong>clasificación</strong> (qué formato pedagógico tiene).</p>
+                </div>
+
+                <h3 class="tipos-section-titulo">Tipos de oferta</h3>
+
+                <div class="tipos-banda-list">
+                    <div class="tipo-bloque">
+                        <div class="tipos-banda">
+                            <div class="tipos-banda-flag" style="background:#1eaf76;">1</div>
+                            <div class="tipos-banda-titulo">Fortalecimiento</div>
+                        </div>
+                        <p class="tipo-descripcion">El <strong>Fortalecimiento</strong> es la dimensión pedagógica del eje: desarrolla las capacidades de liderazgo, organización, vocería e incidencia que las y los jóvenes necesitan para ejercer su ciudadanía. Incluye las escuelas de liderazgo (Potencia Joven, Raíces en Movimiento, Convenio Fundación 2050) y los talleres de comprensión de la Política Pública de Juventud (Escape Room, MAPA de mis Derechos).</p>
+                    </div>
+                    <div class="tipo-bloque">
+                        <div class="tipos-banda">
+                            <div class="tipos-banda-flag" style="background:#f5b800;">2</div>
+                            <div class="tipos-banda-titulo">Conexión con oportunidades</div>
+                        </div>
+                        <p class="tipo-descripcion">La <strong>Conexión con oportunidades</strong> es el puente hacia espacios de incidencia, debate y participación. Master class y talleres con aliados expertos en activismo digital, finanzas para proyectos sociales, oratoria y debate, que conectan a los jóvenes con redes y herramientas más allá de la Casa.</p>
+                    </div>
+                </div>
+
+                <h3 class="tipos-section-titulo">Clasificaciones de oferta</h3>
+                <p class="tipos-intro">El formato metodológico exacto en el que se entrega cada oferta.</p>
+
+                <!-- NOTA pendiente de revisión (2026-05-21):
+                     Las descripciones de las clasificaciones de abajo son resúmenes
+                     cortos del primer pase. El glosario oficial de la SDIS tiene
+                     descripciones más completas; no se adoptaron todavía porque
+                     podrían quedar demasiado largas en las bandas-tarjeta. Revisar
+                     en próxima iteración. -->
+                <div class="clasif-list">
+                    <div class="clasif-card">
+                        <div class="clasif-icono" style="border-color:#253C5C;"><i data-lucide="layers" style="color:#253C5C;"></i></div>
+                        <div class="clasif-banda" style="background:#253C5C;">
+                            <h4 class="clasif-titulo">Ciclo formativo</h4>
+                            <p class="clasif-desc">Procesos formativos <strong>estructurados en varios módulos o sesiones</strong> para desarrollar progresivamente competencias de liderazgo, ciudadanía e incidencia (Potencia Joven, Raíces en Movimiento, Convenio Fundación 2050).</p>
+                        </div>
+                    </div>
+
+                    <div class="clasif-card">
+                        <div class="clasif-icono" style="border-color:#253C5C;"><i data-lucide="wrench" style="color:#253C5C;"></i></div>
+                        <div class="clasif-banda" style="background:#253C5C;">
+                            <h4 class="clasif-titulo">Taller</h4>
+                            <p class="clasif-desc">Metodología <strong>práctica y participativa</strong> orientada a un producto o resultado concreto en un espacio grupal (Escape Room, MAPA de mis Derechos).</p>
+                        </div>
+                    </div>
+
+                    <div class="clasif-card">
+                        <div class="clasif-icono" style="border-color:#253C5C;"><i data-lucide="mic" style="color:#253C5C;"></i></div>
+                        <div class="clasif-banda" style="background:#253C5C;">
+                            <h4 class="clasif-titulo">Masterclass</h4>
+                            <p class="clasif-desc">Sesión intensiva de <strong>corta duración liderada por un experto</strong> para la transferencia de conocimientos especializados sobre un tema puntual (Activismo Digital, Finanzas para proyectos sociales).</p>
+                        </div>
+                    </div>
+
+                    <div class="clasif-card">
+                        <div class="clasif-icono" style="border-color:#253C5C;"><i data-lucide="repeat" style="color:#253C5C;"></i></div>
+                        <div class="clasif-banda" style="background:#253C5C;">
+                            <h4 class="clasif-titulo">Taller / Ciclo Formativo</h4>
+                            <p class="clasif-desc">Formato <strong>híbrido</strong>: combina la dinámica práctica del taller con la progresión modular del ciclo formativo (La palabra como poder: oratoria y debate).</p>
                         </div>
                     </div>
                 </div>
+
             </div></div>
 
-            <div class="content-section" id="ofertas_2026" style="display:none;"><div class="card">
+            <div class="content-section" id="ofertas_2026" style="display:none;"><div class="card" style="position:relative; overflow:hidden;">
+                <img src="../imagenes/manos/2.png" alt="" style="position:absolute; top:18px; right:24px; height:200px; opacity:0.92; pointer-events:none; z-index:0;">
                 <h2 class="card-title">Ofertas 2026</h2>
-                <p style="color:#666; margin-bottom:20px;">Oferta planeada para el eje de Liderazgo y participación.</p>
 
-                <div style="display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap;">
-                    <a href="https://www.instagram.com/distritojovenbta/" target="_blank" style="display:inline-flex; align-items:center; gap:6px; padding:8px 16px; background:#E1306C; color:#fff; border-radius:8px; text-decoration:none; font-size:0.85rem; font-weight:600;">Distrito Joven Instagram</a>
-                    <a href="https://www.facebook.com/DistritoJovenBta/" target="_blank" style="display:inline-flex; align-items:center; gap:6px; padding:8px 16px; background:#1877F2; color:#fff; border-radius:8px; text-decoration:none; font-size:0.85rem; font-weight:600;">Distrito Joven Facebook</a>
+
+                <!-- ====== INICIO BLOQUE OFERTAS GENERADO POR SCRIPT ====== -->
+                <div class="bn-intro">
+                    <p>Las ofertas del eje Liderazgo y Participaci&oacute;n son <strong>procesos formativos, talleres y experiencias</strong> que se entregan en las Casas de Juventud para fortalecer la ciudadan&iacute;a, el liderazgo y la participaci&oacute;n juvenil. Cada una se registra en <strong>SIRBE</strong> (Sistema de Registro de Beneficiarios) bajo uno de los seis c&oacute;digos de actividad que la subdirecci&oacute;n usa para este eje:</p>
+
+                    <div class="bn-codigos-lista">
+                        <div class="bn-codigo-item">
+                            <p class="bn-codigo-num">1492</p>
+                            <div class="bn-codigo-cuerpo">
+                                <p class="bn-codigo-nombre">Atenci&oacute;n y orientaci&oacute;n jur&iacute;dica a j&oacute;venes</p>
+                                <p class="bn-codigo-desc">Atenci&oacute;n individual o grupal en temas de derechos, normatividad y mecanismos de protecci&oacute;n.</p>
+                            </div>
+                        </div>
+                        <div class="bn-codigo-item">
+                            <p class="bn-codigo-num">1494</p>
+                            <div class="bn-codigo-cuerpo">
+                                <p class="bn-codigo-nombre">Promoci&oacute;n y fortalecimiento de actividades de organizaci&oacute;n juvenil</p>
+                                <p class="bn-codigo-desc">Apoyo a colectivos, redes y plataformas de j&oacute;venes para fortalecer su capacidad de organizaci&oacute;n e incidencia.</p>
+                            </div>
+                        </div>
+                        <div class="bn-codigo-item">
+                            <p class="bn-codigo-num">1495</p>
+                            <div class="bn-codigo-cuerpo">
+                                <p class="bn-codigo-nombre">Escenarios de di&aacute;logos intergeneracionales y de saberes</p>
+                                <p class="bn-codigo-desc">Encuentros entre j&oacute;venes y otras generaciones para fortalecer la ciudadan&iacute;a juvenil y el intercambio de saberes.</p>
+                            </div>
+                        </div>
+                        <div class="bn-codigo-item">
+                            <p class="bn-codigo-num">1502</p>
+                            <div class="bn-codigo-cuerpo">
+                                <p class="bn-codigo-nombre">Socializaci&oacute;n de Pol&iacute;tica P&uacute;blica de Juventud</p>
+                                <p class="bn-codigo-desc">Difusi&oacute;n, talleres y procesos pedag&oacute;gicos sobre la Pol&iacute;tica P&uacute;blica Distrital de Juventud y sus instrumentos.</p>
+                            </div>
+                        </div>
+                        <div class="bn-codigo-item">
+                            <p class="bn-codigo-num">1503</p>
+                            <div class="bn-codigo-cuerpo">
+                                <p class="bn-codigo-nombre">Derechos humanos y promoci&oacute;n a la participaci&oacute;n</p>
+                                <p class="bn-codigo-desc">Formaci&oacute;n en derechos humanos y en los mecanismos de incidencia y participaci&oacute;n juvenil.</p>
+                            </div>
+                        </div>
+                        <div class="bn-codigo-item">
+                            <p class="bn-codigo-num">1505</p>
+                            <div class="bn-codigo-cuerpo">
+                                <p class="bn-codigo-nombre">Voluntariado intergeneracional</p>
+                                <p class="bn-codigo-desc">Vinculaci&oacute;n de j&oacute;venes a procesos formales de voluntariado con perspectiva intergeneracional.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="bn-intro-nota">Para mayor informaci&oacute;n sobre la desagregaci&oacute;n SIRBE para el eje Casas de Juventud &mdash; Liderazgo y Participaci&oacute;n, consulte la <a href="#datos_sirbe" onclick="showContent('datos_sirbe'); return false;">desagregaci&oacute;n detallada de Datos SIRBE 2025</a>.</p>
                 </div>
 
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">1. Potencia joven</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Escuela de liderazgo juvenil dirigido a jóvenes de 14 a 28 años en los que profesionales de distintas áreas saldrán de sus oficinas para estar contigo y compartir todo su conocimiento en temas clave como: Interseccionalidad y Enfoque Diferencial; Recolección, análisis y uso de datos en proyectos juveniles; Sistema Nacional y Distrital de Juventud; Liderazgo Público; Gestión de Proyectos; Design Thinking y Cambios comportamentales</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Implementa</td><td style="padding:6px 10px; color:#555;">SDIS/GOYN</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; vertical-align:top;">Dirigido a</td><td style="padding:6px 10px; color:#555;">Jóvenes de 14 a 28 años</td></tr>
-                    </table>
+
+                <div class="bn-grid">
+                    <div class="bn-card" data-tipo="fortalecimiento" data-clasif="ciclo-formativo">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento &middot; Ciclo formativo</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Potencia joven</h4>
+                            <p class="bn-texto">Escuela de liderazgo juvenil dirigido a jóvenes de 14 a 28 años en los que profesionales de distintas áreas saldrán de sus oficinas para estar contigo y compartir todo su conocimiento en temas clave como: Interseccionalidad y Enfoque Diferencial; Recolección, análisis y uso de datos en proyectos juveniles; Sistema Nacional y Distrital de Juventud; Liderazgo Público; Gestión de Proyectos; Design Thinking y Cambios comportamentales</p>
+                            <dl class="bn-meta">
+                                <dt>Modalidad</dt><dd>Unidades operativas</dd>
+                                <dt>Implementa</dt><dd>SDIS/GOYN</dd>
+                                <dt>Dirigido a</dt><dd>Jóvenes de 14 a 28 años</dd>
+                                <dt>Localidad</dt><dd>Ciudad Bolívar PTE</dd>
+                                <dt>Mes</dt><dd>Abril PTE</dd>
+                                <dt>Meta</dt><dd>50</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1494</p>
+                                <p class="bn-sirbe-actividad">Promoción y fortalecimiento de actividades de organización juvenil</p>
+                                <p class="bn-sirbe-uso">Escuela de liderazgo juvenil con aliado GOYN: fortalecimiento de organización y liderazgo</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento" data-clasif="taller">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento &middot; Taller</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Escape Room Participativo: Salvar la Política</h4>
+                            <p class="bn-texto">Es una metodología lúdica y colaborativa dirigida a consejeros de juventud, integrantes de plataformas juveniles y jóvenes con experiencia en participación, que utiliza la lógica de un juego de escape para facilitar la comprensión de la Política Pública Distrital de Juventud y del Sistema Distrital de Juventud. A través de retos progresivos, las y los participantes reconstruyen el sentido de la política, identifican las instancias de participación, reconocen sus funciones y analizan rutas de incidencia, promoviendo el trabajo en equipo, la lectura crítica y la apropiación del sistema como una herramienta real para la participación juvenil.</p>
+                            <dl class="bn-meta">
+                                <dt>Modalidad</dt><dd>Unidades operativas</dd>
+                                <dt>Implementa</dt><dd>SDIS-Equipo Territorial</dd>
+                                <dt>Dirigido a</dt><dd>Consejeros y Consejeras de Juventud, integrantes de Plataformas Locales de Juventud y jóvenes con mayor cualificación política y de liderazgo</dd>
+                                <dt>Localidad</dt><dd>Todas</dd>
+                                <dt>Mes</dt><dd>Febrero-Diciembre</dd>
+                                <dt>Meta</dt><dd>200</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1502</p>
+                                <p class="bn-sirbe-actividad">Socialización de Política Pública de Juventud</p>
+                                <p class="bn-sirbe-uso">Socialización lúdica de la Política Pública Distrital de Juventud</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento" data-clasif="taller">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento &middot; Taller</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">EL MAPA DE MIS DERECHOS Cartografía corporal y territorial para comprender la Política Pública de Juventud</h4>
+                            <p class="bn-texto">Es una metodología pedagógica y participativa dirigida a jóvenes de 14 a 17 años, que emplea la cartografía corporal y territorial para conectar sus experiencias cotidianas con los derechos juveniles y la Política Pública Distrital de Juventud. Mediante el dibujo, la conversación y la reflexión colectiva, las y los participantes identifican problemáticas y oportunidades en su entorno, comprenden de forma sencilla para qué existe la política pública y conocen el Sistema Distrital de Juventud como una red de espacios donde las juventudes pueden participar, dialogar y construir cambios en la ciudad.</p>
+                            <dl class="bn-meta">
+                                <dt>Modalidad</dt><dd>Unidades operativas</dd>
+                                <dt>Implementa</dt><dd>SDIS- Equipo Territorial</dd>
+                                <dt>Dirigido a</dt><dd>Jóvenes de 14 a 17 años</dd>
+                                <dt>Localidad</dt><dd>Todas</dd>
+                                <dt>Mes</dt><dd>Febrero-Diciembre</dd>
+                                <dt>Meta</dt><dd>2000</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1502</p>
+                                <p class="bn-sirbe-actividad">Socialización de Política Pública de Juventud</p>
+                                <p class="bn-sirbe-uso">Cartografía corporal y territorial para comprender la Política Pública de Juventud</p>
+                            </div>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1503</p>
+                                <p class="bn-sirbe-actividad">Derechos humanos y promoción a la participación</p>
+                                <p class="bn-sirbe-uso">Formación en derechos y participación juvenil con metodología cartográfica</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="conexion-con-oportunidades" data-clasif="masterclass">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Conexión con oportunidades &middot; Masterclass</p>
+                            <h4 class="bn-titulo" style="color:#f5b800;">Activismo Digital: de los likes a la acción colectiva</h4>
+                            <p class="bn-texto">Esta masterclass aborda el uso estratégico de las redes sociales como herramientas de incidencia social, política y comunitaria, superando la lógica del simple alcance o la viralidad momentánea. A partir de la experiencia práctica de un/a creador/a de contenido con enfoque social, se explorarán las claves para transformar interacciones digitales en procesos reales de movilización, organización y cambio. La sesión profundiza en cómo construir narrativas con sentido social, generar comunidades digitales activas, posicionar causas juveniles en la agenda pública y articular el activismo digital con acciones presenciales y procesos de participación institucional, como los espacios del Sistema Distrital de Juventud. Asimismo, se reflexiona sobre los límites, riesgos y responsabilidades del activismo en entornos digitales.</p>
+                            <dl class="bn-meta">
+                                <dt>Modalidad</dt><dd>Unidades operativas</dd>
+                                <dt>Implementa</dt><dd>Aliado</dd>
+                                <dt>Dirigido a</dt><dd>• Integrantes de Plataformas de Juventud. • Consejeros y Consejeras de Juventud. • Jóvenes líderes, activistas y creadores de contenido con interés en incidencia social y política. • Jóvenes que gestionan o participan en procesos colectivos con presencia en redes sociales.</dd>
+                                <dt>Localidad</dt><dd>Todas</dd>
+                                <dt>Mes</dt><dd>Segundo semestre 2026</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1503</p>
+                                <p class="bn-sirbe-actividad">Derechos humanos y promoción a la participación</p>
+                                <p class="bn-sirbe-uso">Master class de derechos y participación: activismo digital</p>
+                            </div>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1494</p>
+                                <p class="bn-sirbe-actividad">Promoción y fortalecimiento de actividades de organización juvenil</p>
+                                <p class="bn-sirbe-uso">Fortalecimiento de organización juvenil con uso de redes y herramientas digitales</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="conexion-con-oportunidades" data-clasif="masterclass">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Conexión con oportunidades &middot; Masterclass</p>
+                            <h4 class="bn-titulo" style="color:#f5b800;">Finanzas para proyectos sociales juveniles: de la idea al financiamiento</h4>
+                            <p class="bn-texto">Esta masterclass brinda herramientas prácticas para la gestión de recursos financieros orientados a iniciativas sociales, culturales y comunitarias lideradas por jóvenes. A partir de un enfoque pedagógico y aplicado, se exploran distintas alternativas de financiación como el crowdfunding, la cooperación internacional, los fondos públicos, las alianzas con organizaciones y la autogestión. Durante la sesión se abordarán aspectos clave como la formulación básica de proyectos, la identificación de posibles financiadores, la construcción de presupuestos sencillos, la comunicación de impacto y la rendición de cuentas.</p>
+                            <dl class="bn-meta">
+                                <dt>Modalidad</dt><dd>Unidades operativas</dd>
+                                <dt>Implementa</dt><dd>Aliado</dd>
+                                <dt>Dirigido a</dt><dd>• Integrantes de Plataformas de Juventud. • Jóvenes líderes y gestores de proyectos sociales, culturales o comunitarios. • Consejeros y Consejeras de Juventud interesados en impulsar iniciativas territoriales. • Jóvenes vinculados a procesos organizativos que buscan fortalecer su sostenibilidad económica.</dd>
+                                <dt>Localidad</dt><dd>Todas</dd>
+                                <dt>Mes</dt><dd>Segundo semestre 2026</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1494</p>
+                                <p class="bn-sirbe-actividad">Promoción y fortalecimiento de actividades de organización juvenil</p>
+                                <p class="bn-sirbe-uso">Fortalecimiento de organizaciones juveniles: gestión financiera de proyectos sociales</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="conexion-con-oportunidades" data-clasif="taller-ciclo-formativo">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Conexión con oportunidades &middot; Taller/Ciclo Formativo</p>
+                            <h4 class="bn-titulo" style="color:#f5b800;">La palabra como poder: oratoria, debate e incidencia juvenil</h4>
+                            <p class="bn-texto">Este taller/ciclo formativo está orientada a fortalecer las habilidades de expresión oral, argumentación y debate como herramientas fundamentales para la participación e incidencia juvenil. Parte de la idea de que hablar en público no es solo una habilidad técnica, sino un acto político que permite posicionar ideas, disputar sentidos y defender derechos en escenarios de toma de decisiones. A lo largo de la sesión se trabajarán elementos clave como la construcción de mensajes claros, el manejo del miedo escénico, la organización de argumentos, la escucha activa, el uso del lenguaje corporal y la adaptación del discurso a distintos públicos y espacios, como Consejos de Juventud, Asambleas, Comisiones de Concertación y escenarios comunitarios.</p>
+                            <dl class="bn-meta">
+                                <dt>Modalidad</dt><dd>Unidades operativas</dd>
+                                <dt>Implementa</dt><dd>Aliado</dd>
+                                <dt>Dirigido a</dt><dd>• Consejeros y Consejeras de Juventud. • Integrantes de Plataformas de Juventud. • Jóvenes líderes y voceros de procesos organizativos. • Jóvenes interesados en fortalecer sus capacidades de comunicación, debate y representación.</dd>
+                                <dt>Localidad</dt><dd>Todas</dd>
+                                <dt>Mes</dt><dd>Segundo semestre 2026</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1503</p>
+                                <p class="bn-sirbe-actividad">Derechos humanos y promoción a la participación</p>
+                                <p class="bn-sirbe-uso">Formación en oratoria, debate e incidencia juvenil para la participación</p>
+                            </div>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1495</p>
+                                <p class="bn-sirbe-actividad">Escenarios de diálogos intergeneracionales y de saberes que fortalezcan la ciudadanía juvenil</p>
+                                <p class="bn-sirbe-uso">Diálogos y debate: escenarios de intercambio de saberes y ciudadanía</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento" data-clasif="ciclo-formativo">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento &middot; Ciclo formativo</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Raíces en Movimiento: Escuela Itinerante de Liderazgo Juvenil Rural y de Borde</h4>
+                            <p class="bn-texto">Raíces en Movimiento es una escuela itinerante de liderazgo juvenil que busca fortalecer las capacidades de jóvenes de zonas rurales, rurales dispersas y bordes urbano-rurales de Bogotá, promoviendo su reconocimiento como agentes comunitarios capaces de articular procesos sociales, educativos, culturales y ambientales en sus territorios. La escuela se desarrolla a través de encuentros presenciales itinerantes en veredas, instituciones educativas rurales, espacios comunitarios y escenarios locales, reconociendo que la participación juvenil en contextos rurales y de borde de ciudad se construye desde la cercanía, la confianza y el arraigo territorial. La propuesta integra saberes comunitarios, lectura crítica del territorio, liderazgo colectivo, gestión de iniciativas juveniles y cuidado del bienestar personal y comunitario. Desde un enfoque participativo e intersectorial, la escuela busca que las y los jóvenes fortalezcan su capacidad para sostener y proyectar procesos juveniles más allá de la presencia institucional permanente, contribuyendo a la apropiación territorial de la Estrategia Móvil de Juventud y a la construcción de redes juveniles rurales con capacidad de incidencia local.</p>
+                            <dl class="bn-meta">
+                                <dt>Modalidad</dt><dd>Estrategia Móvil</dd>
+                                <dt>Implementa</dt><dd>Estrategia Móvil</dd>
+                                <dt>Dirigido a</dt><dd>Jóvenes entre los 14 y 28 años que habitan zonas rurales, rurales dispersas y bordes urbano-rurales de Bogotá, incluyendo localidades como Sumapaz y territorios periféricos donde la presencia institucional es intermitente o distante</dd>
+                                <dt>Localidad</dt><dd>Sumapaz, Usme, Chapinero, Ciudad Bolívar y San cristobal</dd>
+                                <dt>Mes</dt><dd>Marzo a Noviembre 2026</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1494</p>
+                                <p class="bn-sirbe-actividad">Promoción y fortalecimiento de actividades de organización juvenil</p>
+                                <p class="bn-sirbe-uso">Escuela itinerante de liderazgo juvenil rural y de borde</p>
+                            </div>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1495</p>
+                                <p class="bn-sirbe-actividad">Escenarios de diálogos intergeneracionales y de saberes que fortalezcan la ciudadanía juvenil</p>
+                                <p class="bn-sirbe-uso">Diálogos intergeneracionales y de saberes en zonas rurales y de borde</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento" data-clasif="ciclo-formativo">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento &middot; Ciclo formativo</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Convenio Fundación 2050</h4>
+                            <p class="bn-texto">Fortalecimiento y ajuste a la metodología de los Comités Operativos Locales de Juventud</p>
+                            <dl class="bn-meta">
+                                <dt>Modalidad</dt><dd>Unidades operativas</dd>
+                                <dt>Implementa</dt><dd>Fundación 2050</dd>
+                                <dt>Dirigido a</dt><dd>Equipos territoriales SDIS</dd>
+                                <dt>Localidad</dt><dd>Todas</dd>
+                                <dt>Mes</dt><dd>Enero a Abril 2026</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1494</p>
+                                <p class="bn-sirbe-actividad">Promoción y fortalecimiento de actividades de organización juvenil</p>
+                                <p class="bn-sirbe-uso">Fortalecimiento y ajuste de procesos de organización juvenil con Fundación 2050</p>
+                            </div>
+                        </aside>
+                    </div>
                 </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">2. Escape Room Participativo: Salvar la Política</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Es una metodología lúdica y colaborativa dirigida a consejeros de juventud, integrantes de plataformas juveniles y jóvenes con experiencia en participación, que utiliza la lógica de un juego de escape para facilitar la comprensión de la Política Pública Distrital de Juventud y del Sistema Distrital de Juventud. A través de retos progresivos, las y los participantes reconstruyen el sentido de la política, identifican las instancias de participación, reconocen sus funciones y analizan rutas de incidencia, promoviendo el trabajo en equipo, la lectura crítica y la apropiación del sistema como una herramienta real para la participación juvenil.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Implementa</td><td style="padding:6px 10px; color:#555;">SDIS-Equipo Territorial</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; vertical-align:top;">Dirigido a</td><td style="padding:6px 10px; color:#555;">Consejeros y Consejeras de Juventud, integrantes de Plataformas Locales de Juventud y jóvenes con mayor cualificación política y de liderazgo</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">3. EL MAPA DE MIS DERECHOS  Cartografía corporal y territorial para comprender la Política Pública de Juventud</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Es una metodología pedagógica y participativa dirigida a jóvenes de 14 a 17 años, que emplea la cartografía corporal y territorial para conectar sus experiencias cotidianas con los derechos juveniles y la Política Pública Distrital de Juventud. Mediante el dibujo, la conversación y la reflexión colectiva, las y los participantes identifican problemáticas y oportunidades en su entorno, comprenden de forma sencilla para qué existe la política pública y conocen el Sistema Distrital de Juventud como una red de espacios donde las juventudes pueden participar, dialogar y construir cambios en la ciudad.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Implementa</td><td style="padding:6px 10px; color:#555;">SDIS- Equipo Territorial</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; vertical-align:top;">Dirigido a</td><td style="padding:6px 10px; color:#555;">Jóvenes de 14 a 17 años</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">4. Activismo Digital: de los likes a la acción colectiva</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Esta masterclass aborda el uso estratégico de las redes sociales como herramientas de incidencia social, política y comunitaria, superando la lógica del simple alcance o la viralidad momentánea. A partir de la experiencia práctica de un/a creador/a de contenido con enfoque social, se explorarán las claves para transformar interacciones digitales en procesos reales de movilización, organización y cambio.<br>La sesión profundiza en cómo construir narrativas con sentido social, generar comunidades digitales activas, posicionar causas juveniles en la agenda pública y articular el activismo digital con acciones presenciales y procesos de participación institucional, como los espacios del Sistema Distrital de Juventud. Asimismo, se reflexiona sobre los límites, riesgos y responsabilidades del activismo en entornos digitales.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Implementa</td><td style="padding:6px 10px; color:#555;">Aliado</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; vertical-align:top;">Dirigido a</td><td style="padding:6px 10px; color:#555;">Integrantes de Plataformas de Juventud.         Consejeros y Consejeras de Juventud.         Jóvenes líderes, activistas y creadores de contenido con </td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">5. Finanzas para proyectos sociales juveniles: de la idea al financiamiento</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Esta masterclass brinda herramientas prácticas para la gestión de recursos financieros orientados a iniciativas sociales, culturales y comunitarias lideradas por jóvenes. A partir de un enfoque pedagógico y aplicado, se exploran distintas alternativas de financiación como el crowdfunding, la cooperación internacional, los fondos públicos, las alianzas con organizaciones y la autogestión.<br>Durante la sesión se abordarán aspectos clave como la formulación básica de proyectos, la identificación de posibles financiadores, la construcción de presupuestos sencillos, la comunicación de impacto y la rendición de cuentas.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Implementa</td><td style="padding:6px 10px; color:#555;">Aliado</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; vertical-align:top;">Dirigido a</td><td style="padding:6px 10px; color:#555;">Integrantes de Plataformas de Juventud. 	Jóvenes líderes y gestores de proyectos sociales, culturales o comunitarios. 	Consejeros y Consejeras de Juve</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">6. La palabra como poder: oratoria, debate e incidencia juvenil</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Este taller/ciclo formativo está orientada a fortalecer las habilidades de expresión oral, argumentación y debate como herramientas fundamentales para la participación e incidencia juvenil. Parte de la idea de que hablar en público no es solo una habilidad técnica, sino un acto político que permite posicionar ideas, disputar sentidos y defender derechos en escenarios de toma de decisiones.<br>A lo largo de la sesión se trabajarán elementos clave como la construcción de mensajes claros, el manejo del miedo escénico, la organización de argumentos, la escucha activa, el uso del lenguaje corporal y la adaptación del discurso a distintos públicos y espacios, como Consejos de Juventud, Asambleas, Comisiones de Concertación y escenarios comunitarios.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Implementa</td><td style="padding:6px 10px; color:#555;">Aliado</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; vertical-align:top;">Dirigido a</td><td style="padding:6px 10px; color:#555;">Consejeros y Consejeras de Juventud. 	Integrantes de Plataformas de Juventud. 	Jóvenes líderes y voceros de procesos organizativos. 	Jóvenes interesad</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">7. Raíces en Movimiento: Escuela Itinerante de Liderazgo Juvenil Rural y de Borde</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Raíces en Movimiento es una escuela itinerante de liderazgo juvenil que busca fortalecer las capacidades de jóvenes de zonas rurales, rurales dispersas y bordes urbano-rurales de Bogotá, promoviendo su reconocimiento como agentes comunitarios capaces de articular procesos sociales, educativos, culturales y ambientales en sus territorios.<br><br>La escuela se desarrolla a través de encuentros presenciales itinerantes en veredas, instituciones educativas rurales, espacios comunitarios y escenarios locales, reconociendo que la participación juvenil en contextos rurales y de borde de ciudad se construye desde la cercanía, la confianza y el arraigo territorial. La propuesta integra saberes comunitarios, lectura crítica del territorio, liderazgo colectivo, gestión de iniciativas juveniles y cuidado del bienestar personal y comunitario.<br><br>Desde un enfoque participativo e intersectorial, la escuela busca que las y los jóvenes fortalezcan su capacidad para sostener y proyectar procesos juveniles más allá de la presencia institucional permanente, contribuyendo a la apropiación territorial de la Estrategia Móvil de Juventud y a la construcción de redes juveniles rurales con capacidad de incidencia local.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Implementa</td><td style="padding:6px 10px; color:#555;">Estrategia Móvil</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; vertical-align:top;">Dirigido a</td><td style="padding:6px 10px; color:#555;">Jóvenes entre los 14 y 28 años que habitan zonas rurales, rurales dispersas y bordes urbano-rurales de Bogotá</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">8. Convenio Fundación 2050</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Fortalecimiento y ajuste a la metodología de los Comités Operativos Locales de Juventud</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Implementa</td><td style="padding:6px 10px; color:#555;">Fundación 2050</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; vertical-align:top;">Dirigido a</td><td style="padding:6px 10px; color:#555;">Equipos territoriales SDIS</td></tr>
-                    </table>
-                </div>
+                <!-- ====== FIN BLOQUE OFERTAS GENERADO POR SCRIPT ====== -->
+
+                
             </div></div>
+
+            <div class="content-section" id="reporte_politicas" style="display:none;"><div class="card">
+                <h2 class="card-title">Reporte a políticas</h2>
+                <!-- ====== INICIO BLOQUE REPORTE POLITICAS GENERADO POR SCRIPT ====== -->
+                <p style="font-family:Figtree, sans-serif; font-size:0.92rem; color:#3a3a3a; line-height:1.65; margin: 8px 0 14px; max-width:820px;">El eje de Liderazgo y Participación del servicio Casas de Juventud apunta de manera directa y transversal a varias Políticas Públicas Distritales y Planes Intersectoriales, gracias a sus acciones en organización juvenil, socialización de la Política Pública de Juventud, derechos humanos, voluntariado y diálogos intergeneracionales.</p>
+                <p style="font-family:Figtree, sans-serif; font-size:0.92rem; color:#3a3a3a; line-height:1.65; margin: 0 0 14px; max-width:820px;">Al ser un servicio de carácter inclusivo, todas las ofertas de fortalecimiento del liderazgo y la participación apuntan de forma transversal a las metas de vinculación con enfoque diferencial dentro de las Políticas Públicas de Ruralidad, Discapacidad, Migrantes Internacionales, Pueblos Indígenas, Pueblo Raizal, Rrom, y comunidades Negras, Afrocolombianas y Palenqueras.</p>
+                <p style="font-family:Figtree, sans-serif; font-size:0.92rem; color:#3a3a3a; line-height:1.65; margin: 0 0 14px; max-width:820px;">Cada atención que entrega Casas de Juventud se registra en <strong>SIRBE</strong> (Sistema de Registro de Beneficiarios) bajo un <strong>código de actividad</strong> que indica qué se hizo. El eje Liderazgo y Participación usa seis códigos: 1492, 1494, 1495, 1502, 1503 y 1505. Cada tarjeta de esta sección muestra un código y los productos de política a los que reporta cuando se aplica esa actividad.</p>
+                <p style="font-family:Figtree, sans-serif; font-size:0.92rem; color:#3a3a3a; line-height:1.65; margin: 0 0 24px; max-width:820px;">El sistema de reporte funciona como una <strong>matriz cruzada</strong>: el código de actividad de SIRBE indica <em>qué</em> se hizo, y las variables de caracterización del participante en la ficha SIRBE indican <em>con quién</em> se hizo. Por eso muchos productos y políticas poblacionales no necesitan un código exclusivo: se alimentan de las actividades generales del eje cruzadas con la caracterización del joven.</p>
+
+                <article class="rp-card">
+                    <div class="rp-card-codigo">
+                        <p class="rp-card-label">Código SIRBE</p>
+                        <p class="rp-card-num">1492</p>
+                        <p class="rp-card-nombre">Atención y orientación jurídica a jóvenes</p>
+                        <p class="rp-card-desc">Atención y orientación jurídica individual o grupal a jóvenes en temas de derechos, normatividad y mecanismos de protección.</p>
+                    </div>
+                    <div class="rp-card-grupos">
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública Distrital de Juventud</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.1.1 Implementación de las atenciones integrales para jóvenes</li>
+                                <li class="rp-prod">1.1.2. Jóvenes que asisten a las casas de juventud en las localidades que brindan espacios para el reconocimiento de su diversidad y el desarrollo de capacidades.</li>
+                                <li class="rp-prod">6.5.3. Jóvenes orientados para el ejercicio de su derecho de objeción de conciencia y definición de su situación frente al servicio militar obligatorio de acuerdo con la normatividad vigente.</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública de Mujer y Equidad de Género</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.2.13 Sensibilización de jóvenes como agentes de cambio en derechos sexuales y derechos reproductivos con enfoque de género.</li>
+                                <li class="rp-prod">1.2.7 Sensibilización de agentes de cambio, servidoras y servidores públicos o contratistas en derechos sexuales y derechos reproductivos con enfoque de género.</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública LGBTI</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.3.10 Participación en la oferta de las casas de la juventud generando apropiación del espacio sin situaciones de discriminación y fortaleciendo el tejido social de los y las jóvenes de los sectores LGBTI.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="rp-card">
+                    <div class="rp-card-codigo">
+                        <p class="rp-card-label">Código SIRBE</p>
+                        <p class="rp-card-num">1494</p>
+                        <p class="rp-card-nombre">Promoción y fortalecimiento de actividades de organización juvenil</p>
+                        <p class="rp-card-desc">Promoción y fortalecimiento de actividades de organización juvenil: apoyo a colectivos, redes y plataformas de jóvenes.</p>
+                    </div>
+                    <div class="rp-card-grupos">
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública Distrital de Juventud</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.1.1 Implementación de las atenciones integrales para jóvenes</li>
+                                <li class="rp-prod">1.1.2. Jóvenes que asisten a las casas de juventud en las localidades que brindan espacios para el reconocimiento de su diversidad y el desarrollo de capacidades.</li>
+                                <li class="rp-prod">6.5.3. Jóvenes orientados para el ejercicio de su derecho de objeción de conciencia y definición de su situación frente al servicio militar obligatorio de acuerdo con la normatividad vigente.</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública de Mujer y Equidad de Género</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.2.13 Sensibilización de jóvenes como agentes de cambio en derechos sexuales y derechos reproductivos con enfoque de género.</li>
+                                <li class="rp-prod">1.2.7 Sensibilización de agentes de cambio, servidoras y servidores públicos o contratistas en derechos sexuales y derechos reproductivos con enfoque de género.</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública LGBTI</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.3.10 Participación en la oferta de las casas de la juventud generando apropiación del espacio sin situaciones de discriminación y fortaleciendo el tejido social de los y las jóvenes de los sectores LGBTI.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="rp-card">
+                    <div class="rp-card-codigo">
+                        <p class="rp-card-label">Código SIRBE</p>
+                        <p class="rp-card-num">1495</p>
+                        <p class="rp-card-nombre">Escenarios de diálogos intergeneracionales y de saberes que fortalezcan la ciudadanía juvenil</p>
+                        <p class="rp-card-desc">Escenarios de diálogos intergeneracionales y de saberes que fortalecen la ciudadanía juvenil — encuentros entre jóvenes y otras generaciones.</p>
+                    </div>
+                    <div class="rp-card-grupos">
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública Distrital de Juventud</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.1.1 Implementación de las atenciones integrales para jóvenes</li>
+                                <li class="rp-prod">1.1.2. Jóvenes que asisten a las casas de juventud en las localidades que brindan espacios para el reconocimiento de su diversidad y el desarrollo de capacidades.</li>
+                                <li class="rp-prod">6.5.3. Jóvenes orientados para el ejercicio de su derecho de objeción de conciencia y definición de su situación frente al servicio militar obligatorio de acuerdo con la normatividad vigente.</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública de Mujer y Equidad de Género</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.2.13 Sensibilización de jóvenes como agentes de cambio en derechos sexuales y derechos reproductivos con enfoque de género.</li>
+                                <li class="rp-prod">1.2.7 Sensibilización de agentes de cambio, servidoras y servidores públicos o contratistas en derechos sexuales y derechos reproductivos con enfoque de género.</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública LGBTI</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.3.10 Participación en la oferta de las casas de la juventud generando apropiación del espacio sin situaciones de discriminación y fortaleciendo el tejido social de los y las jóvenes de los sectores LGBTI.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="rp-card">
+                    <div class="rp-card-codigo">
+                        <p class="rp-card-label">Código SIRBE</p>
+                        <p class="rp-card-num">1502</p>
+                        <p class="rp-card-nombre">Socialización de Política Pública de Juventud</p>
+                        <p class="rp-card-desc">Socialización de la Política Pública de Juventud: difusión, talleres y procesos pedagógicos sobre la política y sus instrumentos.</p>
+                    </div>
+                    <div class="rp-card-grupos">
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública Distrital de Juventud</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.1.1 Implementación de las atenciones integrales para jóvenes</li>
+                                <li class="rp-prod">1.1.2. Jóvenes que asisten a las casas de juventud en las localidades que brindan espacios para el reconocimiento de su diversidad y el desarrollo de capacidades.</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública de Mujer y Equidad de Género</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.2.13 Sensibilización de jóvenes como agentes de cambio en derechos sexuales y derechos reproductivos con enfoque de género.</li>
+                                <li class="rp-prod">1.2.7 Sensibilización de agentes de cambio, servidoras y servidores públicos o contratistas en derechos sexuales y derechos reproductivos con enfoque de género.</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública LGBTI</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.3.10 Participación en la oferta de las casas de la juventud generando apropiación del espacio sin situaciones de discriminación y fortaleciendo el tejido social de los y las jóvenes de los sectores LGBTI.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="rp-card">
+                    <div class="rp-card-codigo">
+                        <p class="rp-card-label">Código SIRBE</p>
+                        <p class="rp-card-num">1503</p>
+                        <p class="rp-card-nombre">Derechos humanos y promoción a la participación</p>
+                        <p class="rp-card-desc">Derechos humanos y promoción a la participación: formación en derechos humanos y mecanismos de incidencia y participación juvenil.</p>
+                    </div>
+                    <div class="rp-card-grupos">
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública Distrital de Juventud</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.1.1 Implementación de las atenciones integrales para jóvenes</li>
+                                <li class="rp-prod">1.1.2. Jóvenes que asisten a las casas de juventud en las localidades que brindan espacios para el reconocimiento de su diversidad y el desarrollo de capacidades.</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública de Mujer y Equidad de Género</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.2.13 Sensibilización de jóvenes como agentes de cambio en derechos sexuales y derechos reproductivos con enfoque de género.</li>
+                                <li class="rp-prod">1.2.7 Sensibilización de agentes de cambio, servidoras y servidores públicos o contratistas en derechos sexuales y derechos reproductivos con enfoque de género.</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública LGBTI</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.3.10 Participación en la oferta de las casas de la juventud generando apropiación del espacio sin situaciones de discriminación y fortaleciendo el tejido social de los y las jóvenes de los sectores LGBTI.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="rp-card">
+                    <div class="rp-card-codigo">
+                        <p class="rp-card-label">Código SIRBE</p>
+                        <p class="rp-card-num">1505</p>
+                        <p class="rp-card-nombre">Voluntariado intergeneracional</p>
+                        <p class="rp-card-desc">Voluntariado intergeneracional: vinculación de jóvenes a procesos formales de voluntariado con perspectiva intergeneracional.</p>
+                    </div>
+                    <div class="rp-card-grupos">
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública Distrital de Juventud</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.1.1 Implementación de las atenciones integrales para jóvenes</li>
+                                <li class="rp-prod">1.1.2. Jóvenes que asisten a las casas de juventud en las localidades que brindan espacios para el reconocimiento de su diversidad y el desarrollo de capacidades.</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública de Mujer y Equidad de Género</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.2.13 Sensibilización de jóvenes como agentes de cambio en derechos sexuales y derechos reproductivos con enfoque de género.</li>
+                                <li class="rp-prod">1.2.7 Sensibilización de agentes de cambio, servidoras y servidores públicos o contratistas en derechos sexuales y derechos reproductivos con enfoque de género.</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública LGBTI</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.3.10 Participación en la oferta de las casas de la juventud generando apropiación del espacio sin situaciones de discriminación y fortaleciendo el tejido social de los y las jóvenes de los sectores LGBTI.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="rp-card rp-card-cruce">
+                    <div class="rp-card-codigo">
+                        <p class="rp-card-label">Sin código SIRBE propio</p>
+                        <p class="rp-card-num">+</p>
+                        <p class="rp-card-nombre">Productos que se reportan por cruce de variables</p>
+                        <p class="rp-aclaracion">Estos productos no tienen un código de actividad SIRBE propio. El reporte se logra cruzando las atenciones registradas bajo cualquiera de los seis códigos del eje Liderazgo y Participación con las variables de caracterización del participante en la ficha SIRBE (grupo étnico, orientación sexual, rol ocupacional, ubicación territorial, condición de víctima, etc.) o con marcadores específicos en el nombre del curso.</p>
+                    </div>
+                    <div class="rp-card-grupos">
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública de Actividades Sexuales Pagadas</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">2.2.7 Jornadas de atención en estrategias de prevención, desarrollo de capacidades e información sobre el uso de métodos anticonceptivos dirigidas a personas jóvenes que realizan ASP.</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública de Infancia y Adolescencia</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.2.8. Formación a niñas, niños, adolescentes y familias en derechos sexuales y derechos reproductivos con enfoque de género y diferencial.</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública de la Población Negra, Afrocolombiana y Palenquera, en Bogotá D.C. 2024-2036</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.3.9 Casa de la juventud que implemente el protocolo que garantiza el cumplimiento del enfoque diferencial étnico negro afrocolombiano, y aporte a la pervivencia cultural de las y los jovenes negros y afrocolombianos, en concertación con la instancia de representación legal de las comunidades negras afrocolombianas en el Distrito Capital.</li>
+                            </ul>
+                            <p class="rp-cruce"><strong>Cómo se reporta:</strong> Ficha SIRBE casilla AA (grupo étnico). El equipo de la DADE toma a los y las jóvenes que reportaron autorreconocimiento étnico.</p>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública de Mujer y Equidad de Género</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">6.1.9 Niñas, niños, adolescentes y jóvenes con sensibilización e información en derechos sexuales y derechos reproductivos con enfoque de género.</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública de Seguridad paz y convivencia</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.1.7 Jóvenes informados en el marco de la estrategia de prevención de violencias y resolución de conflictos</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública LGBTI</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.2.11 Vinculación a la oferta de servicios de prevención de la maternidad y paternidad temprana y promoción de los derechos sexuales y los derechos reproductivos a los jóvenes de los sectores LGBTI</li>
+                                <li class="rp-prod">1.2.12 Estrategia de Orientación Socioocupacional que vincula a los Jóvenes de los sectores LGBTI a la oferta de los servicios de la subdirección para la juventud de la SDIS para facilitar su inclusión socio laboral.</li>
+                            </ul>
+                            <p class="rp-cruce"><strong>Cómo se reporta:</strong> Ficha SIRBE casillas E (identidad de género), F (identidad transgénero) y G (orientación sexual). El equipo de la DADE filtra a los y las jóvenes que se autorreconocen en sectores LGBTI.</p>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Plan</p>
+                            <p class="rp-grupo-tema">PAD Víctimas</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">Vincular al 100% de Jóvenes víctimas del conflicto armado a los servicios sociales y estrategias de la Subdirección para la Juventud, con cobertura y atención territorial</li>
+                            </ul>
+                            <p class="rp-cruce rp-cruce-pendiente"><strong>En revisión con Daniela Correa: el detalle de cómo se reporta este instrumento se actualizará cuando llegue el feedback del equipo de Políticas Públicas.</strong></p>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Plan</p>
+                            <p class="rp-grupo-tema">Plan de Acción Comité Intersectorial de Salud</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">Centros de escucha para la juventud</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Plan</p>
+                            <p class="rp-grupo-tema">Plan de Atención Intersectorial prevención y atención de la conducta suicida</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">Desarrollo de espacios de fortalecimiento de capacidades</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Plan</p>
+                            <p class="rp-grupo-tema">Plan operativo de reincorporación</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">Realizar jornadas de sensibilización sobre derechos sexuales y reproductivos para jóvenes entre los 14 y 28 años en proceso de reintegración en condiciones de vulnerabilidad segun lo requerido por parte de parte de la ARN y demás entidades del orden nacional y/o distrital.</li>
+                            </ul>
+                            <p class="rp-cruce rp-cruce-pendiente"><strong>En revisión con Daniela Correa: el detalle de cómo se reporta este instrumento se actualizará cuando llegue el feedback del equipo de Políticas Públicas.</strong></p>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Programa</p>
+                            <p class="rp-grupo-tema">PDET</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">PROD_49: Promoción del adecuado ejercicio de los derechos sexuales y reproductivos, prevención de violencia sexual en el marco de la prevención de la maternidad y paternidad temprana en los territorios PDET B-R durante cada vigencia.</li>
+                                <li class="rp-prod">PROD_54: Jornadas de oferta institucional de la Subdirección para la Juventud de la Secretaría Distrital de Integración Social dirigidas a la población juvenil en Sumapaz</li>
+                            </ul>
+                            <p class="rp-cruce rp-cruce-pendiente"><strong>En revisión con Daniela Correa: el detalle de cómo se reporta este instrumento se actualizará cuando llegue el feedback del equipo de Políticas Públicas.</strong></p>
+                        </div>
+                    </div>
+                </article>
+                <!-- ====== FIN BLOQUE REPORTE POLITICAS GENERADO POR SCRIPT ====== -->
+            </div></div>
+        
 
             <div class="content-section" id="datos_sirbe" style="display:none;"><div class="card">
                 <h2 class="card-title">Datos SIRBE 2025</h2>
@@ -385,6 +1232,16 @@
             if (items) items.classList.toggle('show');
         }
 
+        function toggleOferta(el) {
+            el.classList.toggle('abierta');
+        }
+
     </script>
+    <!-- Lucide Icons (flat icons de l&iacute;nea, MIT license) -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script>lucide.createIcons();
+/* === JS filtros chip (generado) === */
+/* === fin JS filtros === */
+</script>
 </body>
 </html>

@@ -1,22 +1,17 @@
 # -*- coding: utf-8 -*-
 """
-Actualiza la sección "Ofertas 2026" dentro de ejes/Bienestar.html a partir
+Actualiza la sección "Ofertas 2026" dentro de ejes/SIDICU.html a partir
 del Excel de ofertas.
 
-El script es quirúrgico: NO regenera el HTML completo. Solo reemplaza el
-contenido interno del `<div class="content-section" id="ofertas_2026">`
-por chips de filtros (Tipo + Clasificación) + lista de tarjetas
-generadas desde el Excel. El resto del HTML (Resumen del eje, Tipos y
-formatos, Datos SIRBE, header, sidebar, CSS, JS) queda intacto.
+SIDICU es un eje transversal (jóvenes cuidadores) que NO tiene códigos
+SIRBE propios — sus ofertas se reportan en códigos de Bienestar,
+Inclusión, Liderazgo o Cultura según el contenido. Por eso este script
+es más simple que los demás:
+  - El HTML tiene 3 secciones (Resumen, Tipos y formatos, Ofertas 2026).
+  - NO hay Reporte a políticas ni Datos SIRBE 2025.
+  - El mapeo SIRBE acepta cualquier código de los otros ejes.
 
-También inyecta una vez:
-  - El CSS adicional de los chips y de `.oferta.oculta` dentro de <style>
-  - El JS de filtrado al final del bloque <script>
-
-Si el script se corre dos veces, detecta los marcadores y reemplaza sin
-duplicar.
-
-Fuente: ejes/oferta 2026/Oferta 2026.xlsx, hoja 'Bienestar '.
+Fuente: ejes/oferta 2026/Oferta 2026.xlsx, hoja 'SIDICU'.
 """
 
 import html
@@ -33,13 +28,9 @@ MARKER_POL_FIN = "<!-- ====== FIN BLOQUE REPORTE POLITICAS GENERADO POR SCRIPT =
 
 _AQUI = Path(__file__).resolve().parent
 BASE = _AQUI.parent
-HTML_PATH = BASE / "ejes" / "Bienestar.html"
+HTML_PATH = BASE / "ejes" / "SIDICU.html"
 EXCEL_OFERTAS = BASE / "ejes" / "oferta 2026" / "Oferta 2026.xlsx"
-# Mapeo oferta → código SIRBE (aproximación inicial, revisable a mano por
-# Carolina o Diego Huertas). Columnas esperadas:
-#   Nombre oferta | Tipo | Clasificación (Excel) | Código SIRBE |
-#   Nombre actividad SIRBE | Curso(s) sugerido(s) en SIRBE | Notas
-EXCEL_MAPEO_SIRBE = BASE / "ejes" / "oferta 2026" / "Mapeo_SIRBE_bienestar.xlsx"
+EXCEL_MAPEO_SIRBE = BASE / "ejes" / "oferta 2026" / "Mapeo_SIRBE_sidicu.xlsx"
 # Mapeo oferta → productos de política pública (lo que Felipe pidió reportar).
 # Una fila por par (oferta, producto). Se lee del Excel y se muestra debajo
 # del bloque SIRBE en cada tarjeta.
@@ -68,13 +59,40 @@ NOTA_DANIELA = "En revisión con Daniela Correa: el detalle de cómo se reporta 
 # como fallback.
 EXCEL_CONFIG_POLITICAS = BASE / "ejes" / "Políticas" / "Configuracion_politicas_bienestar.xlsx"
 
-# Códigos SIRBE de Bienestar (orden de presentación: ascendente)
-CODIGOS_BIENESTAR = ["511", "1485", "1486", "1487"]
+# SIDICU NO tiene códigos SIRBE propios. Sus ofertas se reportan bajo
+# códigos de otros ejes según el contenido. NOMBRES_CODIGOS incluye
+# todos los códigos posibles para que las tarjetas puedan mostrarlos.
+# La variable CODIGOS_BIENESTAR conserva el nombre por compatibilidad
+# pero contiene la unión de códigos de todos los ejes.
+CODIGOS_BIENESTAR = [
+    "511", "1207", "1485", "1486", "1487", "1488", "1489", "1490",
+    "1491", "1492", "1494", "1495", "1496", "1497", "1498", "1499",
+    "1502", "1503", "1505",
+]
 NOMBRES_CODIGOS = {
+    # Bienestar
     "511": "Acompañamiento y orientación psicosocial",
     "1485": "Centros de escucha",
     "1486": "Talleres informativos en prevención",
     "1487": "Cuidado frente al consumo responsable de SPA",
+    # Inclusión Productiva
+    "1496": "Salas TIC para el fortalecimiento de habilidades y capacidades juveniles",
+    "1497": "Formación en emprendimiento y empleabilidad",
+    "1498": "Orientación socio-ocupacional dirigida a jóvenes",
+    "1499": "Formación para la generación de ingresos",
+    # Liderazgo y Participación
+    "1492": "Atención y orientación jurídica a jóvenes",
+    "1494": "Promoción y fortalecimiento de actividades de organización juvenil",
+    "1495": "Escenarios de diálogos intergeneracionales y de saberes",
+    "1502": "Socialización de Política Pública de Juventud",
+    "1503": "Derechos humanos y promoción a la participación",
+    "1505": "Voluntariado intergeneracional",
+    # Cultura
+    "1207": "Aprovechamiento del tiempo libre con énfasis en intereses juveniles",
+    "1488": "Centros de audio y grabación",
+    "1489": "Formación artística focalizada",
+    "1490": "Espacios para el desarrollo y formación de actividades artísticas, culturales y con sentido",
+    "1491": "Semana de la Juventud",
 }
 
 # Productos del Excel oficial que NO deben aparecer en la sección
@@ -573,7 +591,7 @@ def _leer_ofertas():
         return []
     wb = openpyxl.load_workbook(EXCEL_OFERTAS, data_only=True)
     nombre_hoja = next(
-        (n for n in wb.sheetnames if "ienestar" in n.lower() and "alianza" not in n.lower()),
+        (n for n in wb.sheetnames if "sidicu" in n.lower() and "alianza" not in n.lower()),
         None,
     )
     if nombre_hoja is None:
@@ -594,7 +612,9 @@ def _leer_ofertas():
         return v
 
     por_clave, orden = {}, []
-    for r in range(3, ws.max_row + 1):
+    # En la hoja SIDICU el título principal va en fila 2 y los headers
+    # en fila 3, por lo que los datos arrancan en fila 4.
+    for r in range(4, ws.max_row + 1):
         nombre = _limpiar(cell(r, 5))
         if not nombre:
             continue
@@ -784,42 +804,8 @@ def _tarjeta(o, mapeo_sirbe):
 
 INTRO_OFERTAS_SIRBE = """\
                 <div class="bn-intro">
-                    <p>Las ofertas del eje Bienestar son <strong>actividades puntuales y procesos pedag&oacute;gicos</strong> que se entregan en las Casas de Juventud. Cada una se registra en <strong>SIRBE</strong> (Sistema de Registro de Beneficiarios) bajo uno de los cuatro c&oacute;digos de actividad que la subdirecci&oacute;n usa para las atenciones de Casas de Juventud del eje Bienestar:</p>
-
-                    <div class="bn-codigos-lista">
-                        <div class="bn-codigo-item">
-                            <p class="bn-codigo-num">511</p>
-                            <div class="bn-codigo-cuerpo">
-                                <p class="bn-codigo-nombre">Acompa&ntilde;amiento y orientaci&oacute;n psicosocial</p>
-                                <p class="bn-codigo-desc">Atenciones individuales con acompa&ntilde;amiento y orientaci&oacute;n psicosocial al joven.</p>
-                            </div>
-                        </div>
-                        <div class="bn-codigo-item">
-                            <p class="bn-codigo-num">1485</p>
-                            <div class="bn-codigo-cuerpo">
-                                <p class="bn-codigo-nombre">Centros de escucha</p>
-                                <p class="bn-codigo-desc">Espacios estructurados de escucha sobre derechos sexuales y reproductivos. Incluye formaci&oacute;n, acceso a informaci&oacute;n y ejercicio de derechos. Aqu&iacute; se encuentran las salas de escucha de las Casas.</p>
-                            </div>
-                        </div>
-                        <div class="bn-codigo-item">
-                            <p class="bn-codigo-num">1486</p>
-                            <div class="bn-codigo-cuerpo">
-                                <p class="bn-codigo-nombre">Talleres informativos en prevenci&oacute;n</p>
-                                <p class="bn-codigo-desc">Sesiones grupales con prop&oacute;sito formativo sobre DSDR, salud mental, PVBG y SPA. Es el c&oacute;digo donde caen la mayor&iacute;a de los ciclos, experiencias, encuentros y eventos masivos.</p>
-                            </div>
-                        </div>
-                        <div class="bn-codigo-item">
-                            <p class="bn-codigo-num">1487</p>
-                            <div class="bn-codigo-cuerpo">
-                                <p class="bn-codigo-nombre">Cuidado frente al consumo responsable de SPA</p>
-                                <p class="bn-codigo-desc">Espacios espec&iacute;ficamente enfocados en prevenci&oacute;n del consumo de sustancias psicoactivas, con metodolog&iacute;a especializada y enfoque de reducci&oacute;n de da&ntilde;o.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <p class="bn-intro-nota">El c&oacute;digo <strong>1599 Orientaci&oacute;n psicosocial</strong> estaba antes en la tabla, pero ya no aparece en la tabla de homologaci&oacute;n vigente.</p>
-
-                    <p class="bn-intro-nota">Para mayor informaci&oacute;n sobre la desagregaci&oacute;n SIRBE para el eje Casas de Juventud &mdash; Bienestar, consulte la <a href="#datos_sirbe" onclick="showContent('datos_sirbe'); return false;">desagregaci&oacute;n detallada de Datos SIRBE 2025</a>.</p>
+                    <p>SIDICU es un <strong>eje transversal</strong>: sus ofertas para j&oacute;venes cuidadores y cuidadoras tocan al mismo tiempo bienestar, inclusi&oacute;n productiva, liderazgo y cultura. Por eso <strong>no tiene c&oacute;digos SIRBE propios</strong>: cada oferta se registra bajo los c&oacute;digos de los otros ejes seg&uacute;n el contenido que predomine.</p>
+                    <p class="bn-intro-nota">En cada tarjeta de la oferta se indica el c&oacute;digo SIRBE bajo el cual se reporta esa actividad y a qu&eacute; eje pertenece ese c&oacute;digo. Una misma oferta puede reportar a varios c&oacute;digos a la vez. Algunas ofertas a&uacute;n est&aacute;n en construcci&oacute;n y aparecen marcadas como pendientes.</p>
                 </div>
 
 """
@@ -1108,16 +1094,7 @@ def generar():
     html_nuevo = _inyectar_css(html_nuevo)
     html_nuevo = _inyectar_js(html_nuevo)
 
-    # Inyectar bloque de "Reporte a políticas" entre sus marcadores
-    bloque_pol = _html_seccion_politicas()
-    if MARKER_POL_INI in html_nuevo and MARKER_POL_FIN in html_nuevo:
-        html_nuevo = re.sub(
-            re.escape(MARKER_POL_INI) + r".*?" + re.escape(MARKER_POL_FIN),
-            bloque_pol,
-            html_nuevo,
-            count=1,
-            flags=re.DOTALL,
-        )
+    # SIDICU NO tiene sección "Reporte a políticas" — saltamos esa inyección.
 
     HTML_PATH.write_text(html_nuevo, encoding="utf-8")
     print(f"Actualizado: {HTML_PATH}")

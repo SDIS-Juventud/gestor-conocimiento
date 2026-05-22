@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIDICU - Sistema Distrital de Cuidado | Gestion del Conocimiento SDIS</title>
+    <title>Cultura - Casas de Juventud | Gestor de conocimiento SDIS</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Antonio:wght@700&family=Figtree:wght@400;600&display=swap" rel="stylesheet">
     <style>
@@ -70,16 +70,6 @@
         .filter-btn { padding: 8px 18px; border: 2px solid #253C5C; border-radius: 25px; background: white; color: #253C5C; font-family: inherit; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
         .filter-btn:hover { background: #EAEFF5; }
         .filter-btn.active { background: #253C5C; color: white; }
-        /* --- Estructura SIRBE tipo arbol --- */
-        .tree-level {{ margin-left: 25px; padding: 8px 0; }}
-        .tree-label {{ font-weight: 600; color: var(--accent-text); }}
-        .tree-sublabel {{ color: #666; font-size: 0.9rem; margin-left: 10px; }}
-        .tree-item {{
-            padding: 6px 15px;
-            border-left: 2px solid var(--accent-light);
-            margin-left: 20px;
-            margin-top: 4px;
-        }}
         @media (max-width: 768px) {
             .container { flex-direction: column; }
             .sidebar { width: 100%; border-right: none; border-bottom: 1px solid #e0e0e0; }
@@ -87,7 +77,280 @@
             .stats-imagen-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
             .stats-imagen-card { aspect-ratio: 2.4 / 1 !important; }
         }
-    </style>
+
+        /* Categorías de ofertas: títulos grandes Anton con línea inferior accent */
+        .categoria { margin: 36px 0 18px; padding-bottom: 8px; border-bottom: 2px solid #253C5C; }
+        .categoria:first-of-type { margin-top: 24px; }
+        .categoria-titulo { font-family: 'Anton', 'Segoe UI', sans-serif; font-size: 1.7rem; color: #253C5C; text-transform: uppercase; letter-spacing: 0.02em; margin: 0; line-height: 1.1; }
+        .categoria-descripcion { font-size: 0.88rem; color: #555; margin: 8px 0 0; line-height: 1.6; }
+
+        /* Cada oferta como acordeón individual sobrio (sin sombras, sin bandas) */
+        .ofertas-lista { margin-top: 4px; }
+        .oferta { border-bottom: 1px solid #e0e0e0; }
+        .oferta:last-child { border-bottom: none; }
+        .oferta-header { padding: 18px 0; cursor: pointer; display: flex; align-items: flex-start; gap: 14px; }
+        .oferta-header:hover .oferta-titulo { opacity: 0.75; }
+        .oferta-titulo-wrap { flex: 1; min-width: 0; }
+        .oferta-modalidad { font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.06em; color: #888; margin: 0 0 2px; }
+        .oferta-titulo { font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; text-transform: uppercase; font-size: 1rem; color: #253C5C; line-height: 1.25; margin: 0; transition: opacity 0.18s ease; }
+        .oferta-chevron { width: 10px; height: 10px; border-top: 2px solid #253C5C; border-right: 2px solid #253C5C; transform: rotate(135deg); transition: transform 0.2s ease; align-self: center; flex-shrink: 0; margin-right: 4px; }
+        .oferta.abierta .oferta-chevron { transform: rotate(-45deg); }
+        .oferta-cuerpo { display: none; padding: 0 0 22px 0; }
+        .oferta.abierta .oferta-cuerpo { display: block; }
+        .oferta-desc { font-size: 0.88rem; color: #3a3a3a; line-height: 1.7; margin: 0 0 12px; }
+        .oferta-desc:last-child { margin-bottom: 0; }
+        .oferta-desc strong { color: #253C5C; }
+        .oferta-meta { display: grid; grid-template-columns: 110px 1fr; gap: 6px 14px; margin-top: 14px; font-size: 0.82rem; padding-top: 14px; border-top: 1px dashed #e0e0e0; }
+        .oferta-meta dt { font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; color: #253C5C; text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.72rem; padding-top: 2px; }
+        .oferta-meta dd { color: #555; margin: 0; line-height: 1.55; }
+        .oferta-subexp { margin-top: 14px; padding: 14px 18px; background: #f5efd2; border-radius: 8px; }
+        .oferta-subexp-titulo { font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; color: #253C5C; margin: 0 0 8px; letter-spacing: 0.04em; }
+        .oferta-subexp ul { margin: 0; padding-left: 18px; font-size: 0.85rem; color: #3a3a3a; line-height: 1.6; }
+        .oferta-subexp li { margin-bottom: 3px; }
+        @media (max-width: 720px) {
+            .oferta-cuerpo { padding-left: 40px; }
+            .oferta-meta { grid-template-columns: 1fr; gap: 2px; }
+            .oferta-meta dt { padding-top: 8px; }
+            .oferta-meta dt:first-child { padding-top: 0; }
+        }
+
+        /* Sección Tipos y formatos */
+        .tipos-intro { font-size: 0.92rem; color: #3a3a3a; line-height: 1.65; margin: 8px 0 22px; }
+        .tipos-section-titulo { font-family: 'Anton', 'Segoe UI', sans-serif; font-size: 1.5rem; color: #253C5C; text-transform: uppercase; letter-spacing: 0.02em; margin: 32px 0 14px; padding-bottom: 6px; border-bottom: 2px solid #253C5C; line-height: 1.1; }
+
+        /* Tipos de oferta: bandas chevron compactas, solo nombre */
+        .tipos-banda-list { display: flex; flex-direction: column; gap: 18px; margin-bottom: 18px; }
+        .tipo-bloque { display: flex; flex-direction: column; gap: 8px; }
+        .tipo-descripcion { font-family: 'Figtree', 'Segoe UI', sans-serif; font-size: 0.88rem; color: #3a3a3a; line-height: 1.65; margin: 0 0 0 56px; max-width: 760px; }
+        .tipo-descripcion strong { color: #2F3E3C; font-weight: 700; }
+        @media (max-width: 720px) { .tipo-descripcion { margin-left: 0; } }
+        .tipos-banda { display: flex; align-items: stretch; }
+        .tipos-banda-flag { width: 56px; flex-shrink: 0; clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%); display: flex; align-items: center; justify-content: center; padding-right: 16px; font-family: 'Anton', 'Segoe UI', sans-serif; color: #fff; font-size: 1.5rem; line-height: 1; letter-spacing: 0.02em; }
+        .tipos-banda-titulo { background: #2F3E3C; color: #f5efd2; flex: 1; padding: 14px 22px 14px 26px; font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; font-size: 1rem; margin-left: -16px; display: flex; align-items: center; border-radius: 0 8px 8px 0; }
+
+        /* Clasificaciones: círculo crema con ícono Lucide + barra del color */
+        .clasif-list { display: flex; flex-direction: column; gap: 16px; margin-bottom: 18px; }
+        .clasif-card { display: flex; align-items: center; }
+        .clasif-icono { width: 72px; height: 72px; border-radius: 50%; background: #f5efd2; border: 3px solid; display: flex; align-items: center; justify-content: center; flex-shrink: 0; z-index: 2; }
+        .clasif-icono svg { width: 28px; height: 28px; stroke-width: 1.8; }
+        .clasif-banda { flex: 1; padding: 16px 22px 16px 36px; border-radius: 8px; margin-left: -20px; color: #fff; }
+        .clasif-titulo { font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; text-transform: uppercase; font-size: 1rem; margin: 0 0 4px; color: #fff; letter-spacing: 0.03em; }
+        .clasif-desc { font-size: 0.83rem; line-height: 1.55; margin: 0; color: rgba(255,255,255,0.95); }
+        .clasif-desc strong { color: #fff; font-weight: 700; }
+        @media (max-width: 720px) {
+            .clasif-card { flex-direction: column; align-items: stretch; gap: 0; }
+            .clasif-icono { align-self: flex-start; margin-bottom: -16px; margin-left: 14px; }
+            .clasif-banda { margin-left: 0; padding: 28px 22px 18px 22px; }
+        }
+
+        .tipos-cita { font-size: 0.82rem; color: #555; margin-top: 28px; padding: 0; line-height: 1.7; }
+        .tipos-cita strong { color: #253C5C; }
+    
+/* === CSS chips de filtros (generado) === */
+/* Intro de la sección Ofertas 2026: párrafo + lista de 5 códigos SIRBE
+   con esbozo + nota a Datos SIRBE 2025. Sin bandas, sin sombras
+   dramáticas; jerarquía dada por la tipografía y el espaciado. */
+.bn-intro { margin-bottom: 32px; }
+.bn-intro > p { font-family: 'Figtree', sans-serif; font-size: 0.92rem; color: #3a3a3a; line-height: 1.65; margin: 0 0 18px; max-width: 820px; }
+.bn-codigos-lista { display: flex; flex-direction: column; gap: 14px; margin: 20px 0 22px; }
+.bn-codigo-item { display: grid; grid-template-columns: 80px 1fr; gap: 18px; align-items: start; padding: 14px 0; }
+.bn-codigo-item + .bn-codigo-item { padding-top: 14px; }
+.bn-codigo-num { font-family: 'Anton', 'Segoe UI', sans-serif; font-size: 2.1rem; color: #253C5C; margin: 0; line-height: 1; letter-spacing: 0.01em; }
+.bn-codigo-cuerpo { min-width: 0; }
+.bn-codigo-nombre { font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; text-transform: uppercase; font-size: 0.86rem; color: #2F3E3C; letter-spacing: 0.03em; margin: 0 0 5px; line-height: 1.3; }
+.bn-codigo-desc { font-family: 'Figtree', sans-serif; font-size: 0.86rem; color: #555; line-height: 1.55; margin: 0; }
+.bn-codigo-desc strong { color: #2F3E3C; font-weight: 700; }
+.bn-intro-nota { font-family: 'Figtree', sans-serif; font-size: 0.86rem; color: #555; line-height: 1.6; margin: 18px 0 0; padding-top: 14px; max-width: 820px; }
+.bn-intro-nota a { color: #253C5C; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 720px) {
+    .bn-codigo-item { grid-template-columns: 1fr; gap: 4px; }
+    .bn-codigo-num { font-size: 1.7rem; }
+}
+
+/* Tarjetas horizontales de ofertas Bienestar: contenido principal a la
+   izquierda, bloque SIRBE con el código de reporte a la derecha. Fondo
+   crema, sin bandas. Hover sutil. */
+.bn-grid { display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }
+.bn-card { background: #f5efd2; border-radius: 12px; padding: 20px 22px; display: grid; grid-template-columns: 1fr 280px; gap: 24px; align-items: stretch; box-shadow: 0 2px 8px rgba(0,0,0,0.04); transition: transform 0.18s ease, box-shadow 0.18s ease; }
+.bn-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.07); }
+.bn-card.oculta { display: none; }
+.bn-card-main { min-width: 0; }
+.bn-kicker { font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; font-size: 0.7rem; color: #888; margin: 0 0 8px; line-height: 1.3; }
+.bn-titulo { font-family: 'Antonio', 'Anton', 'Segoe UI', sans-serif; font-weight: 700; font-size: 1.05rem; text-transform: uppercase; letter-spacing: 0.02em; margin: 0 0 10px; line-height: 1.22; }
+.bn-texto { font-family: 'Figtree', 'Segoe UI', sans-serif; font-weight: 500; font-size: 0.83rem; color: #3a3a3a; line-height: 1.6; margin: 0; }
+.bn-texto strong { font-weight: 700; color: #2f3e3c; }
+
+/* Mini-ficha de metadatos al pie de la tarjeta: lista label/valor en
+   dos columnas, estilo editorial. Etiqueta en Antonio Bold pequeña,
+   valor en Figtree. Sin cápsulas, sin colores de fondo. */
+.bn-meta { display: grid; grid-template-columns: 110px 1fr; gap: 4px 14px; margin: 14px 0 0; padding-top: 12px; font-size: 0.8rem; }
+.bn-meta dt { font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; color: #2F3E3C; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.7rem; padding-top: 2px; }
+.bn-meta dd { color: #555; margin: 0; line-height: 1.5; }
+@media (max-width: 600px) {
+    .bn-meta { grid-template-columns: 1fr; gap: 1px; }
+    .bn-meta dt { padding-top: 8px; }
+    .bn-meta dt:first-of-type { padding-top: 2px; }
+}
+
+/* Bloque SIRBE a la derecha de cada tarjeta: sin caja, sin bordes ni
+   bandas; la separación visual la da el grid y la tipografía. */
+.bn-sirbe { padding: 4px 0; display: flex; flex-direction: column; justify-content: center; gap: 14px; }
+.bn-sirbe-label { font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.66rem; color: #888; margin: 0; }
+.bn-sirbe-item { margin: 0; }
+.bn-sirbe-codigo { font-family: 'Anton', 'Segoe UI', sans-serif; font-size: 1.55rem; color: #253C5C; margin: 0 0 4px; line-height: 1; letter-spacing: 0.01em; }
+.bn-sirbe-actividad { font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; text-transform: uppercase; font-size: 0.72rem; color: #2F3E3C; letter-spacing: 0.03em; margin: 0 0 4px; line-height: 1.3; }
+.bn-sirbe-uso { font-family: 'Figtree', 'Segoe UI', sans-serif; font-size: 0.78rem; color: #555; line-height: 1.5; margin: 0; }
+.bn-sirbe-pendiente { font-family: 'Figtree', 'Segoe UI', sans-serif; font-size: 0.82rem; color: #aaa; margin: 0; }
+
+@media (max-width: 900px) {
+    .bn-card { grid-template-columns: 1fr; }
+    .bn-sirbe { padding-top: 10px; margin-top: 6px; }
+}
+
+/* Sección "Reporte a políticas": tarjetas horizontales tipo bn-card.
+   Mismo lenguaje visual que las tarjetas de "Ofertas 2026" pero con
+   datos invertidos: izquierda = código SIRBE, derecha = productos
+   agrupados por política. */
+.rp-card { background: #f5efd2; border-radius: 12px; padding: 22px 24px; display: grid; grid-template-columns: 1fr 2fr; gap: 28px; align-items: start; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); transition: transform 0.18s ease, box-shadow 0.18s ease; }
+.rp-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.07); }
+.rp-card-codigo { min-width: 0; }
+.rp-card-label { font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.66rem; color: #888; margin: 0 0 6px; }
+.rp-card-num { font-family: 'Anton', 'Segoe UI', sans-serif; font-size: 2.4rem; color: #253C5C; margin: 0 0 6px; line-height: 1; letter-spacing: 0.01em; }
+.rp-card-nombre { font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; text-transform: uppercase; font-size: 0.88rem; color: #2F3E3C; letter-spacing: 0.03em; margin: 0 0 10px; line-height: 1.3; }
+.rp-card-desc { font-family: 'Figtree', sans-serif; font-size: 0.83rem; color: #555; line-height: 1.55; margin: 0; }
+.rp-card-grupos { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.rp-grupo { margin: 0; }
+.rp-grupo-tipo { font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.66rem; color: #888; margin: 0 0 2px; }
+.rp-grupo-tema { font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; text-transform: uppercase; font-size: 0.86rem; color: #253C5C; letter-spacing: 0.02em; margin: 0 0 8px; line-height: 1.3; }
+.rp-prods { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.rp-prod { font-family: 'Figtree', sans-serif; font-size: 0.84rem; color: #3a3a3a; line-height: 1.55; padding-left: 14px; position: relative; }
+.rp-prod::before { content: '·'; position: absolute; left: 0; top: -2px; color: #253C5C; font-weight: 700; font-size: 1.2rem; line-height: 1; }
+.rp-vacio { font-family: 'Figtree', sans-serif; font-size: 0.85rem; color: #aaa; font-style: italic; margin: 0; }
+
+/* Tarjeta "Productos que se reportan por cruce de variables": misma
+   estética pero con cruce explicado bajo cada producto. */
+.rp-card-cruce { grid-template-columns: 1fr; }
+.rp-card-cruce .rp-card-codigo { border-bottom: 1px solid rgba(47,62,60,0.12); padding-bottom: 14px; margin-bottom: 4px; }
+.rp-card-cruce .rp-card-num { font-size: 1.6rem; color: #555; }
+.rp-aclaracion { font-family: 'Figtree', sans-serif; font-size: 0.85rem; color: #555; line-height: 1.6; margin: 0 0 12px; max-width: 760px; }
+.rp-aclaracion strong, .rp-aclaracion em { color: #253C5C; }
+.rp-cruce { font-family: 'Figtree', sans-serif; font-size: 0.8rem; color: #555; line-height: 1.55; margin: 6px 0 12px 14px; padding: 8px 12px; background: rgba(255,255,255,0.55); border-radius: 6px; }
+.rp-cruce strong { color: #253C5C; font-weight: 700; }
+.rp-cruce em { color: #2F3E3C; font-style: italic; }
+/* Nota pendiente de feedback de Daniela Correa: tono gris neutro,
+   sin colores de alarma — la urgencia visual no debe sobrepasar la
+   urgencia real (mientras llega el feedback, simplemente está en cola). */
+.rp-cruce-pendiente { background: #ececec; color: #555; }
+.rp-cruce-pendiente strong { color: #2F3E3C; font-weight: 700; }
+
+@media (max-width: 720px) {
+    .rp-card { grid-template-columns: 1fr; gap: 14px; }
+}
+@media (max-width: 600px) {
+    .rp-codigo-header, .rp-item { grid-template-columns: 1fr; gap: 4px; }
+    .rp-producto { grid-column: 1; }
+    .rp-vacio { padding-left: 0; }
+}
+
+/* Fix overflow de la sección Datos SIRBE 2025: las tablas y el árbol de
+   cursos tienen textos largos que sobrepasan el ancho del .card. Esto
+   confina las tablas a su contenedor y permite scroll horizontal si hace
+   falta. También fuerza word-wrap en celdas. */
+#datos_sirbe .card { overflow-x: auto; }
+#datos_sirbe table { table-layout: auto; max-width: 100%; }
+#datos_sirbe table td, #datos_sirbe table th { word-break: break-word; overflow-wrap: break-word; }
+#datos_sirbe [id^="cursos_CULT_"] { overflow-x: auto; }
+/* === fin CSS chips === */
+
+/* ============================================================
+   RESPONSIVE GLOBAL — para tablet y móvil
+   Cubre: imágenes decorativas que se superponen, tablas Datos SIRBE,
+   tarjetas que pasan a una sola columna, paddings que se reducen.
+   ============================================================ */
+
+/* Tablet — hasta 900px */
+@media (max-width: 900px) {
+    /* Imágenes decorativas de esquina (la chica, la mano, el megáfono)
+       se reducen para no chocar con el texto. */
+    .content-section .card > img[src*="/elementos/"],
+    .content-section .card > img[src*="/manos/"] {
+        height: 160px !important;
+        opacity: 0.7 !important;
+    }
+    .main-content { padding: 24px 20px; max-width: 100%; }
+    .card { padding: 20px; }
+}
+
+/* Móvil — hasta 720px */
+@media (max-width: 720px) {
+    /* En móvil las imágenes pasan al flujo normal del documento (en lugar
+       de quedarse pegadas en la esquina superior derecha con position:
+       absolute). Quedan arriba del título, centradas, con un tamaño
+       razonable para celular. Así no se superponen con el texto. */
+    .content-section .card > img[src*="/elementos/"],
+    .content-section .card > img[src*="/manos/"] {
+        position: static !important;
+        display: block !important;
+        height: 140px !important;
+        margin: 0 auto 14px !important;
+        opacity: 0.95 !important;
+        top: auto !important;
+        right: auto !important;
+    }
+
+    /* Headers y títulos compactos */
+    .header { padding: 14px 16px; }
+    .header h1 { font-size: 1.4rem; }
+    .card-title { font-size: 1.4rem; }
+    .main-content { padding: 16px 12px; }
+    .card { padding: 16px; }
+
+    /* Tipos de oferta: bandas chevron compactas */
+    .tipos-banda-flag { width: 44px; font-size: 1.2rem; }
+    .tipos-banda-titulo { font-size: 0.88rem; padding: 12px 16px 12px 22px; }
+
+    /* Tablas de Datos SIRBE 2025: scroll horizontal y fuente más pequeña */
+    #datos_sirbe table { font-size: 0.78rem !important; min-width: 480px; }
+    #datos_sirbe table th, #datos_sirbe table td { padding: 6px 8px !important; }
+    #datos_sirbe .card { padding: 14px; }
+
+    /* Las cards con árbol de cursos SIRBE: scroll horizontal interior */
+    #datos_sirbe [id^="cursos_CULT_"] { padding: 0 10px 8px !important; }
+
+    /* Tarjetas Ofertas (bn-card): grid a 1 columna, padding más bajo */
+    .bn-card { padding: 16px 18px; gap: 12px; }
+    .bn-titulo { font-size: 0.98rem; }
+    .bn-sirbe { padding-top: 12px; margin-top: 4px; border-top: 1px solid rgba(47,62,60,0.12); }
+
+    /* Tarjetas Reporte a políticas (rp-card): ya colapsan, pero ajusto padding */
+    .rp-card { padding: 16px 18px; gap: 14px; }
+    .rp-card-num { font-size: 2rem; }
+
+    /* Mini-ficha bn-meta: 1 columna, etiquetas con margen superior */
+    .bn-meta { grid-template-columns: 1fr !important; gap: 2px; }
+    .bn-meta dt { padding-top: 8px; }
+    .bn-meta dt:first-of-type { padding-top: 2px; }
+
+    /* Quick links / cards estadísticos del HTML original */
+    .stats-imagen-grid { grid-template-columns: 1fr !important; max-width: 100% !important; }
+}
+
+/* Móvil pequeño — hasta 480px */
+@media (max-width: 480px) {
+    .header { padding: 12px 12px; flex-wrap: wrap; gap: 10px; }
+    .header h1 { font-size: 1.2rem; }
+    .card-title { font-size: 1.2rem; line-height: 1.15; }
+    .main-content { padding: 12px 10px; }
+    .card { padding: 14px; border-radius: 8px; }
+
+    /* Códigos SIRBE: se reducen porque ocupan 2rem */
+    .bn-sirbe-codigo { font-size: 1.3rem !important; }
+    .rp-card-num { font-size: 1.6rem; }
+
+    /* Tabla Datos SIRBE aún más compacta */
+    #datos_sirbe table { font-size: 0.74rem !important; }
+}
+</style>
 </head>
 <body>
     <header class="header">
@@ -102,331 +365,1384 @@
     <div class="container">
         <nav class="sidebar">
             <div class="sidebar-item active" onclick="showContent('que_es')">Resumen del eje</div>
+            <div class="sidebar-item" onclick="showContent('tipos_formatos')">Tipos y formatos</div>
             <div class="sidebar-item" onclick="showContent('ofertas_2026')">Ofertas 2026</div>
+            <div class="sidebar-item" onclick="showContent('reporte_politicas')">Reporte a políticas</div>
             <div class="sidebar-item" onclick="showContent('datos_sirbe')">Datos SIRBE 2025</div>
         </nav>
 
         <main class="main-content">
-            <div class="content-section active" id="que_es" style="display:block;"><div class="card">
+            <div class="content-section active" id="que_es" style="display:block;"><div class="card" style="position:relative; overflow:hidden;">
+                <img src="../imagenes/elementos/3.png" alt="" style="position:absolute; top:18px; right:clamp(40px, 10%, 200px); height:360px; opacity:0.92; pointer-events:none; z-index:0;">
+                <div style="position:relative; z-index:1;">
                 <h2 class="card-title">Cultura</h2>
-                <p style="line-height:1.7;">Formación artística, uso de espacios para prácticas artísticas y culturales, deportes, eventos y aprovechamiento del tiempo libre con énfasis en intereses juveniles.</p>
-                <div class="stats-imagen-grid" style="display:grid; grid-template-columns:1fr; gap:20px; margin:25px auto 0; max-width:50%;">
-                    <div class="stats-imagen-card" style="position:relative; aspect-ratio: 1.83 / 1;">
-                        <img src="../imagenes/Recuadro%201.png" alt="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:fill; display:block;">
-                        <div style="position:absolute; inset:0; padding:9% 8% 8% 8%; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
-                            <div style="font-size:clamp(2.6rem, 5.5vw, 4.2rem); font-weight:800; line-height:1; color:#2d3a33;">42</div>
-                            <div style="display:inline-block; background:#2d3a33; padding:7px 18px; margin-top:14px;">
-                                <h3 style="color:#ead9a7; font-size:clamp(1rem, 1.5vw, 1.25rem); font-weight:700; margin:0; white-space:nowrap;">Ofertas planeadas</h3>
-                            </div>
+                <p style="line-height:1.7; max-width:680px;">El eje de Cultura del Servicio Casas de Juventud reconoce el <strong>arte y la cultura</strong> como territorios legítimos para que las y los jóvenes se exploren a sí mismos, construyan comunidad y se expresen frente al mundo. Su propósito es <strong>fortalecer la trayectoria artística y cultural de las juventudes</strong>, ofreciendo espacios formativos, de creación colectiva y de circulación cultural.</p>
+                <p style="line-height:1.7; margin-top:14px; max-width:680px;">El eje combina tres apuestas pedagógicas: la <strong>formación artística focalizada</strong> en disciplinas específicas (artes plásticas, audiovisuales, musicales, escénicas, danzarias y circenses, además de deportes), los <strong>semilleros y laboratorios de creación colectiva</strong> de largo plazo, y las <strong>experiencias culturales</strong> que aprovechan el tiempo libre con énfasis en los intereses juveniles. Junto a esto opera el <strong>Centro de Audio y Grabación</strong> para producción musical y sonora, y la <strong>Semana de la Juventud</strong> como espacio anual de circulación, encuentro y celebración.</p>
+                </div>
+            </div></div>
+
+            <div class="content-section" id="tipos_formatos" style="display:none;"><div class="card" style="position:relative; overflow:hidden;">
+                <img src="../imagenes/elementos/8.png" alt="" style="position:absolute; top:18px; right:24px; height:140px; opacity:0.85; pointer-events:none; z-index:0;">
+                <div style="position:relative; z-index:1;">
+                    <h2 class="card-title">Tipos y formatos de oferta</h2>
+                    <p class="tipos-intro" style="max-width:560px;">Las ofertas del eje de Cultura se organizan en <strong>dos dimensiones complementarias</strong>: el <strong>tipo de oferta</strong> (qué busca lograr en la trayectoria del joven) y la <strong>clasificación</strong> (qué formato pedagógico tiene).</p>
+                </div>
+
+                <h3 class="tipos-section-titulo">Tipos de oferta</h3>
+
+                <div class="tipos-banda-list">
+                    <div class="tipo-bloque">
+                        <div class="tipos-banda">
+                            <div class="tipos-banda-flag" style="background:#1eaf76;">1</div>
+                            <div class="tipos-banda-titulo">Fortalecimiento de habilidades</div>
+                        </div>
+                        <p class="tipo-descripcion">El <strong>Fortalecimiento de habilidades</strong> es la dimensión pedagógica del eje: desarrolla las capacidades técnicas y artísticas en disciplinas específicas (música, danza, teatro, plástica, audiovisuales, circenses, urbanas, deportes). Es el tipo dominante e incluye semilleros, ciclos y talleres de formación artística focalizada.</p>
+                    </div>
+                    <div class="tipo-bloque">
+                        <div class="tipos-banda">
+                            <div class="tipos-banda-flag" style="background:#2fa4d4;">2</div>
+                            <div class="tipos-banda-titulo">Participación</div>
+                        </div>
+                        <p class="tipo-descripcion">La <strong>Participación</strong> es la dimensión que ubica al joven como agente cultural en la comunidad. Se materializa en laboratorios de creación colectiva, intervenciones en el espacio público y eventos culturales que abren la puerta a la circulación y al diálogo intergeneracional.</p>
+                    </div>
+                </div>
+
+                <h3 class="tipos-section-titulo">Clasificaciones de oferta</h3>
+                <p class="tipos-intro">El formato metodológico exacto en el que se entrega cada oferta.</p>
+
+                <!-- NOTA pendiente de revisión (2026-05-21):
+                     Las descripciones de las clasificaciones de abajo son resúmenes
+                     cortos del primer pase. El glosario oficial de la SDIS tiene
+                     descripciones más completas; no se adoptaron todavía porque
+                     podrían quedar demasiado largas en las bandas-tarjeta. Revisar
+                     en próxima iteración. -->
+                <div class="clasif-list">
+                    <div class="clasif-card">
+                        <div class="clasif-icono" style="border-color:#253C5C;"><i data-lucide="sprout" style="color:#253C5C;"></i></div>
+                        <div class="clasif-banda" style="background:#253C5C;">
+                            <h4 class="clasif-titulo">Semillero</h4>
+                            <p class="clasif-desc">Proceso formativo y creativo de <strong>largo plazo</strong> para el desarrollo de habilidades artísticas, la expresión cultural y la construcción colectiva a través del arte.</p>
+                        </div>
+                    </div>
+
+                    <div class="clasif-card">
+                        <div class="clasif-icono" style="border-color:#253C5C;"><i data-lucide="layers" style="color:#253C5C;"></i></div>
+                        <div class="clasif-banda" style="background:#253C5C;">
+                            <h4 class="clasif-titulo">Ciclo</h4>
+                            <p class="clasif-desc">Proceso formativo <strong>estructurado en varios módulos o sesiones</strong> para el desarrollo progresivo de competencias técnicas y artísticas de corto o mediano plazo.</p>
+                        </div>
+                    </div>
+
+                    <div class="clasif-card">
+                        <div class="clasif-icono" style="border-color:#253C5C;"><i data-lucide="wrench" style="color:#253C5C;"></i></div>
+                        <div class="clasif-banda" style="background:#253C5C;">
+                            <h4 class="clasif-titulo">Taller</h4>
+                            <p class="clasif-desc">Metodología <strong>práctica y participativa</strong> orientada a la aplicación inmediata de conocimientos para obtener un producto o resultado concreto en un espacio grupal.</p>
+                        </div>
+                    </div>
+
+                    <div class="clasif-card">
+                        <div class="clasif-icono" style="border-color:#253C5C;"><i data-lucide="map-pin" style="color:#253C5C;"></i></div>
+                        <div class="clasif-banda" style="background:#253C5C;">
+                            <h4 class="clasif-titulo">Experiencia</h4>
+                            <p class="clasif-desc">Actividad que <strong>despierta la curiosidad</strong> de las personas participantes a través de la observación, el contacto con el entorno y la inmersión en contextos artísticos y culturales.</p>
+                        </div>
+                    </div>
+
+                    <div class="clasif-card">
+                        <div class="clasif-icono" style="border-color:#253C5C;"><i data-lucide="flask-conical" style="color:#253C5C;"></i></div>
+                        <div class="clasif-banda" style="background:#253C5C;">
+                            <h4 class="clasif-titulo">Laboratorio</h4>
+                            <p class="clasif-desc">Espacio de <strong>experimentación y creación colectiva</strong> en torno a un lenguaje artístico, con énfasis en el proceso más que en el producto.</p>
                         </div>
                     </div>
                 </div>
+
             </div></div>
 
-            <div class="content-section" id="ofertas_2026" style="display:none;"><div class="card">
+            <div class="content-section" id="ofertas_2026" style="display:none;"><div class="card" style="position:relative; overflow:hidden;">
+                <img src="../imagenes/manos/2.png" alt="" style="position:absolute; top:18px; right:24px; height:200px; opacity:0.92; pointer-events:none; z-index:0;">
                 <h2 class="card-title">Ofertas 2026</h2>
-                <p style="color:#666; margin-bottom:20px;">Oferta planeada para el eje de Cultura.</p>
 
-                <div style="display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap;">
-                    <a href="https://www.instagram.com/distritojovenbta/" target="_blank" style="display:inline-flex; align-items:center; gap:6px; padding:8px 16px; background:#E1306C; color:#fff; border-radius:8px; text-decoration:none; font-size:0.85rem; font-weight:600;">Distrito Joven Instagram</a>
-                    <a href="https://www.facebook.com/DistritoJovenBta/" target="_blank" style="display:inline-flex; align-items:center; gap:6px; padding:8px 16px; background:#1877F2; color:#fff; border-radius:8px; text-decoration:none; font-size:0.85rem; font-weight:600;">Distrito Joven Facebook</a>
+
+                <!-- ====== INICIO BLOQUE OFERTAS GENERADO POR SCRIPT ====== -->
+                <div class="bn-intro">
+                    <p>Las ofertas del eje Cultura son <strong>semilleros, ciclos formativos, talleres, laboratorios y experiencias art&iacute;sticas</strong> que se entregan en las Casas de Juventud. Cada una se registra en <strong>SIRBE</strong> (Sistema de Registro de Beneficiarios) bajo uno de los cinco c&oacute;digos de actividad que la subdirecci&oacute;n usa para este eje:</p>
+
+                    <div class="bn-codigos-lista">
+                        <div class="bn-codigo-item">
+                            <p class="bn-codigo-num">1207</p>
+                            <div class="bn-codigo-cuerpo">
+                                <p class="bn-codigo-nombre">Aprovechamiento del tiempo libre con &eacute;nfasis en intereses juveniles</p>
+                                <p class="bn-codigo-desc">Pr&aacute;cticas art&iacute;sticas, culturales y deportivas que canalizan las inquietudes y talentos juveniles fuera del marco formativo focalizado.</p>
+                            </div>
+                        </div>
+                        <div class="bn-codigo-item">
+                            <p class="bn-codigo-num">1488</p>
+                            <div class="bn-codigo-cuerpo">
+                                <p class="bn-codigo-nombre">Centros de audio y grabaci&oacute;n</p>
+                                <p class="bn-codigo-desc">Estudios y equipamiento t&eacute;cnico para producci&oacute;n musical, sonora y audiovisual de las juventudes.</p>
+                            </div>
+                        </div>
+                        <div class="bn-codigo-item">
+                            <p class="bn-codigo-num">1489</p>
+                            <div class="bn-codigo-cuerpo">
+                                <p class="bn-codigo-nombre">Formaci&oacute;n art&iacute;stica focalizada</p>
+                                <p class="bn-codigo-desc">Ciclos y talleres con contenidos t&eacute;cnicos y art&iacute;sticos espec&iacute;ficos (canto, danza, teatro, pl&aacute;stica, audiovisuales) para profundizar en un oficio.</p>
+                            </div>
+                        </div>
+                        <div class="bn-codigo-item">
+                            <p class="bn-codigo-num">1490</p>
+                            <div class="bn-codigo-cuerpo">
+                                <p class="bn-codigo-nombre">Espacios para el desarrollo y formaci&oacute;n de actividades art&iacute;sticas, culturales y con sentido</p>
+                                <p class="bn-codigo-desc">Semilleros y laboratorios de creaci&oacute;n colectiva de largo plazo, con &eacute;nfasis en procesos y no s&oacute;lo en resultados.</p>
+                            </div>
+                        </div>
+                        <div class="bn-codigo-item">
+                            <p class="bn-codigo-num">1491</p>
+                            <div class="bn-codigo-cuerpo">
+                                <p class="bn-codigo-nombre">Semana de la Juventud</p>
+                                <p class="bn-codigo-desc">Eventos masivos, festivales, concursos y muestras art&iacute;sticas y culturales con motivo de la conmemoraci&oacute;n anual.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="bn-intro-nota">Para mayor informaci&oacute;n sobre la desagregaci&oacute;n SIRBE para el eje Casas de Juventud &mdash; Cultura, consulte la <a href="#datos_sirbe" onclick="showContent('datos_sirbe'); return false;">desagregaci&oacute;n detallada de Datos SIRBE 2025</a>.</p>
                 </div>
 
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">1. Semillero Observatorio Escénico: Actuación</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Este semillero de actuación con énfasis en teatro físico y audiovisual es un espacio de exploración del cuerpo como lenguaje narrativo. A través del movimiento, la presencia escénica y la relación con la cámara, las y los participantes investigan formas de actuación que integran gesto, emoción e imagen, fortaleciendo la expresividad, la conciencia corporal y la creación de relatos escénicos y audiovisuales propios.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Arte Dramático</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Implementa</td><td style="padding:6px 10px; color:#555;">Gestor/a Escénico, Apoya Gestor/a Audiovisual</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; vertical-align:top;">Dirigido a</td><td style="padding:6px 10px; color:#555;">Jóvenes de 14 a 28 años con interés en la actuación, el teatro, la danza y el movimiento corporal como proyecto de vida</td></tr>
-                    </table>
+
+                <div class="bn-grid">
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="semillero">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Semillero</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Semillero Observatorio Escénico: Actuación</h4>
+                            <p class="bn-texto">Este semillero de actuación con énfasis en teatro físico y audiovisual es un espacio de exploración del cuerpo como lenguaje narrativo. A través del movimiento, la presencia escénica y la relación con la cámara, las y los participantes investigan formas de actuación que integran gesto, emoción e imagen, fortaleciendo la expresividad, la conciencia corporal y la creación de relatos escénicos y audiovisuales propios.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Arte Dramático</dd>
+                                <dt>Modalidad</dt><dd>Unidad Operativa</dd>
+                                <dt>Implementa</dt><dd>Gestor/a Escénico Apoya Gestor/a Audiovisual</dd>
+                                <dt>Dirigido a</dt><dd>Jóvenes de 14 a 28 años con interés en la actuación, el teatro, la danza y el movimiento corporal como proyecto de vida</dd>
+                                <dt>Localidad</dt><dd>Barrios Unidos</dd>
+                                <dt>Mes</dt><dd>Febrero - Noviembre</dd>
+                                <dt>Fase</dt><dd>Permanente</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1490</p>
+                                <p class="bn-sirbe-actividad">Espacios para el desarrollo y formación de actividades artísticas, culturales y con sentido</p>
+                                <p class="bn-sirbe-uso">Semillero / laboratorio de arte dramático</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="semillero">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Semillero</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Semillero de Gráfica Expandida</h4>
+                            <p class="bn-texto">Este semillero de gráfica es un espacio de creación y experimentación en serigrafía, stencil, fanzine, collage y diversas técnicas de impresión y gráfica manual. A través del trabajo con tinta, plantillas, capas y repetición, las y los participantes exploran la gráfica como lenguaje visual, herramienta de expresión colectiva y medio para narrar ideas, territorios y experiencias propias. El proceso también aporta al fortalecimiento de iniciativas de emprendimiento cultural, promoviendo el desarrollo de productos gráficos, nociones básicas de producción, circulación y sostenibilidad, así como el trabajo colaborativo y la proyección de propuestas creativas en contextos comunitarios y económicos.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Artes Plásticas</dd>
+                                <dt>Modalidad</dt><dd>Unidad Operativa</dd>
+                                <dt>Implementa</dt><dd>Gestor/a Plásticas Gestor/a Territorial Apoya Gestor/a Graffiti</dd>
+                                <dt>Fase</dt><dd>Permanente</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1490</p>
+                                <p class="bn-sirbe-actividad">Espacios para el desarrollo y formación de actividades artísticas, culturales y con sentido</p>
+                                <p class="bn-sirbe-uso">Semillero / laboratorio de artes plásticas</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="semillero">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Semillero</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Semillero Circulando el Circo</h4>
+                            <p class="bn-texto">Circulando el Circo es un semillero de formación y creación que explora las artes circenses como lenguaje escénico y herramienta de expresión corporal. A través de técnicas básicas de circo, equilibrio, payaso, acrobacia, juego y trabajo colectivo, las y los participantes fortalecen la confianza, la coordinación, la conciencia del cuerpo y la creatividad, promoviendo el bienestar, el trabajo en equipo y la construcción de experiencias escénicas desde el movimiento y la risa compartida.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Artes Circenses</dd>
+                                <dt>Modalidad</dt><dd>Unidad Operativa</dd>
+                                <dt>Implementa</dt><dd>Gestor/a Circo</dd>
+                                <dt>Dirigido a</dt><dd>Jóvenes de 14 a 28 años con interés en la práctica circense.</dd>
+                                <dt>Localidad</dt><dd>Antonio Nariño</dd>
+                                <dt>Mes</dt><dd>Febrero a Noviembre</dd>
+                                <dt>Fase</dt><dd>Permanente</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1490</p>
+                                <p class="bn-sirbe-actividad">Espacios para el desarrollo y formación de actividades artísticas, culturales y con sentido</p>
+                                <p class="bn-sirbe-uso">Semillero / laboratorio de artes circenses</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="semillero">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Semillero</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Semillero Revolución Sonora</h4>
+                            <p class="bn-texto">Revolución Sonora es un semillero de producción musical orientado a la creación, exploración y experimentación con el sonido. A través del uso de herramientas digitales, composición, grabación y mezcla, las y los participantes desarrollan procesos de producción musical propios, fortaleciendo la escucha, la creatividad y el trabajo colaborativo. El semillero impulsa el sonido como forma de expresión juvenil, comunicación cultural y posibilidad de proyección artística y productiva.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Artes Musicales</dd>
+                                <dt>Modalidad</dt><dd>Unidad Operativa</dd>
+                                <dt>Implementa</dt><dd>Gestor/a Producción musical</dd>
+                                <dt>Mes</dt><dd>Febrero a Noviembre</dd>
+                                <dt>Fase</dt><dd>Permanente</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1490</p>
+                                <p class="bn-sirbe-actividad">Espacios para el desarrollo y formación de actividades artísticas, culturales y con sentido</p>
+                                <p class="bn-sirbe-uso">Semillero / laboratorio de artes musicales</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="semillero">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Semillero</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Semillero Latido Reciclado: Batucada</h4>
+                            <p class="bn-texto">Este semillero de batucada con elementos reciclados es un espacio de creación musical colectiva que transforma materiales reutilizados en instrumentos de percusión. A través del ritmo, el cuerpo y el trabajo en equipo, las y los participantes exploran la batucada como lenguaje sonoro y herramienta de expresión comunitaria, fortaleciendo la conciencia ambiental, la creatividad y la participación juvenil, mediante procesos de construcción de instrumentos, ensamble rítmico e intervención sonora en espacios públicos.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Artes Musicales</dd>
+                                <dt>Modalidad</dt><dd>Unidad Operativa</dd>
+                                <dt>Localidad</dt><dd>Engativá (por confirmar)</dd>
+                                <dt>Mes</dt><dd>Febrero a Noviembre</dd>
+                                <dt>Fase</dt><dd>Permanente</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1490</p>
+                                <p class="bn-sirbe-actividad">Espacios para el desarrollo y formación de actividades artísticas, culturales y con sentido</p>
+                                <p class="bn-sirbe-uso">Semillero / laboratorio de artes musicales</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="semillero">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Semillero</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Semillero Pulso Urbano: Paredes que gritan</h4>
+                            <p class="bn-texto"><em style="color:#888;">Sin descripción registrada en el Excel.</em></p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Arte Urbano</dd>
+                                <dt>Modalidad</dt><dd>Unidad Operativa, Estrategia Móvil</dd>
+                                <dt>Localidad</dt><dd>Engativa</dd>
+                                <dt>Fase</dt><dd>Permanente</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1490</p>
+                                <p class="bn-sirbe-actividad">Espacios para el desarrollo y formación de actividades artísticas, culturales y con sentido</p>
+                                <p class="bn-sirbe-uso">Semillero / laboratorio de arte urbano</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="semillero">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Semillero</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Semillero Mirar en Movimiento: Cine</h4>
+                            <p class="bn-texto">Mirar en Movimiento es un semillero de creación cinematográfica orientado a la exploración del cine como lenguaje narrativo y herramienta de expresión juvenil. A través del guion, la dirección, la cámara y el montaje, las y los participantes desarrollan procesos colectivos de creación audiovisual, fortaleciendo la mirada crítica, el trabajo en equipo y la construcción de relatos propios que dialogan con su territorio y experiencias.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Artes Audiovisuales</dd>
+                                <dt>Modalidad</dt><dd>Unidad Operativa</dd>
+                                <dt>Localidad</dt><dd>Bosa</dd>
+                                <dt>Fase</dt><dd>Permanente</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1490</p>
+                                <p class="bn-sirbe-actividad">Espacios para el desarrollo y formación de actividades artísticas, culturales y con sentido</p>
+                                <p class="bn-sirbe-uso">Semillero / laboratorio de artes audiovisuales</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="semillero">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Semillero</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Puños de Hierro, Alma de Fuego Semillero de boxeo</h4>
+                            <p class="bn-texto">En lel semillero se trabajarán los fundamentos del boxeo con golpes básicos y combinaciones, la movilidad con golpeo en desplazamiento para controlar la distancia, y la defensa mediante esquives y bloqueos que fortalezcan seguridad y coordinación. La resistencia cardiovascular se estimulará con ejercicios de alta intensidad, y el sparring técnico permitirá aplicar lo aprendido en un entorno de respeto, empatía y superación. Con ejercicios técnicos y tácticos de progresión continua, desde lo individual hasta el combate simulado, el/la joven avanzará hacia la meta de sentirse preparado como si se entrenara para una competencia o torneo real.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Deportes</dd>
+                                <dt>Modalidad</dt><dd>Unidad Operativa</dd>
+                                <dt>Localidad</dt><dd>Suba</dd>
+                                <dt>Fase</dt><dd>Permanente</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1490</p>
+                                <p class="bn-sirbe-actividad">Espacios para el desarrollo y formación de actividades artísticas, culturales y con sentido</p>
+                                <p class="bn-sirbe-uso">Semillero / laboratorio de deportes</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="experiencia">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Experiencia</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Tocar, Mirar, Mover: Exploración en Danza Contacto</h4>
+                            <p class="bn-texto">Una sesión vivencial para descubrir la danza a través del contacto físico y la improvisación en movimiento. A través de ejercicios de escucha corporal, peso compartido y fluidez en el espacio, los participantes explorarán la conexión con otros cuerpos y el entorno, desarrollando una danza auténtica y sensible. Un espacio para liberar tensiones, habitar el presente y moverse desde la confianza y la creatividad colectiva.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Arte Danzario</dd>
+                                <dt>Modalidad</dt><dd>Unidad Operativa</dd>
+                                <dt>Fase</dt><dd>Fase I. Escucha y Exploración</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1207</p>
+                                <p class="bn-sirbe-actividad">Aprovechamiento del tiempo libre con énfasis en intereses juveniles</p>
+                                <p class="bn-sirbe-uso">Experiencia cultural en arte danzario</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="experiencia">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Experiencia</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Tu Propio Show: Tips para la presentación musical en vivo</h4>
+                            <p class="bn-texto">Un taller enfocado en la construcción de una presentación musical en vivo, abordando escenografía, repertorio, puesta en escena y conexión con el público.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Artes Musicales</dd>
+                                <dt>Modalidad</dt><dd>Unidad Operativa</dd>
+                                <dt>Fase</dt><dd>Fase I. Escucha y Exploración</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1207</p>
+                                <p class="bn-sirbe-actividad">Aprovechamiento del tiempo libre con énfasis en intereses juveniles</p>
+                                <p class="bn-sirbe-uso">Experiencia cultural en artes musicales</p>
+                            </div>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1489</p>
+                                <p class="bn-sirbe-actividad">Formación artística focalizada</p>
+                                <p class="bn-sirbe-uso">Formación artística focalizada en artes musicales</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="experiencia">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Experiencia</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">¡Encuentra tu voz! Hablar en público</h4>
+                            <p class="bn-texto">&quot;Una experiencia intensiva diseñada para fortalecer la confianza y la claridad al comunicarse frente a una audiencia. A través de dinámicas de respiración, proyección vocal, expresión corporal y manejo del espacio, los participantes aprenderán a conectar con su voz, transmitir mensajes con impacto y manejar el nerviosismo escénico. Ideal para quienes buscan mejorar su habilidad comunicativa, desde presentaciones laborales hasta intervenciones artísticas o sociales.&quot;</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Arte Dramático</dd>
+                                <dt>Modalidad</dt><dd>Unidad Operativa</dd>
+                                <dt>Fase</dt><dd>Fase I. Escucha y Exploración</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1207</p>
+                                <p class="bn-sirbe-actividad">Aprovechamiento del tiempo libre con énfasis en intereses juveniles</p>
+                                <p class="bn-sirbe-uso">Experiencia cultural en arte dramático</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="taller">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Taller</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">¡Del Barrio a la Pantalla! Actuación para medios audiovisuales</h4>
+                            <p class="bn-texto">Este taller hace una introducción del proceso actoral para la preparación de castings y la grabación de material audiovisual. Este proceso les permitirá desarrollar herramientas interpretativas, enfrentar audiciones con confianza y fortalcer un portafolio actoral que les acercará a oportunidades en la industria audiovisual.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Arte Dramático</dd>
+                                <dt>Modalidad</dt><dd>Unidad Operativa</dd>
+                                <dt>Fase</dt><dd>Fase I. Escucha y Exploración</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1489</p>
+                                <p class="bn-sirbe-actividad">Formación artística focalizada</p>
+                                <p class="bn-sirbe-uso">Formación artística focalizada en arte dramático</p>
+                            </div>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1489</p>
+                                <p class="bn-sirbe-actividad">Formación artística focalizada</p>
+                                <p class="bn-sirbe-uso">Formación artística focalizada en arte dramático</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="ciclo">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Ciclo</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Movimiento Mutante: Técnicas de teatro físico, gestual y danza contemporánea</h4>
+                            <p class="bn-texto">Un laboratorio escénico que invita a explorar el cuerpo como herramienta expresiva y narrativa, integrando el lenguaje del teatro físico, el gesto y la danza contemporánea. A través de dinámicas de improvisación, trabajo de ritmo, presencia escénica y exploración del espacio, los participantes experimentarán la transformación del cuerpo en movimiento, expandiendo sus posibilidades creativas y performativas. Un espacio para mutar, habitar nuevas corporalidades y contar historias desde la fisicalidad.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Arte Danzario, Arte Dramático, Artes Audiovisuales, Producción Musical</dd>
+                                <dt>Modalidad</dt><dd>Unidad Operativa</dd>
+                                <dt>Implementa</dt><dd>Gestor/a Escénico Gestor/a Danza Apoya Gestor/a Audiovisual Apoya Gestor/a Producción Musical</dd>
+                                <dt>Dirigido a</dt><dd>Jóvenes de 14 a 28 años con interés en el movimiento y la danza</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1489</p>
+                                <p class="bn-sirbe-actividad">Formación artística focalizada</p>
+                                <p class="bn-sirbe-uso">Formación artística focalizada en arte danzario</p>
+                            </div>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1488</p>
+                                <p class="bn-sirbe-actividad">Centros de audio y grabación</p>
+                                <p class="bn-sirbe-uso">Producción musical / sonora con apoyo de centros de audio y grabación</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="ciclo">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Ciclo</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Poder Vocal: Herramientas para el canto nivel intermedio</h4>
+                            <p class="bn-texto">Un proceso formativo diseñado para perfeccionar la técnica vocal y expandir el rango expresivo, dirigido a quienes ya tienen experiencia en el canto y buscan llevar su voz al siguiente nivel. A través de ejercicios avanzados de respiración, resonancia, control de registro y matices interpretativos, los participantes fortalecerán su proyección, mejorarán la afinación y explorarán nuevos estilos y géneros musicales. Un espacio para afinar la técnica, fortalecer la presencia escénica y conectar con la emoción desde la voz.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Arte Dramático, Artes Musicales</dd>
+                                <dt>Modalidad</dt><dd>Unidad Operativa, Estrategia Móvil</dd>
+                                <dt>Implementa</dt><dd>Gestor/a Escénico Gestor/a Musical</dd>
+                                <dt>Dirigido a</dt><dd>Jóvenes de 14 a 28 años con formación previa en canto.</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1489</p>
+                                <p class="bn-sirbe-actividad">Formación artística focalizada</p>
+                                <p class="bn-sirbe-uso">Formación artística focalizada en arte dramático</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="ciclo">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Ciclo</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">¡Del Barrio a la Pantalla! Actuación para medios audiovisuales</h4>
+                            <p class="bn-texto">Este ciclo guía a los participantes en el proceso actoral desde la exploración lúdica hasta la creación de su portafolio profesional. A través de seis sesiones, trabajarán en la construcción de personajes, el análisis de textos dramáticos, la preparación para castings y la grabación de material audiovisual. Este proceso les permitirá desarrollar herramientas interpretativas, enfrentar audiciones con confianza y consolidar un portafolio actoral que los acercará a oportunidades en la industria audiovisual.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Arte Dramático, Artes Audiovisuales, Gestión Cultural</dd>
+                                <dt>Modalidad</dt><dd>Unidad Operativa</dd>
+                                <dt>Implementa</dt><dd>Gestor/a Escénico Apoya Gestor/a Audiovisual</dd>
+                                <dt>Dirigido a</dt><dd>Jóvenes de 14 a 28 años que quieran fortalecer su portafolio actoral</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1489</p>
+                                <p class="bn-sirbe-actividad">Formación artística focalizada</p>
+                                <p class="bn-sirbe-uso">Formación artística focalizada en arte dramático</p>
+                            </div>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1489</p>
+                                <p class="bn-sirbe-actividad">Formación artística focalizada</p>
+                                <p class="bn-sirbe-uso">Formación artística focalizada en arte dramático</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="ciclo">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Ciclo</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Mi cuerpo, mi ritmo: Creación colectiva de Percusión corporal</h4>
+                            <p class="bn-texto">Proceso de investigación sonora y expresiva que invita a explorar el cuerpo como fuente de ritmo y vibración, a través de la percusión corporal y la creación colectiva. Mediante golpes, palmas, chasquidos y pisadas, los participantes experimentarán la construcción de patrones rítmicos en conjunto, desarrollando la escucha activa, la coordinación y la sincronía grupal. Un espacio para sentir el ritmo en comunidad, conectar con la musicalidad interna y crear desde el cuerpo en movimiento.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Artes Musicales, Arte Danzario</dd>
+                                <dt>Modalidad</dt><dd>Unidad Operativa, Estrategia Móvil</dd>
+                                <dt>Implementa</dt><dd>Gestor/a Musical</dd>
+                                <dt>Dirigido a</dt><dd>Jóvenes de 14 a 28 años</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1489</p>
+                                <p class="bn-sirbe-actividad">Formación artística focalizada</p>
+                                <p class="bn-sirbe-uso">Formación artística focalizada en artes musicales</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="ciclo">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Ciclo</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">El Código Musical: Lee y escribe partituras</h4>
+                            <p class="bn-texto">Introducción al lenguaje escrito de la música, explorando la partitura como un sistema de signos que permite leer, interpretar y crear sonidos. A través de ejercicios prácticos y dinámicos, se desarrollan nociones básicas de ritmo, melodía y notación musical, fortaleciendo la escucha, la lectura musical y la capacidad de escribir ideas sonoras propias.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Artes Musicales</dd>
+                                <dt>Modalidad</dt><dd>Unidad Operativa</dd>
+                                <dt>Implementa</dt><dd>Gestor/a Musical</dd>
+                                <dt>Dirigido a</dt><dd>Jóvenes de 14 a 28 años con interés en la práctica musical.</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1489</p>
+                                <p class="bn-sirbe-actividad">Formación artística focalizada</p>
+                                <p class="bn-sirbe-uso">Formación artística focalizada en artes musicales</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="ciclo">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Ciclo</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Explosión Rítimica Batucada desde cero</h4>
+                            <p class="bn-texto">Este ciclo introduce a las y los participantes en la batucada como una práctica colectiva de percusión que combina ritmo, cuerpo y energía grupal. Desde nociones básicas hasta ensambles sencillos, el proceso fortalece la coordinación, la escucha y el trabajo en equipo, reconociendo el ritmo como una forma de expresión, encuentro y celebración comunitaria.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Artes Musicales</dd>
+                                <dt>Modalidad</dt><dd>Unidad Operativa</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1489</p>
+                                <p class="bn-sirbe-actividad">Formación artística focalizada</p>
+                                <p class="bn-sirbe-uso">Formación artística focalizada en artes musicales</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="ciclo">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Ciclo</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Guitarra para principiantes</h4>
+                            <p class="bn-texto">Un taller introductorio para aprender los fundamentos básicos de la guitarra y dar los primeros acordes en el mundo musical. A través de ejercicios prácticos, exploración de acordes, ritmos y melodías, los participantes desarrollarán destrezas en la digitación, afinación y acompañamiento, mientras se conectan con la expresión sonora del instrumento. Un espacio ideal para perderle el miedo a las cuerdas, disfrutar del proceso y comenzar a crear música desde cero.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Artes Musicales</dd>
+                                <dt>Modalidad</dt><dd>Unidad Operativa</dd>
+                                <dt>Implementa</dt><dd>Gestor/a Musical</dd>
+                                <dt>Dirigido a</dt><dd>Jóvenes de 14 a 28 años con interés en la práctica musical.</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1489</p>
+                                <p class="bn-sirbe-actividad">Formación artística focalizada</p>
+                                <p class="bn-sirbe-uso">Formación artística focalizada en artes musicales</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="ciclo">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Ciclo</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Tu Propio Show: Tips para la presentación musical en vivo</h4>
+                            <p class="bn-texto">Un taller enfocado en la construcción de una presentación musical en vivo, abordando escenografía, repertorio, puesta en escena y conexión con el público.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Artes Musicales</dd>
+                                <dt>Modalidad</dt><dd>Unidad Operativa</dd>
+                                <dt>Implementa</dt><dd>Gestor/a Musical</dd>
+                                <dt>Dirigido a</dt><dd>Jóvenes de 14 a 28 años que participen de un proyecto musical.</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1207</p>
+                                <p class="bn-sirbe-actividad">Aprovechamiento del tiempo libre con énfasis en intereses juveniles</p>
+                                <p class="bn-sirbe-uso">Experiencia cultural en artes musicales</p>
+                            </div>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1489</p>
+                                <p class="bn-sirbe-actividad">Formación artística focalizada</p>
+                                <p class="bn-sirbe-uso">Formación artística focalizada en artes musicales</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="sin-tipo" data-clasif="sin-clasif">
+                        <div class="bn-card-main">
+                            
+                            <h4 class="bn-titulo" style="color:#2F3E3C;">Musica Colombiana y Tradicional</h4>
+                            <p class="bn-texto"><em style="color:#888;">Sin descripción registrada en el Excel.</em></p>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1207</p>
+                                <p class="bn-sirbe-actividad">Aprovechamiento del tiempo libre con énfasis en intereses juveniles</p>
+                                <p class="bn-sirbe-uso">Experiencia cultural / aprovechamiento del tiempo libre</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="ciclo">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Ciclo</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Revolución Sonora: Producción de Canciones</h4>
+                            <p class="bn-texto">Un recorrido general por el proceso de creación musical, desde la idea inicial hasta la producción final. Abarca composición, arreglos, grabación, mezcla y masterización, brindando a los participantes herramientas para producir sus propias canciones.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Producción Musical, Artes Musicales</dd>
+                                <dt>Modalidad</dt><dd>Unidad Operativa</dd>
+                                <dt>Implementa</dt><dd>Gestor/a Musical</dd>
+                                <dt>Dirigido a</dt><dd>Jóvenes de 14 a 28 años que participen de un proyecto musical.</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1489</p>
+                                <p class="bn-sirbe-actividad">Formación artística focalizada</p>
+                                <p class="bn-sirbe-uso">Formación artística focalizada en producción musical</p>
+                            </div>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1488</p>
+                                <p class="bn-sirbe-actividad">Centros de audio y grabación</p>
+                                <p class="bn-sirbe-uso">Producción musical / sonora con apoyo de centros de audio y grabación</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="ciclo">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Ciclo</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Creación de Portafolio de Graffiti Comercial</h4>
+                            <p class="bn-texto">Creación de un portafolio orientado al mercado artístico y comercial, con enfoque en la presentación de proyectos, elaboración de dossiers y estrategias para promover el trabajo con marcas, empresas y espacios culturales.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Arte Urbano, Artes Plásticas</dd>
+                                <dt>Modalidad</dt><dd>Unidad Operativa</dd>
+                                <dt>Implementa</dt><dd>Gestor/a Graffiti</dd>
+                                <dt>Dirigido a</dt><dd>Jóvenes de 14 a 28 con experiencia inicial y media en el graffiti</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1489</p>
+                                <p class="bn-sirbe-actividad">Formación artística focalizada</p>
+                                <p class="bn-sirbe-uso">Formación artística focalizada en arte urbano</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="ciclo">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Ciclo</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Lettering y Tipografía Urbana</h4>
+                            <p class="bn-texto">Creación de letras y estilos tipográficos propios del arte urbano, explorando formas y composiciones.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Arte Urbano, Artes Plásticas</dd>
+                                <dt>Modalidad</dt><dd>Unidad Operativa, Estrategia Móvil</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1489</p>
+                                <p class="bn-sirbe-actividad">Formación artística focalizada</p>
+                                <p class="bn-sirbe-uso">Formación artística focalizada en arte urbano</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="ciclo">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Ciclo</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Gráfica Expandida</h4>
+                            <p class="bn-texto"><em style="color:#888;">Sin descripción registrada en el Excel.</em></p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Artes Plásticas</dd>
+                                <dt>Modalidad</dt><dd>Estrategia Móvil, Unidad Operativa</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1489</p>
+                                <p class="bn-sirbe-actividad">Formación artística focalizada</p>
+                                <p class="bn-sirbe-uso">Formación artística focalizada en artes plásticas</p>
+                            </div>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1489</p>
+                                <p class="bn-sirbe-actividad">Formación artística focalizada</p>
+                                <p class="bn-sirbe-uso">Formación artística focalizada en artes plásticas</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="ciclo">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Ciclo</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Forjando Guerreros Ciclo de boxeo</h4>
+                            <p class="bn-texto">Este ciclo propone una introducción al boxeo como una práctica formativa que fortalece el cuerpo, la disciplina y la autoconfianza. A través del aprendizaje de técnicas básicas, rutinas físicas y ejercicios de coordinación, las y los participantes desarrollan resistencia, autocontrol y respeto por el otro, reconociendo el entrenamiento como un espacio de cuidado, enfoque y canalización positiva de la energía.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Deportes</dd>
+                                <dt>Modalidad</dt><dd>Unidad Operativa</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1489</p>
+                                <p class="bn-sirbe-actividad">Formación artística focalizada</p>
+                                <p class="bn-sirbe-uso">Formación artística focalizada en deportes</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="ciclo">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Ciclo</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">El arte del control Ciclo en Jiujitsu</h4>
+                            <p class="bn-texto">Este ciclo aborda el jiujitsu como una disciplina que integra técnica, estrategia y autocontrol. A través del aprendizaje de fundamentos básicos, ejercicios de coordinación y prácticas guiadas, las y los participantes fortalecen la conciencia corporal, la disciplina y la gestión de la fuerza, promoviendo el respeto, la calma y la resolución consciente de situaciones de tensión.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Deportes</dd>
+                                <dt>Modalidad</dt><dd>Unidad Operativa</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1489</p>
+                                <p class="bn-sirbe-actividad">Formación artística focalizada</p>
+                                <p class="bn-sirbe-uso">Formación artística focalizada en deportes</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="ciclo">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Ciclo</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Raices en juego Ciclo en juegos tradicionales</h4>
+                            <p class="bn-texto">Este ciclo invita a redescubrir los juegos tradicionales como prácticas culturales vivas que fortalecen la identidad, la memoria colectiva y el encuentro comunitario. A través del juego, las y los participantes desarrollan habilidades motrices, cooperación y creatividad, reconociendo el cuerpo y la lúdica como formas de aprendizaje, cuidado y transmisión cultural entre generaciones.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Deportes</dd>
+                                <dt>Modalidad</dt><dd>Unidad Operativa, Estrategia Móvil</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1489</p>
+                                <p class="bn-sirbe-actividad">Formación artística focalizada</p>
+                                <p class="bn-sirbe-uso">Formación artística focalizada en deportes</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="ciclo">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Ciclo</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Más allá de la Cancha Ciclo en Baloncesto</h4>
+                            <p class="bn-texto">Este ciclo propone el baloncesto como una práctica que trasciende el juego para convertirse en un espacio de formación integral. A través del aprendizaje de fundamentos técnicos y dinámicas colectivas, las y los participantes fortalecen el trabajo en equipo, la comunicación, la disciplina y la toma de decisiones, promoviendo valores de convivencia, respeto y liderazgo dentro y fuera de la cancha.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Deportes</dd>
+                                <dt>Modalidad</dt><dd>Estrategia Móvil, Unidad Operativa</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1489</p>
+                                <p class="bn-sirbe-actividad">Formación artística focalizada</p>
+                                <p class="bn-sirbe-uso">Formación artística focalizada en deportes</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="participacion" data-clasif="laboratorio">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Participación &middot; Laboratorio</p>
+                            <h4 class="bn-titulo" style="color:#2fa4d4;">Laboratorio Piel Urbana: Graffiti</h4>
+                            <p class="bn-texto">Piel Urbana es un laboratorio avanzado de creación en graffiti y gráfica urbana, enfocado en la exploración de vinilos, texturas y técnicas mixtas aplicadas al muro y a soportes no convencionales. Más que un espacio de formación, el laboratorio propone procesos de investigación y producción artística colectiva, donde las y los participantes experimentan con capas, materialidades y lenguajes visuales para desarrollar obras gráficas con identidad propia, diálogo territorial y proyección en el espacio público.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Arte Urbano</dd>
+                                <dt>Modalidad</dt><dd>Unidad Operativa</dd>
+                                <dt>Implementa</dt><dd>Gestor/a Graffiti</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1490</p>
+                                <p class="bn-sirbe-actividad">Espacios para el desarrollo y formación de actividades artísticas, culturales y con sentido</p>
+                                <p class="bn-sirbe-uso">Semillero / laboratorio de arte urbano</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="ciclo">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Ciclo</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Semillero Materia Viva: Animación en Stop Motion</h4>
+                            <p class="bn-texto">es un semillero de animación en stop motion enfocado en la creación de relatos animados a partir de objetos, cuerpos y materiales cotidianos. Mediante la construcción de personajes, escenarios y la animación fotograma a fotograma, las y los participantes exploran el movimiento como acto creativo, fortaleciendo la paciencia, la imaginación y el trabajo colaborativo para dar vida a historias propias.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Artes Audiovisuales</dd>
+                                <dt>Modalidad</dt><dd>Unidad Operativa</dd>
+                                <dt>Localidad</dt><dd>Usaquén</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1489</p>
+                                <p class="bn-sirbe-actividad">Formación artística focalizada</p>
+                                <p class="bn-sirbe-uso">Formación artística focalizada en artes audiovisuales</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="sin-tipo" data-clasif="semillero">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Semillero</p>
+                            <h4 class="bn-titulo" style="color:#2F3E3C;">Danza Expandida</h4>
+                            <p class="bn-texto"><em style="color:#888;">Sin descripción registrada en el Excel.</em></p>
+                            <dl class="bn-meta">
+                                <dt>Modalidad</dt><dd>Estrategia Móvil</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1490</p>
+                                <p class="bn-sirbe-actividad">Espacios para el desarrollo y formación de actividades artísticas, culturales y con sentido</p>
+                                <p class="bn-sirbe-uso">Semillero / laboratorio de semillero</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="taller">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Taller</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Serigrafía</h4>
+                            <p class="bn-texto">Taller de introducción y exploración de la serigrafía como técnica de impresión manual adaptable a contextos territoriales diversos. A través del trabajo con plantillas, marcos, tinta y soportes accesibles, las y los participantes experimentan la serigrafía como herramienta de expresión colectiva, comunicación comunitaria y producción gráfica situada, ajustando los procesos técnicos a las condiciones del territorio y los recursos disponibles.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Artes Plásticas</dd>
+                                <dt>Modalidad</dt><dd>Estrategia Móvil</dd>
+                                <dt>Implementa</dt><dd>Gestor/a Arte Urbano y Gráfica de Estrategia Móvil</dd>
+                                <dt>Dirigido a</dt><dd>Jóvenes de 14 a 28 años y comunidad en general que participen de los procesos territoriales de la Estrategia Móvil</dd>
+                                <dt>Localidad</dt><dd>Por demanda o necesidad de intervencción institucional en comunidades de enfoque diferencial, ruralidad y borde de ciudad.</dd>
+                                <dt>Mes</dt><dd>No aplica</dd>
+                                <dt>Meta</dt><dd>Producir piezas gráficas colectivas que representen narrativas o mensajes del territorio. Fortalecer el trabajo colaborativo y la apropiación del espacio de intervención. Armonizar los contenidos del diseño con los contenidos de los diferentes ejes del servicio.</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1489</p>
+                                <p class="bn-sirbe-actividad">Formación artística focalizada</p>
+                                <p class="bn-sirbe-uso">Formación artística focalizada en artes plásticas</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="taller">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Taller</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Fanzine: Autoedición en Mano</h4>
+                            <p class="bn-texto">Taller de creación de fanzines como formato de autoedición gráfica y narrativa, donde texto e imagen dialogan para contar historias, memorias y experiencias territoriales. El taller se adapta a distintos niveles de alfabetización visual y escrita, permitiendo la participación activa de diversas poblaciones mediante el uso de técnicas manuales y accesibles.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Artes Plásticas</dd>
+                                <dt>Modalidad</dt><dd>Estrategia Móvil</dd>
+                                <dt>Implementa</dt><dd>Gestor/a Arte Urbano y Gráfica de Estrategia Móvil</dd>
+                                <dt>Dirigido a</dt><dd>Jóvenes de 14 a 28 años y comunidad en general que participen de los procesos territoriales de la Estrategia Móvil</dd>
+                                <dt>Localidad</dt><dd>Por demanda o necesidad de intervencción institucional en comunidades de enfoque diferencial, ruralidad y borde de ciudad.</dd>
+                                <dt>Mes</dt><dd>No aplica</dd>
+                                <dt>Meta</dt><dd>Crear uno o varios fanzines colectivos como ejercicio de narración territorial. Promover la expresión de voces diversas a través de la autoedición. Generar un producto gráfico fácilmente replicable en otros contextos.</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1489</p>
+                                <p class="bn-sirbe-actividad">Formación artística focalizada</p>
+                                <p class="bn-sirbe-uso">Formación artística focalizada en artes plásticas</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="taller">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Taller</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Collage: Cortar y Re-significar</h4>
+                            <p class="bn-texto">Taller de collage enfocado en la reconfiguración de imágenes, símbolos y materiales impresos para construir nuevos sentidos visuales. A partir del recorte, la superposición y el ensamblaje, las y los participantes exploran el collage como herramienta de reflexión crítica, memoria y resignificación del territorio y la experiencia cotidiana.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Artes Plásticas</dd>
+                                <dt>Modalidad</dt><dd>Estrategia Móvil</dd>
+                                <dt>Implementa</dt><dd>Gestor/a Arte Urbano y Gráfica de Estrategia Móvil</dd>
+                                <dt>Dirigido a</dt><dd>Jóvenes de 14 a 28 años y comunidad en general que participen de los procesos territoriales de la Estrategia Móvil</dd>
+                                <dt>Localidad</dt><dd>Por demanda o necesidad de intervencción institucional en comunidades de enfoque diferencial, ruralidad y borde de ciudad.</dd>
+                                <dt>Mes</dt><dd>No aplica</dd>
+                                <dt>Meta</dt><dd>Desarrollar composiciones visuales colectivas o individuales mediante collage. Estimular la lectura crítica de imágenes y discursos visuales. Propiciar espacios de diálogo a partir de la creación gráfica.</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1489</p>
+                                <p class="bn-sirbe-actividad">Formación artística focalizada</p>
+                                <p class="bn-sirbe-uso">Formación artística focalizada en artes plásticas</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="taller">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Taller</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Stencil:</h4>
+                            <p class="bn-texto">Taller de stencil como técnica gráfica rápida y replicable, ideal para intervenciones territoriales de corta duración. A través del diseño de plantillas y la repetición de imágenes, el taller explora el stencil como herramienta de comunicación visual, señalización simbólica y apropiación temporal del espacio, cuidando siempre el contexto y las dinámicas comunitarias del territorio.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Artes Plásticas</dd>
+                                <dt>Modalidad</dt><dd>Estrategia Móvil</dd>
+                                <dt>Implementa</dt><dd>Gestor/a Arte Urbano y Gráfica de Estrategia Móvil</dd>
+                                <dt>Dirigido a</dt><dd>Jóvenes de 14 a 28 años y comunidad en general que participen de los procesos territoriales de la Estrategia Móvil</dd>
+                                <dt>Localidad</dt><dd>Por demanda o necesidad de intervencción institucional en comunidades de enfoque diferencial, ruralidad y borde de ciudad.</dd>
+                                <dt>Mes</dt><dd>No aplica</dd>
+                                <dt>Meta</dt><dd>Diseñar y producir plantillas de stencil vinculadas a mensajes territoriales y/o de los ejes del servicio. Realizar intervenciones gráficas controladas en soportes móviles o autorizados. Fortalecer la comprensión del stencil como lenguaje gráfico colectivo.</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1489</p>
+                                <p class="bn-sirbe-actividad">Formación artística focalizada</p>
+                                <p class="bn-sirbe-uso">Formación artística focalizada en artes plásticas</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="taller">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Taller</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Grabado Alterno: Sello Casero (linografía casera, sellos, impresión con objetos)</h4>
+                            <p class="bn-texto">Taller de exploración de técnicas de grabado alternativo y experimental que no requieren infraestructura especializada. A través de sellos, matrices caseras y objetos cotidianos, las y los participantes experimentan procesos de impresión accesibles, favoreciendo la creatividad, la experimentación material y la adaptación técnica a contextos rurales o de difícil acceso.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Artes Plásticas</dd>
+                                <dt>Modalidad</dt><dd>Estrategia Móvil</dd>
+                                <dt>Implementa</dt><dd>Gestor/a Arte Urbano y Gráfica de Estrategia Móvil</dd>
+                                <dt>Dirigido a</dt><dd>Jóvenes de 14 a 28 años y comunidad en general que participen de los procesos territoriales de la Estrategia Móvil</dd>
+                                <dt>Localidad</dt><dd>Por demanda o necesidad de intervencción institucional en comunidades de enfoque diferencial, ruralidad y borde de ciudad.</dd>
+                                <dt>Mes</dt><dd>No aplica</dd>
+                                <dt>Meta</dt><dd>Experimentar técnicas de impresión sin maquinaria especializada. Producir estampas gráficas a partir de matrices caseras. Potenciar la creatividad a partir de recursos locales y reutilizados.</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1489</p>
+                                <p class="bn-sirbe-actividad">Formación artística focalizada</p>
+                                <p class="bn-sirbe-uso">Formación artística focalizada en artes plásticas</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="taller">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Taller</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Afiche y gráfica comunitaria</h4>
+                            <p class="bn-texto">Taller orientado a la creación de afiches y piezas gráficas comunitarias, pensadas para comunicar mensajes colectivos, convocatorias o narrativas territoriales. El proceso integra diseño manual, composición visual y reflexión sobre el uso ético y situado de la imagen en espacios comunitarios.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Artes Plásticas</dd>
+                                <dt>Modalidad</dt><dd>Estrategia Móvil</dd>
+                                <dt>Implementa</dt><dd>Gestor/a Arte Urbano y Gráfica de Estrategia Móvil</dd>
+                                <dt>Dirigido a</dt><dd>Jóvenes de 14 a 28 años y comunidad en general que participen de los procesos territoriales de la Estrategia Móvil</dd>
+                                <dt>Localidad</dt><dd>Por demanda o necesidad de intervencción institucional en comunidades de enfoque diferencial, ruralidad y borde de ciudad.</dd>
+                                <dt>Mes</dt><dd>No aplica</dd>
+                                <dt>Meta</dt><dd>Diseñar piezas gráficas de comunicación comunitaria. Fortalecer la capacidad de las comunidades para producir sus propios mensajes visuales. Promover el uso consciente de la gráfica como herramienta de participación.</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1489</p>
+                                <p class="bn-sirbe-actividad">Formación artística focalizada</p>
+                                <p class="bn-sirbe-uso">Formación artística focalizada en artes plásticas</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="taller">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Taller</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Creación de stickers: Pégate a esto</h4>
+                            <p class="bn-texto">Taller de creación de stickers como formato gráfico portátil y de rápida circulación. A partir del dibujo, la ilustración y la repetición, las y los participantes desarrollan imágenes que condensan ideas, símbolos o mensajes territoriales, pensadas para circular de manera responsable en espacios cotidianos.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Artes Plásticas</dd>
+                                <dt>Modalidad</dt><dd>Estrategia Móvil</dd>
+                                <dt>Implementa</dt><dd>Gestor/a Arte Urbano y Gráfica de Estrategia Móvil</dd>
+                                <dt>Dirigido a</dt><dd>Jóvenes de 14 a 28 años y comunidad en general que participen de los procesos territoriales de la Estrategia Móvil</dd>
+                                <dt>Localidad</dt><dd>Por demanda o necesidad de intervencción institucional en comunidades de enfoque diferencial, ruralidad y borde de ciudad.</dd>
+                                <dt>Mes</dt><dd>No aplica</dd>
+                                <dt>Meta</dt><dd>Diseñar y producir stickers gráficos con identidad territorial y/o con contenidos de los ejes del servicio Explorar el pequeño formato como medio de comunicación visual. Favorecer la apropiación creativa y la circulación responsable.</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1489</p>
+                                <p class="bn-sirbe-actividad">Formación artística focalizada</p>
+                                <p class="bn-sirbe-uso">Formación artística focalizada en artes plásticas</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="taller">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Taller</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Gráfica Textil Básica: Estampar el Cuerpo</h4>
+                            <p class="bn-texto">Taller de introducción a la gráfica textil mediante técnicas manuales de impresión sobre tela. A través del estampado básico, el taller permite explorar el textil como soporte gráfico, promoviendo la creación de piezas vestibles con sentido identitario y comunitario.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Artes Plásticas</dd>
+                                <dt>Modalidad</dt><dd>Estrategia Móvil</dd>
+                                <dt>Implementa</dt><dd>Gestor/a Arte Urbano y Gráfica de Estrategia Móvil</dd>
+                                <dt>Dirigido a</dt><dd>Jóvenes de 14 a 28 años y comunidad en general que participen de los procesos territoriales de la Estrategia Móvil</dd>
+                                <dt>Localidad</dt><dd>Por demanda o necesidad de intervencción institucional en comunidades de enfoque diferencial, ruralidad y borde de ciudad.</dd>
+                                <dt>Mes</dt><dd>No aplica</dd>
+                                <dt>Meta</dt><dd>Realizar estampas textiles básicas sobre telas o prendas. Reconocer el cuerpo y el vestir como soportes de expresión gráfica. Potenciar nociones iniciales de producción y posible circulación.</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1489</p>
+                                <p class="bn-sirbe-actividad">Formación artística focalizada</p>
+                                <p class="bn-sirbe-uso">Formación artística focalizada en artes plásticas</p>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <div class="bn-card" data-tipo="fortalecimiento-de-habilidades" data-clasif="taller">
+                        <div class="bn-card-main">
+                            <p class="bn-kicker">Fortalecimiento de habilidades &middot; Taller</p>
+                            <h4 class="bn-titulo" style="color:#1eaf76;">Fotografía Intervenida: La Imagen Alterada</h4>
+                            <p class="bn-texto">Taller de intervención manual de fotografías mediante dibujo, escritura, costura, tejido o collage. La propuesta invita a reconfigurar imágenes propias o del territorio, combinando fotografía y gráfica para generar nuevas narrativas visuales y afectivas.</p>
+                            <dl class="bn-meta">
+                                <dt>Línea cultural</dt><dd>Artes Plásticas</dd>
+                                <dt>Modalidad</dt><dd>Estrategia Móvil</dd>
+                                <dt>Implementa</dt><dd>Gestor/a Arte Urbano y Gráfica de Estrategia Móvil</dd>
+                                <dt>Dirigido a</dt><dd>Jóvenes de 14 a 28 años y comunidad en general que participen de los procesos territoriales de la Estrategia Móvil</dd>
+                                <dt>Localidad</dt><dd>Por demanda o necesidad de intervencción institucional en comunidades de enfoque diferencial, ruralidad y borde de ciudad.</dd>
+                                <dt>Mes</dt><dd>No aplica</dd>
+                                <dt>Meta</dt><dd>Intervenir fotografías impresas con técnicas manuales. Explorar la imagen fotográfica como territorio de creación gráfica. Construir relatos visuales híbridos desde la experiencia local.</dd>
+                            </dl>
+                        </div>
+                        <aside class="bn-sirbe">
+                            <p class="bn-sirbe-label">Reporte SIRBE</p>
+                            <div class="bn-sirbe-item">
+                                <p class="bn-sirbe-codigo">1489</p>
+                                <p class="bn-sirbe-actividad">Formación artística focalizada</p>
+                                <p class="bn-sirbe-uso">Formación artística focalizada en artes plásticas</p>
+                            </div>
+                        </aside>
+                    </div>
                 </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">2. Semillero de Gráfica Expandida</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Este semillero de gráfica es un espacio de creación y experimentación en serigrafía, stencil, fanzine, collage y diversas técnicas de impresión y gráfica manual. A través del trabajo con tinta, plantillas, capas y repetición, las y los participantes exploran la gráfica como lenguaje visual, herramienta de expresión colectiva y medio para narrar ideas, territorios y experiencias propias. El proceso también aporta al fortalecimiento de iniciativas de emprendimiento cultural, promoviendo el desarrollo de productos gráficos, nociones básicas de producción, circulación y sostenibilidad, así como el trabajo colaborativo y la proyección de propuestas creativas en contextos comunitarios y económicos.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Artes Plásticas</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Implementa</td><td style="padding:6px 10px; color:#555;">Gestor/a Plásticas, Gestor/a Territorial, Apoya Gestor/a Graffiti</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">3. Semillero Circulando el Circo</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Circulando el Circo es un semillero de formación y creación que explora las artes circenses como lenguaje escénico y herramienta de expresión corporal. A través de técnicas básicas de circo, equilibrio, payaso, acrobacia, juego y trabajo colectivo, las y los participantes fortalecen la confianza, la coordinación, la conciencia del cuerpo y la creatividad, promoviendo el bienestar, el trabajo en equipo y la construcción de experiencias escénicas desde el movimiento y la risa compartida.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Artes Circenses</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Implementa</td><td style="padding:6px 10px; color:#555;">Gestor/a Circo</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; vertical-align:top;">Dirigido a</td><td style="padding:6px 10px; color:#555;">Jóvenes de 14 a 28 años con interés en la práctica circense.</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">4. Semillero Revolución Sonora</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Revolución Sonora es un semillero de producción musical orientado a la creación, exploración y experimentación con el sonido. A través del uso de herramientas digitales, composición, grabación y mezcla, las y los participantes desarrollan procesos de producción musical propios, fortaleciendo la escucha, la creatividad y el trabajo colaborativo. El semillero impulsa el sonido como forma de expresión juvenil, comunicación cultural y posibilidad de proyección artística y productiva.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Artes Musicales</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Implementa</td><td style="padding:6px 10px; color:#555;">Gestor/a Producción musical</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">5. Semillero Latido Reciclado: Batucada</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Este semillero de batucada con elementos reciclados es un espacio de creación musical colectiva que transforma materiales reutilizados en instrumentos de percusión. A través del ritmo, el cuerpo y el trabajo en equipo, las y los participantes exploran la batucada como lenguaje sonoro y herramienta de expresión comunitaria, fortaleciendo la conciencia ambiental, la creatividad y la participación juvenil, mediante procesos de construcción de instrumentos, ensamble rítmico e intervención sonora en espacios públicos.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Artes Musicales</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">6. Semillero Pulso Urbano: Paredes que gritan</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;"></p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Arte Urbano</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">7. Semillero Mirar en Movimiento: Cine</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Mirar en Movimiento es un semillero de creación cinematográfica orientado a la exploración del cine como lenguaje narrativo y herramienta de expresión juvenil. A través del guion, la dirección, la cámara y el montaje, las y los participantes desarrollan procesos colectivos de creación audiovisual, fortaleciendo la mirada crítica, el trabajo en equipo y la construcción de relatos propios que dialogan con su territorio y experiencias.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Artes Audiovisuales</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">8. Puños de Hierro, Alma de Fuego Semillero de boxeo</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">En lel semillero se trabajarán los fundamentos del boxeo con golpes básicos y combinaciones, la movilidad con golpeo en desplazamiento para controlar la distancia, y la defensa mediante esquives y bloqueos que fortalezcan seguridad y coordinación. La resistencia cardiovascular se estimulará con ejercicios de alta intensidad, y el sparring técnico permitirá aplicar lo aprendido en un entorno de respeto, empatía y superación. Con ejercicios técnicos y tácticos de progresión continua, desde lo individual hasta el combate simulado, el/la joven avanzará hacia la meta de sentirse preparado como si se entrenara para una competencia o torneo real.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Deportes</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">9. Tocar, Mirar, Mover: Exploración en Danza Contacto</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Una sesión vivencial para descubrir la danza a través del contacto físico y la improvisación en movimiento.<br><br>A través de ejercicios de escucha corporal, peso compartido y fluidez en el espacio, los participantes explorarán la conexión con otros cuerpos y el entorno, desarrollando una danza auténtica y sensible.<br><br>Un espacio para liberar tensiones, habitar el presente y moverse desde la confianza y la creatividad colectiva.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Arte Danzario</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">10. Tu Propio Show: Tips para la presentación musical en vivo</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Un taller enfocado en la construcción de una presentación musical en vivo, abordando escenografía, repertorio, puesta en escena y conexión con el público.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Artes Musicales</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">11. ¡Encuentra tu voz! Hablar en público</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">"Una experiencia intensiva diseñada para fortalecer la confianza y la claridad al comunicarse frente a una audiencia.<br><br>A través de dinámicas de respiración, proyección vocal, expresión corporal y manejo del espacio, los participantes aprenderán a conectar con su voz, transmitir mensajes con impacto y manejar el nerviosismo escénico.<br><br>Ideal para quienes buscan mejorar su habilidad comunicativa, desde presentaciones laborales hasta intervenciones artísticas o sociales."</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Arte Dramático</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">12. ¡Del Barrio a la Pantalla! Actuación para medios audiovisuales</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Este taller hace una introducción  del proceso actoral para la preparación de castings y la grabación de material audiovisual. Este proceso les permitirá desarrollar herramientas interpretativas, enfrentar audiciones con confianza y fortalcer un portafolio actoral que les acercará a oportunidades en la industria audiovisual.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Arte Dramático</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">13. Movimiento Mutante: Técnicas de teatro físico, gestual y danza contemporánea</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Un laboratorio escénico que invita a explorar el cuerpo como herramienta expresiva y narrativa, integrando el lenguaje del teatro físico, el gesto y la danza contemporánea.<br>A través de dinámicas de improvisación, trabajo de ritmo, presencia escénica y exploración del espacio, los participantes experimentarán la transformación del cuerpo en movimiento, expandiendo sus posibilidades creativas y performativas.<br>Un espacio para mutar, habitar nuevas corporalidades y contar historias desde la fisicalidad.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Arte Danzario, Arte Dramático, Artes Audiovisuales, Producción Musical</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Implementa</td><td style="padding:6px 10px; color:#555;">Gestor/a Escénico, Gestor/a Danza, Apoya Gestor/a Audiovisual, Apoya Gestor/a Producción Musical</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; vertical-align:top;">Dirigido a</td><td style="padding:6px 10px; color:#555;">Jóvenes de 14 a 28 años con interés en el movimiento y la danza</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">14. Poder Vocal: Herramientas para el canto nivel intermedio</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Un proceso formativo diseñado para perfeccionar la técnica vocal y expandir el rango expresivo, dirigido a quienes ya tienen experiencia en el canto y buscan llevar su voz al siguiente nivel.<br>A través de ejercicios avanzados de respiración, resonancia, control de registro y matices interpretativos, los participantes fortalecerán su proyección, mejorarán la afinación y explorarán nuevos estilos y géneros musicales.<br>Un espacio para afinar la técnica, fortalecer la presencia escénica y conectar con la emoción desde la voz.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Arte Dramático, Artes Musicales</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Implementa</td><td style="padding:6px 10px; color:#555;">Gestor/a Escénico, Gestor/a Musical</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; vertical-align:top;">Dirigido a</td><td style="padding:6px 10px; color:#555;">Jóvenes de 14 a 28 años con formación previa en canto.</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">15. ¡Del Barrio a la Pantalla! Actuación para medios audiovisuales</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Este ciclo guía a los participantes en el proceso actoral desde la exploración lúdica hasta la creación de su portafolio profesional. A través de seis sesiones, trabajarán en la construcción de personajes, el análisis de textos dramáticos, la preparación para castings y la grabación de material audiovisual. Este proceso les permitirá desarrollar herramientas interpretativas, enfrentar audiciones con confianza y consolidar un portafolio actoral que los acercará a oportunidades en la industria audiovisual.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Arte Dramático, Artes Audiovisuales, Gestión Cultural</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Implementa</td><td style="padding:6px 10px; color:#555;">Gestor/a Escénico, Apoya Gestor/a Audiovisual</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; vertical-align:top;">Dirigido a</td><td style="padding:6px 10px; color:#555;">Jóvenes de 14 a 28 años que quieran fortalecer su portafolio actoral</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">16. Mi cuerpo, mi ritmo: Creación colectiva de Percusión corporal</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Proceso de investigación sonora y expresiva que invita a explorar el cuerpo como fuente de ritmo y vibración, a través de la percusión corporal y la creación colectiva.<br>Mediante golpes, palmas, chasquidos y pisadas, los participantes experimentarán la construcción de patrones rítmicos en conjunto, desarrollando la escucha activa, la coordinación y la sincronía grupal.<br>Un espacio para sentir el ritmo en comunidad, conectar con la musicalidad interna y crear desde el cuerpo en movimiento.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Artes Musicales, Arte Danzario</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Implementa</td><td style="padding:6px 10px; color:#555;">Gestor/a Musical</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; vertical-align:top;">Dirigido a</td><td style="padding:6px 10px; color:#555;">Jóvenes de 14 a 28 años</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">17. El Código Musical:  Lee y escribe partituras</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Introducción al lenguaje escrito de la música, explorando la partitura como un sistema de signos que permite leer, interpretar y crear sonidos. A través de ejercicios prácticos y dinámicos, se desarrollan nociones básicas de ritmo, melodía y notación musical, fortaleciendo la escucha, la lectura musical y la capacidad de escribir ideas sonoras propias.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Artes Musicales</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Implementa</td><td style="padding:6px 10px; color:#555;">Gestor/a Musical</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; vertical-align:top;">Dirigido a</td><td style="padding:6px 10px; color:#555;">Jóvenes de 14 a 28 años con interés en la práctica musical.</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">18. Explosión Rítimica Batucada desde cero</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Este ciclo introduce a las y los participantes en la batucada como una práctica colectiva de percusión que combina ritmo, cuerpo y energía grupal. Desde nociones básicas hasta ensambles sencillos, el proceso fortalece la coordinación, la escucha y el trabajo en equipo, reconociendo el ritmo como una forma de expresión, encuentro y celebración comunitaria.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Artes Musicales</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">19. Guitarra para principiantes</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Un taller introductorio para aprender los fundamentos básicos de la guitarra y dar los primeros acordes en el mundo musical.<br>A través de ejercicios prácticos, exploración de acordes, ritmos y melodías, los participantes desarrollarán destrezas en la digitación, afinación y acompañamiento, mientras se conectan con la expresión sonora del instrumento.<br>Un espacio ideal para perderle el miedo a las cuerdas, disfrutar del proceso y comenzar a crear música desde cero.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Artes Musicales</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Implementa</td><td style="padding:6px 10px; color:#555;">Gestor/a Musical</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; vertical-align:top;">Dirigido a</td><td style="padding:6px 10px; color:#555;">Jóvenes de 14 a 28 años con interés en la práctica musical.</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">20. Tu Propio Show: Tips para la presentación musical en vivo</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Un taller enfocado en la construcción de una presentación musical en vivo, abordando escenografía, repertorio, puesta en escena y conexión con el público.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Artes Musicales</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Implementa</td><td style="padding:6px 10px; color:#555;">Gestor/a Musical</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; vertical-align:top;">Dirigido a</td><td style="padding:6px 10px; color:#555;">Jóvenes de 14 a 28 años que participen de un proyecto musical.</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">21. Musica Colombiana y Tradicional</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;"></p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">22. Revolución Sonora: Producción de Canciones</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Un recorrido general por el proceso de creación musical, desde la idea inicial hasta la producción final. Abarca composición, arreglos, grabación, mezcla y masterización, brindando a los participantes herramientas para producir sus propias canciones.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Producción Musical, Artes Musicales</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Implementa</td><td style="padding:6px 10px; color:#555;">Gestor/a Musical</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; vertical-align:top;">Dirigido a</td><td style="padding:6px 10px; color:#555;">Jóvenes de 14 a 28 años que participen de un proyecto musical.</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">23. Creación de Portafolio de Graffiti Comercial</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Creación de un portafolio orientado al mercado artístico y comercial, con enfoque en la presentación de proyectos, elaboración de dossiers y estrategias para promover el trabajo con marcas, empresas y espacios culturales.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Arte Urbano, Artes Plásticas</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Implementa</td><td style="padding:6px 10px; color:#555;">Gestor/a Graffiti</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; vertical-align:top;">Dirigido a</td><td style="padding:6px 10px; color:#555;">Jóvenes de 14 a 28 con experiencia inicial y media en el graffiti</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">24. Lettering y Tipografía Urbana</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Creación de letras y estilos tipográficos propios del arte urbano, explorando formas y composiciones.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Arte Urbano, Artes Plásticas</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">25. Gráfica Expandida</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;"></p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Artes Plásticas</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">26. Forjando Guerreros Ciclo de boxeo</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Este ciclo propone una introducción al boxeo como una práctica formativa que fortalece el cuerpo, la disciplina y la autoconfianza. A través del aprendizaje de técnicas básicas, rutinas físicas y ejercicios de coordinación, las y los participantes desarrollan resistencia, autocontrol y respeto por el otro, reconociendo el entrenamiento como un espacio de cuidado, enfoque y canalización positiva de la energía.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Deportes</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">27. El arte del control Ciclo en Jiujitsu</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Este ciclo aborda el jiujitsu como una disciplina que integra técnica, estrategia y autocontrol. A través del aprendizaje de fundamentos básicos, ejercicios de coordinación y prácticas guiadas, las y los participantes fortalecen la conciencia corporal, la disciplina y la gestión de la fuerza, promoviendo el respeto, la calma y la resolución consciente de situaciones de tensión.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Deportes</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">28. Raices en juego Ciclo en juegos tradicionales</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Este ciclo invita a redescubrir los juegos tradicionales como prácticas culturales vivas que fortalecen la identidad, la memoria colectiva y el encuentro comunitario. A través del juego, las y los participantes desarrollan habilidades motrices, cooperación y creatividad, reconociendo el cuerpo y la lúdica como formas de aprendizaje, cuidado y transmisión cultural entre generaciones.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Deportes</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">29. Más allá de la Cancha Ciclo en Baloncesto</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Este ciclo propone el baloncesto como una práctica que trasciende el juego para convertirse en un espacio de formación integral. A través del aprendizaje de fundamentos técnicos y dinámicas colectivas, las y los participantes fortalecen el trabajo en equipo, la comunicación, la disciplina y la toma de decisiones, promoviendo valores de convivencia, respeto y liderazgo dentro y fuera de la cancha.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Deportes</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">30. Laboratorio Piel Urbana: Graffiti</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Piel Urbana es un laboratorio avanzado de creación en graffiti y gráfica urbana, enfocado en la exploración de vinilos, texturas y técnicas mixtas aplicadas al muro y a soportes no convencionales. Más que un espacio de formación, el laboratorio propone procesos de investigación y producción artística colectiva, donde las y los participantes experimentan con capas, materialidades y lenguajes visuales para desarrollar obras gráficas con identidad propia, diálogo territorial y proyección en el espacio público.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Arte Urbano</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Implementa</td><td style="padding:6px 10px; color:#555;">Gestor/a Graffiti</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">31. Semillero Materia Viva: Animación en Stop Motion</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">es un semillero de animación en stop motion enfocado en la creación de relatos animados a partir de objetos, cuerpos y materiales cotidianos. Mediante la construcción de personajes, escenarios y la animación fotograma a fotograma, las y los participantes exploran el movimiento como acto creativo, fortaleciendo la paciencia, la imaginación y el trabajo colaborativo para dar vida a historias propias.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Artes Audiovisuales</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">32. Danza Expandida</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;"></p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">33. Gráfica Expandida</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Este ciclo de gráfica es un proceso de creación y experimentación en serigrafía, stencil, fanzine, collage y diversas técnicas de impresión y gráfica manual, diseñado para adaptarse a las particularidades de cada territorio, población y contexto institucional. A través del trabajo con tinta, plantillas, capas y repetición, el ciclo propone la exploración de la gráfica como lenguaje visual, herramienta de expresión colectiva y medio para narrar ideas, memorias y experiencias territoriales. Su metodología es flexible y ajustable, permitiendo adecuaciones según las necesidades técnicas, logísticas y pedagógicas del abordaje territorial. Asimismo, el ciclo aporta al fortalecimiento de iniciativas de emprendimiento cultural, promoviendo el desarrollo de productos gráficos, nociones básicas de producción, circulación y sostenibilidad, así como el trabajo colaborativo y la proyección de propuestas creativas en contextos comunitarios y económicos.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Artes Plásticas</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Implementa</td><td style="padding:6px 10px; color:#555;">Gestor/a Arte Urbano y Gráfica de Estrategia Móvil</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; vertical-align:top;">Dirigido a</td><td style="padding:6px 10px; color:#555;">Jóvenes de 14 a 28 años y comunidad en general que participen de los procesos territoriales de la Estrategia Móvil</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">34. Serigrafía</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Taller de introducción y exploración de la serigrafía como técnica de impresión manual adaptable a contextos territoriales diversos. A través del trabajo con plantillas, marcos, tinta y soportes accesibles, las y los participantes experimentan la serigrafía como herramienta de expresión colectiva, comunicación comunitaria y producción gráfica situada, ajustando los procesos técnicos a las condiciones del territorio y los recursos disponibles.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Artes Plásticas</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Implementa</td><td style="padding:6px 10px; color:#555;">Gestor/a Arte Urbano y Gráfica de Estrategia Móvil</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; vertical-align:top;">Dirigido a</td><td style="padding:6px 10px; color:#555;">Jóvenes de 14 a 28 años y comunidad en general que participen de los procesos territoriales de la Estrategia Móvil</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">35. Fanzine: Autoedición en Mano</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Taller de creación de fanzines como formato de autoedición gráfica y narrativa, donde texto e imagen dialogan para contar historias, memorias y experiencias territoriales. El taller se adapta a distintos niveles de alfabetización visual y escrita, permitiendo la participación activa de diversas poblaciones mediante el uso de técnicas manuales y accesibles.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Artes Plásticas</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Implementa</td><td style="padding:6px 10px; color:#555;">Gestor/a Arte Urbano y Gráfica de Estrategia Móvil</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; vertical-align:top;">Dirigido a</td><td style="padding:6px 10px; color:#555;">Jóvenes de 14 a 28 años y comunidad en general que participen de los procesos territoriales de la Estrategia Móvil</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">36. Collage: Cortar y Re-significar</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Taller de collage enfocado en la reconfiguración de imágenes, símbolos y materiales impresos para construir nuevos sentidos visuales. A partir del recorte, la superposición y el ensamblaje, las y los participantes exploran el collage como herramienta de reflexión crítica, memoria y resignificación del territorio y la experiencia cotidiana.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Artes Plásticas</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Implementa</td><td style="padding:6px 10px; color:#555;">Gestor/a Arte Urbano y Gráfica de Estrategia Móvil</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; vertical-align:top;">Dirigido a</td><td style="padding:6px 10px; color:#555;">Jóvenes de 14 a 28 años y comunidad en general que participen de los procesos territoriales de la Estrategia Móvil</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">37. Stencil:</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Taller de stencil como técnica gráfica rápida y replicable, ideal para intervenciones territoriales de corta duración. A través del diseño de plantillas y la repetición de imágenes, el taller explora el stencil como herramienta de comunicación visual, señalización simbólica y apropiación temporal del espacio, cuidando siempre el contexto y las dinámicas comunitarias del territorio.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Artes Plásticas</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Implementa</td><td style="padding:6px 10px; color:#555;">Gestor/a Arte Urbano y Gráfica de Estrategia Móvil</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; vertical-align:top;">Dirigido a</td><td style="padding:6px 10px; color:#555;">Jóvenes de 14 a 28 años y comunidad en general que participen de los procesos territoriales de la Estrategia Móvil</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">38. Grabado Alterno: Sello Casero (linografía casera, sellos, impresión con objetos)</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Taller de exploración de técnicas de grabado alternativo y experimental que no requieren infraestructura especializada. A través de sellos, matrices caseras y objetos cotidianos, las y los participantes experimentan procesos de impresión accesibles, favoreciendo la creatividad, la experimentación material y la adaptación técnica a contextos rurales o de difícil acceso.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Artes Plásticas</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Implementa</td><td style="padding:6px 10px; color:#555;">Gestor/a Arte Urbano y Gráfica de Estrategia Móvil</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; vertical-align:top;">Dirigido a</td><td style="padding:6px 10px; color:#555;">Jóvenes de 14 a 28 años y comunidad en general que participen de los procesos territoriales de la Estrategia Móvil</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">39. Afiche y gráfica comunitaria</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Taller orientado a la creación de afiches y piezas gráficas comunitarias, pensadas para comunicar mensajes colectivos, convocatorias o narrativas territoriales. El proceso integra diseño manual, composición visual y reflexión sobre el uso ético y situado de la imagen en espacios comunitarios.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Artes Plásticas</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Implementa</td><td style="padding:6px 10px; color:#555;">Gestor/a Arte Urbano y Gráfica de Estrategia Móvil</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; vertical-align:top;">Dirigido a</td><td style="padding:6px 10px; color:#555;">Jóvenes de 14 a 28 años y comunidad en general que participen de los procesos territoriales de la Estrategia Móvil</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">40. Creación de stickers: Pégate a esto</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Taller de creación de stickers como formato gráfico portátil y de rápida circulación. A partir del dibujo, la ilustración y la repetición, las y los participantes desarrollan imágenes que condensan ideas, símbolos o mensajes territoriales, pensadas para circular de manera responsable en espacios cotidianos.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Artes Plásticas</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Implementa</td><td style="padding:6px 10px; color:#555;">Gestor/a Arte Urbano y Gráfica de Estrategia Móvil</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; vertical-align:top;">Dirigido a</td><td style="padding:6px 10px; color:#555;">Jóvenes de 14 a 28 años y comunidad en general que participen de los procesos territoriales de la Estrategia Móvil</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">41. Gráfica Textil Básica: Estampar el Cuerpo</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Taller de introducción a la gráfica textil mediante técnicas manuales de impresión sobre tela. A través del estampado básico, el taller permite explorar el textil como soporte gráfico, promoviendo la creación de piezas vestibles con sentido identitario y comunitario.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Artes Plásticas</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Implementa</td><td style="padding:6px 10px; color:#555;">Gestor/a Arte Urbano y Gráfica de Estrategia Móvil</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; vertical-align:top;">Dirigido a</td><td style="padding:6px 10px; color:#555;">Jóvenes de 14 a 28 años y comunidad en general que participen de los procesos territoriales de la Estrategia Móvil</td></tr>
-                    </table>
-                </div>
-                <div class="card" style="margin-bottom:15px;">
-                    <h3 class="card-subtitle" style="font-size:1.05rem; color:#253C5C;">42. Fotografía Intervenida: La Imagen Alterada</h3>
-                    <p style="font-size:0.88rem; color:#555; line-height:1.6;">Taller de intervención manual de fotografías mediante dibujo, escritura, costura, tejido o collage. La propuesta invita a reconfigurar imágenes propias o del territorio, combinando fotografía y gráfica para generar nuevas narrativas visuales y afectivas.</p>
-                    <table style="width:100%; font-size:0.85rem; margin-top:10px;">
-                        <tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Línea</td><td style="padding:6px 10px; color:#555;">Artes Plásticas</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; width:120px; vertical-align:top;">Implementa</td><td style="padding:6px 10px; color:#555;">Gestor/a Arte Urbano y Gráfica de Estrategia Móvil</td></tr><tr><td style="padding:6px 10px; font-weight:600; color:#253C5C; vertical-align:top;">Dirigido a</td><td style="padding:6px 10px; color:#555;">Jóvenes de 14 a 28 años y comunidad en general que participen de los procesos territoriales de la Estrategia Móvil</td></tr>
-                    </table>
-                </div>
+                <!-- ====== FIN BLOQUE OFERTAS GENERADO POR SCRIPT ====== -->
+
+                
             </div></div>
+
+            <div class="content-section" id="reporte_politicas" style="display:none;"><div class="card">
+                <h2 class="card-title">Reporte a políticas</h2>
+                <!-- ====== INICIO BLOQUE REPORTE POLITICAS GENERADO POR SCRIPT ====== -->
+                <p style="font-family:Figtree, sans-serif; font-size:0.92rem; color:#3a3a3a; line-height:1.65; margin: 8px 0 14px; max-width:820px;">El eje de Cultura del servicio Casas de Juventud apunta de manera directa y transversal a varias Políticas Públicas Distritales y Planes Intersectoriales, gracias a sus acciones en formación artística, semilleros, laboratorios de creación, centros de audio y eventos culturales masivos como la Semana de la Juventud.</p>
+                <p style="font-family:Figtree, sans-serif; font-size:0.92rem; color:#3a3a3a; line-height:1.65; margin: 0 0 14px; max-width:820px;">Al ser un servicio de carácter inclusivo, todas las ofertas culturales y artísticas apuntan de forma transversal a las metas de vinculación con enfoque diferencial dentro de las Políticas Públicas de Ruralidad, Discapacidad, Migrantes Internacionales, Pueblos Indígenas, Pueblo Raizal, Rrom, y comunidades Negras, Afrocolombianas y Palenqueras.</p>
+                <p style="font-family:Figtree, sans-serif; font-size:0.92rem; color:#3a3a3a; line-height:1.65; margin: 0 0 14px; max-width:820px;">Cada atención que entrega Casas de Juventud se registra en <strong>SIRBE</strong> (Sistema de Registro de Beneficiarios) bajo un <strong>código de actividad</strong> que indica qué se hizo. El eje Cultura usa cinco códigos: 1207, 1488, 1489, 1490 y 1491. Cada tarjeta de esta sección muestra un código y los productos de política a los que reporta cuando se aplica esa actividad.</p>
+                <p style="font-family:Figtree, sans-serif; font-size:0.92rem; color:#3a3a3a; line-height:1.65; margin: 0 0 24px; max-width:820px;">El sistema de reporte funciona como una <strong>matriz cruzada</strong>: el código de actividad de SIRBE indica <em>qué</em> se hizo, y las variables de caracterización del participante en la ficha SIRBE indican <em>con quién</em> se hizo. Por eso muchos productos y políticas poblacionales no necesitan un código exclusivo: se alimentan de las actividades generales del eje cruzadas con la caracterización del joven.</p>
+
+                <article class="rp-card">
+                    <div class="rp-card-codigo">
+                        <p class="rp-card-label">Código SIRBE</p>
+                        <p class="rp-card-num">1207</p>
+                        <p class="rp-card-nombre">Aprovechamiento del tiempo libre con énfasis en intereses juveniles</p>
+                        <p class="rp-card-desc">Espacios de aprovechamiento del tiempo libre con énfasis en intereses juveniles: prácticas artísticas, culturales y deportivas que canalizan las inquietudes y talentos de las y los jóvenes.</p>
+                    </div>
+                    <div class="rp-card-grupos">
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública Distrital de Juventud</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.1.1 Implementación de las atenciones integrales para jóvenes</li>
+                                <li class="rp-prod">1.1.2. Jóvenes que asisten a las casas de juventud en las localidades que brindan espacios para el reconocimiento de su diversidad y el desarrollo de capacidades.</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública de Mujer y Equidad de Género</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.2.13 Sensibilización de jóvenes como agentes de cambio en derechos sexuales y derechos reproductivos con enfoque de género.</li>
+                                <li class="rp-prod">1.2.7 Sensibilización de agentes de cambio, servidoras y servidores públicos o contratistas en derechos sexuales y derechos reproductivos con enfoque de género.</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública LGBTI</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.3.10 Participación en la oferta de las casas de la juventud generando apropiación del espacio sin situaciones de discriminación y fortaleciendo el tejido social de los y las jóvenes de los sectores LGBTI.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="rp-card">
+                    <div class="rp-card-codigo">
+                        <p class="rp-card-label">Código SIRBE</p>
+                        <p class="rp-card-num">1488</p>
+                        <p class="rp-card-nombre">Centros de audio y grabación</p>
+                        <p class="rp-card-desc">Centros de audio y grabación: estudios y equipamiento técnico para producción musical, sonora y audiovisual de las juventudes.</p>
+                    </div>
+                    <div class="rp-card-grupos">
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública Distrital de Juventud</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.1.1 Implementación de las atenciones integrales para jóvenes</li>
+                                <li class="rp-prod">1.1.2. Jóvenes que asisten a las casas de juventud en las localidades que brindan espacios para el reconocimiento de su diversidad y el desarrollo de capacidades.</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública de Mujer y Equidad de Género</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.2.13 Sensibilización de jóvenes como agentes de cambio en derechos sexuales y derechos reproductivos con enfoque de género.</li>
+                                <li class="rp-prod">1.2.7 Sensibilización de agentes de cambio, servidoras y servidores públicos o contratistas en derechos sexuales y derechos reproductivos con enfoque de género.</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública LGBTI</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.3.10 Participación en la oferta de las casas de la juventud generando apropiación del espacio sin situaciones de discriminación y fortaleciendo el tejido social de los y las jóvenes de los sectores LGBTI.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="rp-card">
+                    <div class="rp-card-codigo">
+                        <p class="rp-card-label">Código SIRBE</p>
+                        <p class="rp-card-num">1489</p>
+                        <p class="rp-card-nombre">Formación artística focalizada</p>
+                        <p class="rp-card-desc">Formación artística focalizada: ciclos y talleres con contenidos técnicos y artísticos específicos (canto, danza, teatro, plástica, audiovisuales) para profundizar en un oficio.</p>
+                    </div>
+                    <div class="rp-card-grupos">
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública Distrital de Juventud</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.1.1 Implementación de las atenciones integrales para jóvenes</li>
+                                <li class="rp-prod">1.1.2. Jóvenes que asisten a las casas de juventud en las localidades que brindan espacios para el reconocimiento de su diversidad y el desarrollo de capacidades.</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública de Mujer y Equidad de Género</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.2.13 Sensibilización de jóvenes como agentes de cambio en derechos sexuales y derechos reproductivos con enfoque de género.</li>
+                                <li class="rp-prod">1.2.7 Sensibilización de agentes de cambio, servidoras y servidores públicos o contratistas en derechos sexuales y derechos reproductivos con enfoque de género.</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública LGBTI</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.3.10 Participación en la oferta de las casas de la juventud generando apropiación del espacio sin situaciones de discriminación y fortaleciendo el tejido social de los y las jóvenes de los sectores LGBTI.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="rp-card">
+                    <div class="rp-card-codigo">
+                        <p class="rp-card-label">Código SIRBE</p>
+                        <p class="rp-card-num">1490</p>
+                        <p class="rp-card-nombre">Espacios para el desarrollo y formación de actividades artísticas, culturales y con sentido</p>
+                        <p class="rp-card-desc">Espacios para el desarrollo y formación de actividades artísticas, culturales y con sentido: semilleros y laboratorios de creación colectiva de largo plazo.</p>
+                    </div>
+                    <div class="rp-card-grupos">
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública Distrital de Juventud</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.1.1 Implementación de las atenciones integrales para jóvenes</li>
+                                <li class="rp-prod">1.1.2. Jóvenes que asisten a las casas de juventud en las localidades que brindan espacios para el reconocimiento de su diversidad y el desarrollo de capacidades.</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública de Mujer y Equidad de Género</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.2.13 Sensibilización de jóvenes como agentes de cambio en derechos sexuales y derechos reproductivos con enfoque de género.</li>
+                                <li class="rp-prod">1.2.7 Sensibilización de agentes de cambio, servidoras y servidores públicos o contratistas en derechos sexuales y derechos reproductivos con enfoque de género.</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública LGBTI</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.3.10 Participación en la oferta de las casas de la juventud generando apropiación del espacio sin situaciones de discriminación y fortaleciendo el tejido social de los y las jóvenes de los sectores LGBTI.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="rp-card">
+                    <div class="rp-card-codigo">
+                        <p class="rp-card-label">Código SIRBE</p>
+                        <p class="rp-card-num">1491</p>
+                        <p class="rp-card-nombre">Semana de la Juventud</p>
+                        <p class="rp-card-desc">Semana de la Juventud: eventos masivos, festivales, concursos y muestras artísticas y culturales con motivo de la conmemoración anual.</p>
+                    </div>
+                    <div class="rp-card-grupos">
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública Distrital de Juventud</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.1.1 Implementación de las atenciones integrales para jóvenes</li>
+                                <li class="rp-prod">1.1.2. Jóvenes que asisten a las casas de juventud en las localidades que brindan espacios para el reconocimiento de su diversidad y el desarrollo de capacidades.</li>
+                                <li class="rp-prod">1.2.5 Jóvenes que participan en las semanas de la juventud.</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública de Mujer y Equidad de Género</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.2.13 Sensibilización de jóvenes como agentes de cambio en derechos sexuales y derechos reproductivos con enfoque de género.</li>
+                                <li class="rp-prod">1.2.7 Sensibilización de agentes de cambio, servidoras y servidores públicos o contratistas en derechos sexuales y derechos reproductivos con enfoque de género.</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública LGBTI</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.3.10 Participación en la oferta de las casas de la juventud generando apropiación del espacio sin situaciones de discriminación y fortaleciendo el tejido social de los y las jóvenes de los sectores LGBTI.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="rp-card rp-card-cruce">
+                    <div class="rp-card-codigo">
+                        <p class="rp-card-label">Sin código SIRBE propio</p>
+                        <p class="rp-card-num">+</p>
+                        <p class="rp-card-nombre">Productos que se reportan por cruce de variables</p>
+                        <p class="rp-aclaracion">Estos productos no tienen un código de actividad SIRBE propio. El reporte se logra cruzando las atenciones registradas bajo cualquiera de los cinco códigos del eje Cultura con las variables de caracterización del participante en la ficha SIRBE (grupo étnico, orientación sexual, rol ocupacional, ubicación territorial, condición de víctima, etc.) o con marcadores específicos en el nombre del curso.</p>
+                    </div>
+                    <div class="rp-card-grupos">
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública de Actividades Sexuales Pagadas</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">2.2.7 Jornadas de atención en estrategias de prevención, desarrollo de capacidades e información sobre el uso de métodos anticonceptivos dirigidas a personas jóvenes que realizan ASP.</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública de Infancia y Adolescencia</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.2.8. Formación a niñas, niños, adolescentes y familias en derechos sexuales y derechos reproductivos con enfoque de género y diferencial.</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública de la Población Negra, Afrocolombiana y Palenquera, en Bogotá D.C. 2024-2036</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.3.9 Casa de la juventud que implemente el protocolo que garantiza el cumplimiento del enfoque diferencial étnico negro afrocolombiano, y aporte a la pervivencia cultural de las y los jovenes negros y afrocolombianos, en concertación con la instancia de representación legal de las comunidades negras afrocolombianas en el Distrito Capital.</li>
+                            </ul>
+                            <p class="rp-cruce"><strong>Cómo se reporta:</strong> Ficha SIRBE casilla AA (grupo étnico). El equipo de la DADE toma a los y las jóvenes que reportaron autorreconocimiento étnico.</p>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública de Mujer y Equidad de Género</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">6.1.9 Niñas, niños, adolescentes y jóvenes con sensibilización e información en derechos sexuales y derechos reproductivos con enfoque de género.</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública de Seguridad paz y convivencia</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.1.7 Jóvenes informados en el marco de la estrategia de prevención de violencias y resolución de conflictos</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Política Pública</p>
+                            <p class="rp-grupo-tema">Política Pública LGBTI</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">1.2.11 Vinculación a la oferta de servicios de prevención de la maternidad y paternidad temprana y promoción de los derechos sexuales y los derechos reproductivos a los jóvenes de los sectores LGBTI</li>
+                                <li class="rp-prod">1.2.12 Estrategia de Orientación Socioocupacional que vincula a los Jóvenes de los sectores LGBTI a la oferta de los servicios de la subdirección para la juventud de la SDIS para facilitar su inclusión socio laboral.</li>
+                            </ul>
+                            <p class="rp-cruce"><strong>Cómo se reporta:</strong> Ficha SIRBE casillas E (identidad de género), F (identidad transgénero) y G (orientación sexual). El equipo de la DADE filtra a los y las jóvenes que se autorreconocen en sectores LGBTI.</p>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Plan</p>
+                            <p class="rp-grupo-tema">PAD Víctimas</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">Vincular al 100% de Jóvenes víctimas del conflicto armado a los servicios sociales y estrategias de la Subdirección para la Juventud, con cobertura y atención territorial</li>
+                            </ul>
+                            <p class="rp-cruce rp-cruce-pendiente"><strong>En revisión con Daniela Correa: el detalle de cómo se reporta este instrumento se actualizará cuando llegue el feedback del equipo de Políticas Públicas.</strong></p>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Plan</p>
+                            <p class="rp-grupo-tema">Plan de Acción Comité Intersectorial de Salud</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">Centros de escucha para la juventud</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Plan</p>
+                            <p class="rp-grupo-tema">Plan de Atención Intersectorial prevención y atención de la conducta suicida</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">Desarrollo de espacios de fortalecimiento de capacidades</li>
+                            </ul>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Plan</p>
+                            <p class="rp-grupo-tema">Plan operativo de reincorporación</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">Realizar jornadas de sensibilización sobre derechos sexuales y reproductivos para jóvenes entre los 14 y 28 años en proceso de reintegración en condiciones de vulnerabilidad segun lo requerido por parte de parte de la ARN y demás entidades del orden nacional y/o distrital.</li>
+                            </ul>
+                            <p class="rp-cruce rp-cruce-pendiente"><strong>En revisión con Daniela Correa: el detalle de cómo se reporta este instrumento se actualizará cuando llegue el feedback del equipo de Políticas Públicas.</strong></p>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Programa</p>
+                            <p class="rp-grupo-tema">PDET</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">PROD_49: Promoción del adecuado ejercicio de los derechos sexuales y reproductivos, prevención de violencia sexual en el marco de la prevención de la maternidad y paternidad temprana en los territorios PDET B-R durante cada vigencia.</li>
+                                <li class="rp-prod">PROD_54: Jornadas de oferta institucional de la Subdirección para la Juventud de la Secretaría Distrital de Integración Social dirigidas a la población juvenil en Sumapaz</li>
+                            </ul>
+                            <p class="rp-cruce rp-cruce-pendiente"><strong>En revisión con Daniela Correa: el detalle de cómo se reporta este instrumento se actualizará cuando llegue el feedback del equipo de Políticas Públicas.</strong></p>
+                        </div>
+                        <div class="rp-grupo">
+                            <p class="rp-grupo-tipo">Sistema</p>
+                            <p class="rp-grupo-tema">Sistema Distrital de Formación Artística y Cultural (SIDFAC)</p>
+                            <ul class="rp-prods">
+                                <li class="rp-prod">Formación y experiencias en arte, cultura, patrimonio y deporte dirigidas a la ciudadanía en general (enfoques de grupos poblacionales, etarios, étnicos, diferenciales) en el ámbito institucional, social y comunitario en los territorios.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+                <!-- ====== FIN BLOQUE REPORTE POLITICAS GENERADO POR SCRIPT ====== -->
+            </div></div>
+        
 
             <div class="content-section" id="datos_sirbe" style="display:none;"><div class="card">
                 <h2 class="card-title">Datos SIRBE 2025</h2>
@@ -677,6 +1993,16 @@
             if (items) items.classList.toggle('show');
         }
 
+        function toggleOferta(el) {
+            el.classList.toggle('abierta');
+        }
+
     </script>
+    <!-- Lucide Icons (flat icons de l&iacute;nea, MIT license) -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script>lucide.createIcons();
+/* === JS filtros chip (generado) === */
+/* === fin JS filtros === */
+</script>
 </body>
 </html>

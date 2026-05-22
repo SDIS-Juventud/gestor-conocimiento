@@ -1,22 +1,18 @@
 # -*- coding: utf-8 -*-
 """
-Actualiza la sección "Ofertas 2026" dentro de ejes/Bienestar.html a partir
-del Excel de ofertas.
+Actualiza la sección "Ofertas 2026" y "Reporte a políticas" dentro de
+ejes/Inclusion.html a partir de los Excels oficiales.
 
-El script es quirúrgico: NO regenera el HTML completo. Solo reemplaza el
-contenido interno del `<div class="content-section" id="ofertas_2026">`
-por chips de filtros (Tipo + Clasificación) + lista de tarjetas
-generadas desde el Excel. El resto del HTML (Resumen del eje, Tipos y
-formatos, Datos SIRBE, header, sidebar, CSS, JS) queda intacto.
+Es la versión análoga al script de Bienestar, ajustada al eje Inclusión
+Productiva: códigos SIRBE 1496/1497/1498/1499, hoja Excel diferente,
+exclusiones de otros ejes, etc.
 
-También inyecta una vez:
-  - El CSS adicional de los chips y de `.oferta.oculta` dentro de <style>
-  - El JS de filtrado al final del bloque <script>
+El script es quirúrgico: NO regenera el HTML completo, solo reemplaza
+el contenido entre marcadores `<!-- ====== INICIO BLOQUE ... ====== -->`
+y `<!-- ====== FIN BLOQUE ... ====== -->`. La sección "Datos SIRBE 2025"
+queda intacta (está hardcoded, se resuelve después).
 
-Si el script se corre dos veces, detecta los marcadores y reemplaza sin
-duplicar.
-
-Fuente: ejes/oferta 2026/Oferta 2026.xlsx, hoja 'Bienestar '.
+Fuente ofertas: ejes/oferta 2026/Oferta 2026.xlsx, hoja 'Oferta Inclusión productiva '.
 """
 
 import html
@@ -33,17 +29,17 @@ MARKER_POL_FIN = "<!-- ====== FIN BLOQUE REPORTE POLITICAS GENERADO POR SCRIPT =
 
 _AQUI = Path(__file__).resolve().parent
 BASE = _AQUI.parent
-HTML_PATH = BASE / "ejes" / "Bienestar.html"
+HTML_PATH = BASE / "ejes" / "Inclusion.html"
 EXCEL_OFERTAS = BASE / "ejes" / "oferta 2026" / "Oferta 2026.xlsx"
 # Mapeo oferta → código SIRBE (aproximación inicial, revisable a mano por
-# Carolina o Diego Huertas). Columnas esperadas:
+# Carolina o el equipo de Inclusión). Columnas esperadas:
 #   Nombre oferta | Tipo | Clasificación (Excel) | Código SIRBE |
 #   Nombre actividad SIRBE | Curso(s) sugerido(s) en SIRBE | Notas
-EXCEL_MAPEO_SIRBE = BASE / "ejes" / "oferta 2026" / "Mapeo_SIRBE_bienestar.xlsx"
+EXCEL_MAPEO_SIRBE = BASE / "ejes" / "oferta 2026" / "Mapeo_SIRBE_inclusion.xlsx"
 # Mapeo oferta → productos de política pública (lo que Felipe pidió reportar).
 # Una fila por par (oferta, producto). Se lee del Excel y se muestra debajo
 # del bloque SIRBE en cada tarjeta.
-EXCEL_MAPEO_POLITICAS = BASE / "ejes" / "Políticas" / "Mapeo_Politicas_bienestar.xlsx"
+EXCEL_MAPEO_POLITICAS = BASE / "ejes" / "Políticas" / "Mapeo_Politicas_inclusion.xlsx"
 # Excel oficial de reportes externos (Felipe). Lo leemos para construir
 # el mapeo código SIRBE → productos de política a los que aplica.
 EXCEL_REPORTES_POLITICAS = BASE / "ejes" / "Políticas" / "Reportes Externos Subdirección Juventud 2026.xlsx"
@@ -66,25 +62,28 @@ NOTA_DANIELA = "En revisión con Daniela Correa: el detalle de cómo se reporta 
 # Configuración editable de exclusiones + reglas de cruce. Si el archivo
 # existe, se lee de ahí; si no, se usan los valores hardcoded más abajo
 # como fallback.
-EXCEL_CONFIG_POLITICAS = BASE / "ejes" / "Políticas" / "Configuracion_politicas_bienestar.xlsx"
+EXCEL_CONFIG_POLITICAS = BASE / "ejes" / "Políticas" / "Configuracion_politicas_inclusion.xlsx"
 
-# Códigos SIRBE de Bienestar (orden de presentación: ascendente)
-CODIGOS_BIENESTAR = ["511", "1485", "1486", "1487"]
+# Códigos SIRBE del eje Inclusión Productiva (orden de presentación: ascendente).
+# Estos son los códigos que el equipo usa para reportar las atenciones de
+# Casas de Juventud en este eje (consistente con la sección Datos SIRBE 2025
+# del HTML actual).
+CODIGOS_BIENESTAR = ["1496", "1497", "1498", "1499"]
 NOMBRES_CODIGOS = {
-    "511": "Acompañamiento y orientación psicosocial",
-    "1485": "Centros de escucha",
-    "1486": "Talleres informativos en prevención",
-    "1487": "Cuidado frente al consumo responsable de SPA",
+    "1496": "Salas TIC para el fortalecimiento de habilidades y capacidades juveniles",
+    "1497": "Formación en emprendimiento y empleabilidad",
+    "1498": "Orientación socio-ocupacional dirigida a jóvenes",
+    "1499": "Formación para la generación de ingresos",
 }
 
 # Productos del Excel oficial que NO deben aparecer en la sección
-# "Reporte a políticas" de Bienestar, aunque el Excel los liste para
-# Casas de Juventud. Razón: corresponden a otros ejes (Inclusión social
-# y productiva, Cultura, Liderazgo) y no al eje Bienestar.
-# Se usan substrings normalizados (sin tildes, en minúsculas) sobre
-# (tema, producto). Si AMBOS sub-strings aparecen, el producto se omite.
+# "Reporte a políticas" de Inclusión, aunque el Excel los liste para
+# Casas de Juventud. Razón: corresponden a otros ejes (Bienestar, Cultura,
+# Liderazgo) y no al eje Inclusión Productiva. Se usan substrings
+# normalizados sobre (tema, producto). Si AMBOS sub-strings aparecen, el
+# producto se omite. El Excel de configuración (si existe) sobrescribe
+# esta lista.
 PRODUCTOS_POLITICAS_EXCLUIR = [
-    ("comite intersectorial de salud", "orientacion socio-ocupacional"),
     ("sidfac", ""),
     ("formacion artistica y cultural", ""),
 ]
@@ -360,10 +359,10 @@ def _html_seccion_politicas():
     # sea autocontenida (no obligue al lector a leer la sección de
     # Ofertas 2026 para entender qué es cada código).
     descripciones_codigo = {
-        "511": "Atenciones individuales con acompañamiento y orientación psicosocial al joven.",
-        "1485": "Espacios estructurados de escucha sobre DSDR. Incluye formación, acceso a información y ejercicio de derechos. Las salas de escucha de las Casas se reportan aquí.",
-        "1486": "Sesiones grupales con propósito formativo sobre DSDR, salud mental, PVBG y SPA. La mayoría de los ciclos, experiencias y encuentros caen aquí.",
-        "1487": "Espacios específicamente enfocados en prevención del consumo de sustancias psicoactivas, con metodología especializada.",
+        "1496": "Espacios de fortalecimiento de habilidades digitales y TIC (manejo de herramientas, alfabetización digital, conexión a oportunidades virtuales).",
+        "1497": "Procesos formativos en emprendimiento y empleabilidad: ciclos largos, talleres, master class y experiencias de preparación para el mundo laboral o productivo.",
+        "1498": "Orientación socio-ocupacional individual y grupal: salas de escucha (Proyecta-T), enrutamiento (Conecta-T), apoyo en toma de decisiones de carrera o vocación.",
+        "1499": "Formación para la generación de ingresos: educación flexible, oficios, formación técnica con enfoque productivo y conexión con el ecosistema económico.",
     }
 
     bloques = []
@@ -426,27 +425,27 @@ def _html_seccion_politicas():
 
     intro = (
         '                <p style="font-family:Figtree, sans-serif; font-size:0.92rem; color:#3a3a3a; line-height:1.65; margin: 8px 0 14px; max-width:820px;">'
-        'El eje de Bienestar del servicio Casas de Juventud apunta de manera directa y '
-        'transversal a varias Políticas Públicas Distritales y Planes Intersectoriales, '
-        'gracias a sus acciones en Derechos Sexuales y Reproductivos (DSYR), Salud Mental, '
-        'Prevención de Violencias Basadas en Género y prevención de Sustancias Psicoactivas (SPA).'
+        'El eje de Inclusión Productiva del servicio Casas de Juventud apunta de manera '
+        'directa y transversal a varias Políticas Públicas Distritales y Planes Intersectoriales, '
+        'gracias a sus acciones en orientación socio-ocupacional, formación para el empleo y '
+        'el emprendimiento, habilidades digitales y conexión con el ecosistema productivo.'
         '</p>\n'
         '                <p style="font-family:Figtree, sans-serif; font-size:0.92rem; color:#3a3a3a; line-height:1.65; margin: 0 0 14px; max-width:820px;">'
-        'Al ser un servicio de carácter inclusivo, todas las ofertas preventivas y de '
-        'acompañamiento en bienestar apuntan de forma transversal a las metas de '
-        'vinculación con enfoque diferencial dentro de las Políticas Públicas de '
+        'Al ser un servicio de carácter inclusivo, todas las ofertas de fortalecimiento de '
+        'capacidades y conexión con oportunidades apuntan de forma transversal a las metas '
+        'de vinculación con enfoque diferencial dentro de las Políticas Públicas de '
         'Ruralidad, Discapacidad, Migrantes Internacionales, Pueblos Indígenas, '
         'Pueblo Raizal, Rrom, y comunidades Negras, Afrocolombianas y Palenqueras.'
         '</p>\n'
         '                <p style="font-family:Figtree, sans-serif; font-size:0.92rem; color:#3a3a3a; line-height:1.65; margin: 0 0 14px; max-width:820px;">'
         'Cada atención que entrega Casas de Juventud se registra en <strong>SIRBE</strong> '
         '(Sistema de Registro de Beneficiarios) bajo un <strong>código de actividad</strong> '
-        'que indica qué se hizo. El eje Bienestar usa cuatro códigos: 511, 1485, 1486 y 1487. '
-        'Cada tarjeta de esta sección muestra un código y los productos de política a los que '
-        'reporta cuando se aplica esa actividad.'
+        'que indica qué se hizo. El eje Inclusión Productiva usa cuatro códigos: 1496, 1497, '
+        '1498 y 1499. Cada tarjeta de esta sección muestra un código y los productos de '
+        'política a los que reporta cuando se aplica esa actividad.'
         '</p>\n'
         '                <p style="font-family:Figtree, sans-serif; font-size:0.92rem; color:#3a3a3a; line-height:1.65; margin: 0 0 24px; max-width:820px;">'
-        'El sistema de reporte funciona como una <strong>matriz cruzada</strong>: el código de actividad de SIRBE indica <em>qué</em> se hizo, y las variables de caracterización del participante en la ficha SIRBE indican <em>con quién</em> se hizo. Por eso muchos productos y políticas poblacionales no necesitan un código exclusivo: se alimentan de las actividades generales de Bienestar cruzadas con la caracterización del joven.'
+        'El sistema de reporte funciona como una <strong>matriz cruzada</strong>: el código de actividad de SIRBE indica <em>qué</em> se hizo, y las variables de caracterización del participante en la ficha SIRBE indican <em>con quién</em> se hizo. Por eso muchos productos y políticas poblacionales no necesitan un código exclusivo: se alimentan de las actividades generales de Inclusión Productiva cruzadas con la caracterización del joven.'
         '</p>'
     )
 
@@ -549,7 +548,7 @@ def _html_seccion_politicas():
             '                        <p class="rp-card-num">+</p>\n'
             '                        <p class="rp-card-nombre">Productos que se reportan por cruce de variables</p>\n'
             '                        <p class="rp-aclaracion">Estos productos no tienen un código de actividad SIRBE propio. '
-            'El reporte se logra cruzando las atenciones registradas bajo cualquiera de los cuatro códigos de Bienestar '
+            'El reporte se logra cruzando las atenciones registradas bajo cualquiera de los cuatro códigos de Inclusión Productiva '
             'con las variables de caracterización del participante en la ficha SIRBE (grupo étnico, orientación sexual, '
             'rol ocupacional, ubicación territorial, condición de víctima, etc.) o con marcadores específicos en el '
             'nombre del curso.</p>\n'
@@ -573,7 +572,7 @@ def _leer_ofertas():
         return []
     wb = openpyxl.load_workbook(EXCEL_OFERTAS, data_only=True)
     nombre_hoja = next(
-        (n for n in wb.sheetnames if "ienestar" in n.lower() and "alianza" not in n.lower()),
+        (n for n in wb.sheetnames if "nclusi" in n.lower() and "alianza" not in n.lower()),
         None,
     )
     if nombre_hoja is None:
@@ -594,15 +593,25 @@ def _leer_ofertas():
         return v
 
     por_clave, orden = {}, []
+    # Hoja "Oferta Inclusión productiva" — columnas:
+    # 1=Periodo · 2=Eje · 3=Modalidad · 4=Tipo · 5=Clasificación ·
+    # 6=Línea · 7=Nombre · 8=Descripción · 9=Quién implementa ·
+    # 10=A quién está dirigido · 11=Meta · 12=Link metodología
     for r in range(3, ws.max_row + 1):
-        nombre = _limpiar(cell(r, 5))
+        nombre = _limpiar(cell(r, 7))
         if not nombre:
             continue
         # Exclusiones editoriales
         if _normalizar(nombre) in OFERTAS_EXCLUIR:
             continue
-        tipo = _limpiar(cell(r, 3))
-        clasif = _limpiar(cell(r, 4)).split("\n")[0].strip()
+        # El Excel a veces trae varios tipos separados por coma. Para
+        # asignar color y filtro, usamos solo el PRIMER tipo listado
+        # (Carolina puede agregar overrides si es necesario).
+        tipo_raw = _limpiar(cell(r, 4))
+        # Quitar el prefijo "1. ", "2. ", "3. " si aparece y tomar el
+        # primer ítem si vienen varios separados por coma.
+        tipo = re.sub(r"^\d+\.\s*", "", tipo_raw.split(",")[0]).strip()
+        clasif = _limpiar(cell(r, 5)).split("\n")[0].strip()
         # Aplicar override editorial si existe para esta oferta
         override = OFERTAS_OVERRIDE.get(_normalizar(nombre), {})
         if "tipo" in override:
@@ -612,17 +621,17 @@ def _leer_ofertas():
 
         clave = (tipo, clasif, nombre)
         if clave not in por_clave:
-            descripcion = override.get("descripcion") or _limpiar(cell(r, 6))
+            descripcion = override.get("descripcion") or _limpiar(cell(r, 8))
             por_clave[clave] = {
                 "tipo": tipo,
                 "clasificacion": clasif,
                 "nombre": nombre,
-                "modalidad": _limpiar(cell(r, 2)),
+                "modalidad": _limpiar(cell(r, 3)),
+                "linea": _limpiar(cell(r, 6)),
                 "descripcion": descripcion,
-                "implementa": _limpiar(cell(r, 7)),
-                "dirigido_a": _limpiar(cell(r, 8)),
-                "localidad": _limpiar(cell(r, 9)),
-                "mes": _limpiar(cell(r, 10)),
+                "implementa": _limpiar(cell(r, 9)),
+                "dirigido_a": _limpiar(cell(r, 10)),
+                "periodo": _limpiar(cell(r, 1)),
                 "meta": _limpiar(cell(r, 11)),
             }
             orden.append(clave)
@@ -653,10 +662,11 @@ def _esc(texto):
 
 
 # Color de título por tipo de oferta (estilo banderas usado en Tipos y formatos).
+# Paleta análoga a Bienestar pero adaptada al eje Inclusión Productiva.
 COLOR_TIPO = {
-    "Fortalecimiento de habilidades": "#f4676e",
-    "Conexión con oportunidades": "#1eaf76",
-    "Participación": "#2fa4d4",
+    "Enrutamiento": "#f4676e",
+    "Fortalecimiento de habilidades": "#1eaf76",
+    "Conexión con oportunidades": "#f5b800",
 }
 
 # Ofertas que NO deben aparecer en la página (decisión editorial de Carolina).
@@ -757,9 +767,10 @@ def _tarjeta(o, mapeo_sirbe):
     # label/valor estilo editorial (sin badges, sin cápsulas).
     meta_items = []
     for label, key in [
-        ("Modalidad", "modalidad"),
+        ("Línea", "linea"),
+        ("Implementa", "implementa"),
         ("Dirigido a", "dirigido_a"),
-        ("Mes", "mes"),
+        ("Periodo", "periodo"),
         ("Meta", "meta"),
     ]:
         v = o.get(key, "")
@@ -784,42 +795,40 @@ def _tarjeta(o, mapeo_sirbe):
 
 INTRO_OFERTAS_SIRBE = """\
                 <div class="bn-intro">
-                    <p>Las ofertas del eje Bienestar son <strong>actividades puntuales y procesos pedag&oacute;gicos</strong> que se entregan en las Casas de Juventud. Cada una se registra en <strong>SIRBE</strong> (Sistema de Registro de Beneficiarios) bajo uno de los cuatro c&oacute;digos de actividad que la subdirecci&oacute;n usa para las atenciones de Casas de Juventud del eje Bienestar:</p>
+                    <p>Las ofertas del eje Inclusi&oacute;n Productiva son <strong>actividades puntuales, ciclos formativos y procesos de acompa&ntilde;amiento</strong> que se entregan en las Casas de Juventud. Cada una se registra en <strong>SIRBE</strong> (Sistema de Registro de Beneficiarios) bajo uno de los cuatro c&oacute;digos de actividad que la subdirecci&oacute;n usa para este eje:</p>
 
                     <div class="bn-codigos-lista">
                         <div class="bn-codigo-item">
-                            <p class="bn-codigo-num">511</p>
+                            <p class="bn-codigo-num">1496</p>
                             <div class="bn-codigo-cuerpo">
-                                <p class="bn-codigo-nombre">Acompa&ntilde;amiento y orientaci&oacute;n psicosocial</p>
-                                <p class="bn-codigo-desc">Atenciones individuales con acompa&ntilde;amiento y orientaci&oacute;n psicosocial al joven.</p>
+                                <p class="bn-codigo-nombre">Salas TIC para el fortalecimiento de habilidades y capacidades juveniles</p>
+                                <p class="bn-codigo-desc">Espacios de fortalecimiento de habilidades digitales y TIC: manejo de herramientas, alfabetizaci&oacute;n digital, conexi&oacute;n a oportunidades virtuales.</p>
                             </div>
                         </div>
                         <div class="bn-codigo-item">
-                            <p class="bn-codigo-num">1485</p>
+                            <p class="bn-codigo-num">1497</p>
                             <div class="bn-codigo-cuerpo">
-                                <p class="bn-codigo-nombre">Centros de escucha</p>
-                                <p class="bn-codigo-desc">Espacios estructurados de escucha sobre derechos sexuales y reproductivos. Incluye formaci&oacute;n, acceso a informaci&oacute;n y ejercicio de derechos. Aqu&iacute; se encuentran las salas de escucha de las Casas.</p>
+                                <p class="bn-codigo-nombre">Formaci&oacute;n en emprendimiento y empleabilidad</p>
+                                <p class="bn-codigo-desc">Procesos formativos en emprendimiento y empleabilidad: ciclos largos, talleres, master class y experiencias de preparaci&oacute;n para el mundo laboral o productivo.</p>
                             </div>
                         </div>
                         <div class="bn-codigo-item">
-                            <p class="bn-codigo-num">1486</p>
+                            <p class="bn-codigo-num">1498</p>
                             <div class="bn-codigo-cuerpo">
-                                <p class="bn-codigo-nombre">Talleres informativos en prevenci&oacute;n</p>
-                                <p class="bn-codigo-desc">Sesiones grupales con prop&oacute;sito formativo sobre DSDR, salud mental, PVBG y SPA. Es el c&oacute;digo donde caen la mayor&iacute;a de los ciclos, experiencias, encuentros y eventos masivos.</p>
+                                <p class="bn-codigo-nombre">Orientaci&oacute;n socio-ocupacional dirigida a j&oacute;venes</p>
+                                <p class="bn-codigo-desc">Salas de escucha (Proyecta-T), enrutamiento (Conecta-T) y acompa&ntilde;amiento individual o grupal en toma de decisiones de carrera y proyecto de vida.</p>
                             </div>
                         </div>
                         <div class="bn-codigo-item">
-                            <p class="bn-codigo-num">1487</p>
+                            <p class="bn-codigo-num">1499</p>
                             <div class="bn-codigo-cuerpo">
-                                <p class="bn-codigo-nombre">Cuidado frente al consumo responsable de SPA</p>
-                                <p class="bn-codigo-desc">Espacios espec&iacute;ficamente enfocados en prevenci&oacute;n del consumo de sustancias psicoactivas, con metodolog&iacute;a especializada y enfoque de reducci&oacute;n de da&ntilde;o.</p>
+                                <p class="bn-codigo-nombre">Formaci&oacute;n para la generaci&oacute;n de ingresos</p>
+                                <p class="bn-codigo-desc">Educaci&oacute;n flexible, oficios, formaci&oacute;n t&eacute;cnica con enfoque productivo y conexi&oacute;n con el ecosistema econ&oacute;mico.</p>
                             </div>
                         </div>
                     </div>
 
-                    <p class="bn-intro-nota">El c&oacute;digo <strong>1599 Orientaci&oacute;n psicosocial</strong> estaba antes en la tabla, pero ya no aparece en la tabla de homologaci&oacute;n vigente.</p>
-
-                    <p class="bn-intro-nota">Para mayor informaci&oacute;n sobre la desagregaci&oacute;n SIRBE para el eje Casas de Juventud &mdash; Bienestar, consulte la <a href="#datos_sirbe" onclick="showContent('datos_sirbe'); return false;">desagregaci&oacute;n detallada de Datos SIRBE 2025</a>.</p>
+                    <p class="bn-intro-nota">Para mayor informaci&oacute;n sobre la desagregaci&oacute;n SIRBE para el eje Casas de Juventud &mdash; Inclusi&oacute;n Productiva, consulte la <a href="#datos_sirbe" onclick="showContent('datos_sirbe'); return false;">desagregaci&oacute;n detallada de Datos SIRBE 2025</a>.</p>
                 </div>
 
 """
@@ -827,8 +836,8 @@ INTRO_OFERTAS_SIRBE = """\
 
 def _bloque_ofertas(ofertas, mapeo_sirbe):
     """Genera el contenido completo a inyectar entre los marcadores.
-    Incluye un intro explicando los 5 códigos SIRBE de Bienestar más la
-    lista de tarjetas. Los filtros se removieron por decisión de Carolina."""
+    Incluye un intro explicando los 4 códigos SIRBE de Inclusión Productiva
+    más la lista de tarjetas. Los filtros se removieron por decisión de Carolina."""
     tarjetas = "\n\n".join(_tarjeta(o, mapeo_sirbe) for o in ofertas)
     return f'''{MARKER_INI}
 {INTRO_OFERTAS_SIRBE}
@@ -956,7 +965,7 @@ CSS_CHIPS = f"""
 #datos_sirbe .card {{ overflow-x: auto; }}
 #datos_sirbe table {{ table-layout: auto; max-width: 100%; }}
 #datos_sirbe table td, #datos_sirbe table th {{ word-break: break-word; overflow-wrap: break-word; }}
-#datos_sirbe [id^="cursos_BIENESTAR_"] {{ overflow-x: auto; }}
+#datos_sirbe [id^="cursos_INC_"] {{ overflow-x: auto; }}
 {CSS_MARKER_FIN}
 """
 

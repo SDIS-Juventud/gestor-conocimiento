@@ -24,6 +24,8 @@ validacion_*.html
 # Documentación oficial JCO: PDFs muy pesados que viven en Google Drive
 # y eventualmente en SharePoint. Los enlaces se gestionan desde enlaces.xlsx.
 Documentación JCO/
+# Script auxiliar local (no va al repo: extrae HTMLs para alimentar NotebookLM).
+scripts/extraer_htmls_para_notebooklm.py
 __pycache__/
 .ipynb_checkpoints/
 *.bak

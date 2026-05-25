@@ -206,6 +206,7 @@ SIDEBAR_CONTEXTO = """\
                     <span>Contexto</span><span class="arrow">&#9654;</span>
                 </div>
                 <div class="sidebar-items show">
+                    <div class="sidebar-item" onclick="showContent('linea_tiempo')">L&iacute;nea de tiempo</div>
                     <div class="sidebar-item" onclick="showContent('descripcion')">Objetivos</div>
                     <div class="sidebar-item" onclick="showContent('triage')">Detecci&oacute;n de alertas</div>
                     <div class="sidebar-item" onclick="showContent('protocolos')">C&oacute;mo opera</div>
@@ -246,6 +247,73 @@ SECCION_WELCOME = """\
                     <p>Sistema de identificaci&oacute;n y seguimiento de alertas tempranas para la protecci&oacute;n integral de la poblaci&oacute;n joven. A partir del triage psicosocial, el equipo identifica situaciones de riesgo y activa los protocolos de atenci&oacute;n correspondientes.</p>
                     <div style="margin:30px auto 0; max-width:450px;">
                         <img src="imagenes/alertas.jpeg" alt="Parche seguro" style="width:100%; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,0.06);">
+                    </div>
+                </div>
+            </div>"""
+
+# Línea de tiempo de Parche Seguro: 6 hitos (2021-2025) reconstruidos a partir
+# del documento que envió el equipo. Mismo componente .linea-tiempo / .lt-hito
+# compartido con Casas de Juventud y JCO (CSS en _comun/estilos.py). Los íconos
+# Lucide se eligen para reflejar la naturaleza de cada hito.
+SECCION_LINEA_TIEMPO = """\
+            <div class="content-section" id="linea_tiempo">
+                <div class="card">
+                    <h2 class="card-title">L&iacute;nea de tiempo</h2>
+                    <p style="color:#555; margin-bottom:24px; line-height:1.7;">Parche Seguro se construy&oacute; de manera progresiva a partir de la experiencia del servicio Parceros por Bogot&aacute;. La estrategia parti&oacute; de identificar las situaciones de vulneraci&oacute;n que llevaban a los j&oacute;venes a desistir del servicio y evolucion&oacute; hasta convertirse en un equipo transversal a la Subdirecci&oacute;n para la Juventud.</p>
+                    <div class="linea-tiempo" style="--lt-cols: 6;">
+                        <article class="lt-hito">
+                            <div class="lt-chevron lt-c1"><i data-lucide="user-plus"></i>2021</div>
+                            <div class="lt-cuerpo">
+                                <div class="lt-icono lt-i1"><i data-lucide="user-plus"></i></div>
+                                <div class="lt-titulo lt-t1">Punto de partida</div>
+                                <div class="lt-texto">Ingreso masivo de j&oacute;venes a Servicio <strong>Parceros por Bogot&aacute;</strong> con alto grado de vulneraci&oacute;n de derechos.</div>
+                            </div>
+                        </article>
+
+                        <article class="lt-hito">
+                            <div class="lt-chevron lt-c2"><i data-lucide="alert-triangle"></i>2022</div>
+                            <div class="lt-cuerpo">
+                                <div class="lt-icono lt-i2"><i data-lucide="alert-triangle"></i></div>
+                                <div class="lt-titulo lt-t2">Vulneraciones detectadas</div>
+                                <div class="lt-texto">Se identifica desistimiento de los y las j&oacute;venes del servicio por situaciones relacionadas a vulneraci&oacute;n de derechos (violencia, situaciones de salud mental, entre otros).</div>
+                            </div>
+                        </article>
+
+                        <article class="lt-hito">
+                            <div class="lt-chevron lt-c3"><i data-lucide="clipboard-list"></i>2022</div>
+                            <div class="lt-cuerpo">
+                                <div class="lt-icono lt-i3"><i data-lucide="clipboard-list"></i></div>
+                                <div class="lt-titulo lt-t3">Nace el Equipo de Alertas</div>
+                                <div class="lt-texto">Se crea el <strong>Equipo de Alertas</strong> dentro de la Ruta Integral de Atenci&oacute;n de la SDIS Juventud. Se realizan grupos focales con los equipos psicosociales para identificar cu&aacute;les situaciones se reportan con mayor frecuencia y se construye el <strong>formulario de reporte de alertas</strong> para el registro, orientaci&oacute;n y enrutamiento.</div>
+                            </div>
+                        </article>
+
+                        <article class="lt-hito">
+                            <div class="lt-chevron lt-c4"><i data-lucide="bell-ring"></i>2023</div>
+                            <div class="lt-cuerpo">
+                                <div class="lt-icono lt-i4"><i data-lucide="bell-ring"></i></div>
+                                <div class="lt-titulo lt-t4">Reportes en operaci&oacute;n</div>
+                                <div class="lt-texto">El Equipo recibe <strong>reportes semanales de alertas</strong> por parte del servicio Parceros por Bogot&aacute; y enruta a entidades competentes.</div>
+                            </div>
+                        </article>
+
+                        <article class="lt-hito">
+                            <div class="lt-chevron lt-c5"><i data-lucide="network"></i>2024</div>
+                            <div class="lt-cuerpo">
+                                <div class="lt-icono lt-i5"><i data-lucide="network"></i></div>
+                                <div class="lt-titulo lt-t5">Articulaci&oacute;n y ampliaci&oacute;n</div>
+                                <div class="lt-texto">Se identifica la necesidad de fortalecer la estrategia por medio de <strong>articulaciones interinstitucionales</strong> que permitan tener un acceso oportuno en la atenci&oacute;n y seguimiento de los casos, y de ampliar la estrategia a los otros servicios de la SDIS Juventud.</div>
+                            </div>
+                        </article>
+
+                        <article class="lt-hito">
+                            <div class="lt-chevron lt-c6"><i data-lucide="shield-check"></i>2025</div>
+                            <div class="lt-cuerpo">
+                                <div class="lt-icono lt-i6"><i data-lucide="shield-check"></i></div>
+                                <div class="lt-titulo lt-t6">Nace Parche Seguro</div>
+                                <div class="lt-texto">Se conforma el <strong>equipo transversal de alertas</strong> y se construye la <strong>Ficha Metodol&oacute;gica</strong>. Se inicia la articulaci&oacute;n interinstitucional y la construcci&oacute;n conjunta de protocolos de atenci&oacute;n con las entidades competentes; arranca el fortalecimiento t&eacute;cnico a los Equipos de Alertas de cada servicio y se consolida el registro mediante <strong>tablero de control</strong>. Se plantea la creaci&oacute;n de la Estrategia de Alertas con el nombre de <strong>Parche Seguro</strong>.</div>
+                            </div>
+                        </article>
                     </div>
                 </div>
             </div>"""
@@ -627,6 +695,8 @@ HTML_COMPLETO = f"""\
         <main class="main-content">
 
 {SECCION_WELCOME}
+
+{SECCION_LINEA_TIEMPO}
 
 {SECCION_DESCRIPCION}
 

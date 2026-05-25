@@ -86,6 +86,7 @@ body { font-family: 'Figtree', 'Segoe UI', sans-serif; background-color: #ffffff
     .container { flex-direction: column; }
     .sidebar { width: 100%; border-right: none; border-bottom: 1px solid #e0e0e0; }
     .rutas-formacion-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
+    .equipo-fila-inferior { grid-template-columns: 1fr !important; gap: 22px !important; }
 }"""
 
 

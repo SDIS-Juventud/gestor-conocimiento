@@ -113,6 +113,37 @@ PRODUCTOS_POLITICAS_EXCLUIR = [
 MARKER_INI = "<!-- ====== INICIO BLOQUE OFERTAS GENERADO POR SCRIPT ====== -->"
 MARKER_FIN = "<!-- ====== FIN BLOQUE OFERTAS GENERADO POR SCRIPT ====== -->"
 
+MARKER_INTRO_INI = "<!-- ====== INICIO BLOQUE INTRO QUE_ES GENERADO POR SCRIPT ====== -->"
+MARKER_INTRO_FIN = "<!-- ====== FIN BLOQUE INTRO QUE_ES GENERADO POR SCRIPT ====== -->"
+
+# Bloque introductorio de la sección "Qué es SIDICU". Refleja la
+# descripción que dio Juliana (líder de SIDICU) en audio del 2026-05-27:
+# dos líneas de trabajo (respiro vs transformación cultural), las tres R
+# del Sistema Distrital de Cuidado, y la regla de reporte a Bienestar/
+# Cultura según si el participante es cuidador o no. La transcripción
+# literal del audio queda en Notes/ para referencia.
+BLOQUE_INTRO_QUE_ES = f"""{MARKER_INTRO_INI}
+                <p style="line-height:1.7; max-width:680px;">SIDICU es el componente de Casas de Juventud dedicado a las <strong>juventudes que ejercen roles de cuidado</strong>: cuidan a adultos mayores, personas con discapacidad, niños y niñas u otros miembros de su hogar. Es un perfil de joven con cargas, horarios y necesidades específicas, que requiere una atención diferenciada.</p>
+                <p style="line-height:1.7; margin-top:14px; max-width:680px;">El propósito del componente es <strong>fortalecer el proyecto de vida y el bienestar integral</strong> de las y los jóvenes cuidadores, reconociendo el cuidado como un trabajo y una práctica corresponsable que históricamente ha recaído sobre las juventudes (sobre todo mujeres).</p>
+
+                <h3 class="card-subtitle" style="margin-top:24px;">Dos líneas de trabajo</h3>
+                <p style="line-height:1.7; max-width:680px;"><strong>Actividades de respiro.</strong> Espacios pensados <strong>exclusivamente</strong> para personas jóvenes cuidadoras. Tienen un enfoque de bienestar, desconexión y descanso de sus rutinas de cuidado.</p>
+                <p style="line-height:1.7; margin-top:10px; max-width:680px;"><strong>Transformación cultural.</strong> Participan tanto personas cuidadoras <strong>como no cuidadoras</strong>. Utiliza metodologías pedagógicas y psicosociales para transformar las percepciones tradicionales sobre el trabajo de cuidado, en el marco del modelo de las <strong>Tres R</strong> del Sistema Distrital de Cuidado:</p>
+                <ul style="line-height:1.7; max-width:680px; padding-left:24px;">
+                    <li><strong>Reconocer</strong>: visibilizar el trabajo que realizan las personas cuidadoras.</li>
+                    <li><strong>Reducir</strong>: reducir la carga de cuidado que manejan.</li>
+                    <li><strong>Redistribuir</strong>: que todas las actividades de cuidado de la vida cotidiana sean realizadas por todas las personas de la sociedad, no principalmente por las mujeres.</li>
+                </ul>
+
+                <h3 class="card-subtitle" style="margin-top:24px;">Cómo reporta SIDICU</h3>
+                <p style="line-height:1.7; max-width:680px;">SIDICU reporta a <strong>dos ejes</strong> de Casas de Juventud: <strong>Bienestar</strong> y <strong>Cultura</strong>. La asignación depende del perfil del participante:</p>
+                <ul style="line-height:1.7; max-width:680px; padding-left:24px;">
+                    <li>Cuando las personas atendidas son <strong>cuidadoras</strong>, la actividad se reporta a la meta de <strong>Cultura</strong>.</li>
+                    <li>Cuando son personas <strong>no cuidadoras</strong> (participantes de actividades de transformación cultural), la actividad se reporta a la meta de <strong>Bienestar</strong>.</li>
+                </ul>
+                <p style="line-height:1.7; margin-top:14px; max-width:680px;">El ajuste de las metas a los parámetros de SIRBE lo realiza el <strong>equipo de Gestión y Análisis de Datos</strong> de Casas de Juventud (María Angélica y Jorge).</p>
+                {MARKER_INTRO_FIN}"""
+
 CSS_MARKER_INI = "/* === CSS chips de filtros (generado) === */"
 CSS_MARKER_FIN = "/* === fin CSS chips === */"
 
@@ -713,20 +744,21 @@ OFERTAS_OVERRIDE = {
 
 
 def _tarjeta(o, mapeo_sirbe):
-    """Genera una tarjeta horizontal de oferta. Mismo aire que las fichas
-    'A tener en cuenta' de Forjar pero ancha en lugar de en grid de 3.
-    Layout:
-        [ Clasif + Título + Descripción ] [ Bloque SIRBE a la derecha ]
-    El bloque SIRBE muestra el código y el nombre de la actividad bajo la
-    cual se reporta esta oferta en SIRBE (aproximación del mapeo)."""
+    """Genera una tarjeta horizontal de oferta. Solo muestra
+    Clasificación + Título + Descripción + metadatos. Sin bloque SIRBE
+    (decisión 2026-05-27: la regla de reporte se explica en el intro
+    de 'Qué es SIDICU' a partir del perfil del participante, no a
+    partir del código SIRBE por tarjeta).
+
+    El parámetro mapeo_sirbe se mantiene en la firma para no romper
+    el llamador, pero ya no se usa aquí."""
+    del mapeo_sirbe  # no usado
     tipo_slug = _slug(o["tipo"]) if o["tipo"] else "sin-tipo"
     clasif_slug = _slug(o["clasificacion"]) if o["clasificacion"] else "sin-clasif"
     color = COLOR_TIPO.get(o["tipo"], "#2F3E3C")
     descripcion = _esc(o["descripcion"]) or "<em style=\"color:#888;\">Sin descripción registrada en el Excel.</em>"
     clasif_label = _esc(o["clasificacion"])
     tipo_label = _esc(o["tipo"])
-    # Tipo + clasificación van combinados en una sola etiqueta gris
-    # encima del nombre (kicker). Solo el nombre lleva el color del tipo.
     etiqueta_partes = [x for x in (tipo_label, clasif_label) if x]
     etiqueta_html = ""
     if etiqueta_partes:
@@ -734,47 +766,6 @@ def _tarjeta(o, mapeo_sirbe):
             f'<p class="bn-kicker">{" &middot; ".join(etiqueta_partes)}</p>'
         )
 
-    # Buscar mapeo SIRBE para esta oferta. Primero match exacto;
-    # si no, buscar por contención (Excel puede tener texto extra
-    # tipo "(No es prioritaria)" que el mapeo no incluye).
-    clave = _normalizar(o["nombre"])
-    entradas = mapeo_sirbe.get(clave, [])
-    if not entradas:
-        for k, v in mapeo_sirbe.items():
-            if k and (k in clave or clave in k):
-                entradas = v
-                break
-
-    entradas_validas = [e for e in entradas if e.get("codigo") or e.get("actividad_sirbe")]
-
-    if entradas_validas:
-        items = []
-        for e in entradas_validas:
-            uso_html = ""
-            if e.get("uso"):
-                uso_html = f'<p class="bn-sirbe-uso">{_esc(e["uso"])}</p>'
-            items.append(
-                '                            <div class="bn-sirbe-item">\n'
-                f'                                <p class="bn-sirbe-codigo">{_esc(e["codigo"]) or "—"}</p>\n'
-                f'                                <p class="bn-sirbe-actividad">{_esc(e["actividad_sirbe"])}</p>\n'
-                f'                                {uso_html}\n'
-                '                            </div>'
-            )
-        items_html = "\n".join(items)
-        sirbe_html = f'''
-                        <aside class="bn-sirbe">
-                            <p class="bn-sirbe-label">Reporte SIRBE</p>
-{items_html}
-                        </aside>'''
-    else:
-        sirbe_html = '''
-                        <aside class="bn-sirbe">
-                            <p class="bn-sirbe-label">Reporte SIRBE</p>
-                            <p class="bn-sirbe-pendiente">Por mapear</p>
-                        </aside>'''
-
-    # Mini-ficha de metadatos: solo los campos con valor, en lista
-    # label/valor estilo editorial (sin badges, sin cápsulas).
     meta_items = []
     for label, key in [
         ("Modalidad", "modalidad"),
@@ -798,17 +789,13 @@ def _tarjeta(o, mapeo_sirbe):
                             {etiqueta_html}
                             <h4 class="bn-titulo" style="color:{color};">{_esc(o["nombre"])}</h4>
                             <p class="bn-texto">{descripcion}</p>{meta_html}
-                        </div>{sirbe_html}
+                        </div>
                     </div>'''
 
 
-INTRO_OFERTAS_SIRBE = """\
-                <div class="bn-intro">
-                    <p>SIDICU es un <strong>eje transversal</strong>: sus ofertas para j&oacute;venes cuidadores y cuidadoras tocan al mismo tiempo bienestar, inclusi&oacute;n productiva, liderazgo y cultura. Por eso <strong>no tiene c&oacute;digos SIRBE propios</strong>: cada oferta se registra bajo los c&oacute;digos de los otros ejes seg&uacute;n el contenido que predomine.</p>
-                    <p class="bn-intro-nota">En cada tarjeta de la oferta se indica el c&oacute;digo SIRBE bajo el cual se reporta esa actividad y a qu&eacute; eje pertenece ese c&oacute;digo. Una misma oferta puede reportar a varios c&oacute;digos a la vez. Algunas ofertas a&uacute;n est&aacute;n en construcci&oacute;n y aparecen marcadas como pendientes.</p>
-                </div>
-
-"""
+# Intro de Ofertas 2026: se eliminó (2026-05-27). La lógica de reporte
+# se explica ahora en el intro de "Qué es SIDICU".
+INTRO_OFERTAS_SIRBE = ""
 
 
 def _bloque_ofertas(ofertas, mapeo_sirbe):
@@ -1048,6 +1035,42 @@ def _reemplazar_bloque_ofertas(html_actual, bloque_nuevo):
     )
 
 
+def _reemplazar_intro_que_es(html_actual, bloque_nuevo):
+    """Reemplaza el contenido entre los marcadores INTRO_INI/INTRO_FIN del
+    párrafo introductorio de la sección 'Qué es SIDICU'. Si los marcadores
+    aún no existen (primera vez), localiza el bloque de párrafos que va
+    después del <h2 class="card-title">Sistema Distrital de Cuidado...</h2>
+    y antes del cierre `</div></div></div>` del content-section que_es."""
+    if MARKER_INTRO_INI in html_actual and MARKER_INTRO_FIN in html_actual:
+        return re.sub(
+            re.escape(MARKER_INTRO_INI) + r".*?" + re.escape(MARKER_INTRO_FIN),
+            bloque_nuevo,
+            html_actual,
+            count=1,
+            flags=re.DOTALL,
+        )
+
+    # Primera vez: busca el h2 de SIDICU y reemplaza todo lo que sigue
+    # hasta el primer cierre `</div></div></div>` (que cierra el inner div,
+    # el card y el content-section).
+    patron = re.compile(
+        r'(<h2 class="card-title">Sistema Distrital de Cuidado[^<]*</h2>\s*)'
+        r'.*?'
+        r'(\s*</div>\s*</div>\s*</div>\s*(?=<div class="content-section"|</main>))',
+        re.DOTALL,
+    )
+    match = patron.search(html_actual)
+    if not match:
+        raise RuntimeError(
+            "No se encontró el h2 de SIDICU en la sección que_es."
+        )
+    return (
+        html_actual[:match.end(1)]
+        + "\n" + bloque_nuevo + "\n"
+        + html_actual[match.start(2):]
+    )
+
+
 def _inyectar_css(html_actual):
     if CSS_MARKER_INI in html_actual:
         return re.sub(
@@ -1091,6 +1114,7 @@ def generar():
 
     bloque = _bloque_ofertas(ofertas, mapeo_sirbe)
     html_nuevo = _reemplazar_bloque_ofertas(html_actual, bloque)
+    html_nuevo = _reemplazar_intro_que_es(html_nuevo, BLOQUE_INTRO_QUE_ES)
     html_nuevo = _inyectar_css(html_nuevo)
     html_nuevo = _inyectar_js(html_nuevo)
 

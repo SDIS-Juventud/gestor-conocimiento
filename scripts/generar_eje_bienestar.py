@@ -199,6 +199,10 @@ def _leer_politica_juventud_activos():
          conceptualmente caen en otros ejes (cultura, liderazgo, etc.).
     No se filtra por equipo: si un producto tiene código de Bienestar,
     aplica al eje aunque lo reporte Comunicaciones, JCO o Jurídico.
+
+    Devuelve tuplas (tipo, tema, producto, cod_actividad, observaciones,
+    responsable). Observaciones está en col 11 y Responsable del reporte
+    en col 7 del Excel PPDJ.
     """
     if not EXCEL_POLITICA_JUVENTUD.exists():
         return []
@@ -210,14 +214,16 @@ def _leer_politica_juventud_activos():
         tema = TEMA_POLITICA_JUVENTUD  # nombre canónico para el orden
         producto = _limpiar(ws.cell(r, 3).value)
         activo = _normalizar(_limpiar(ws.cell(r, 5).value))
+        responsable = _limpiar(ws.cell(r, 7).value)
         cod_actividad = str(ws.cell(r, 10).value or "")
+        observaciones = _limpiar(ws.cell(r, 11).value)
         if not producto:
             continue
         if activo not in ("si", "sí"):
             continue
         if not any(re.search(r"\b" + c + r"\b", cod_actividad) for c in CODIGOS_BIENESTAR):
             continue
-        filas.append((tipo, tema, producto, cod_actividad))
+        filas.append((tipo, tema, producto, cod_actividad, observaciones, responsable))
     return filas
 
 
@@ -274,10 +280,12 @@ def _leer_politicas_por_codigo():
                 return True
         return False
 
-    def _procesar_fila(tipo, tema, producto, cod_actividad):
+    def _procesar_fila(tipo, tema, producto, cod_actividad, observaciones="", responsable=""):
         """Lógica de filtrado + dedup + asignación a códigos SIRBE.
         Compartida entre las hojas del Excel de Felipe y el Excel
-        específico de Política de Juventud."""
+        específico de Política de Juventud. Observaciones y responsable
+        son opcionales: si están, se muestran bajo el producto en el
+        render como "Cómo se reporta:" y "Reporta:" respectivamente."""
         if not producto:
             return
         if _excluir_producto(tema, producto):
@@ -294,6 +302,8 @@ def _leer_politicas_por_codigo():
                     "tipo": tipo,
                     "tema": tema,
                     "producto": producto,
+                    "observaciones": observaciones,
+                    "responsable": responsable,
                 })
         if not tiene_alguno:
             clave = (tema.lower(), _clave_producto(producto))
@@ -303,16 +313,22 @@ def _leer_politicas_por_codigo():
                     "tipo": tipo,
                     "tema": tema,
                     "producto": producto,
+                    "observaciones": observaciones,
+                    "responsable": responsable,
                 })
 
     # 1) Excel específico de Política Pública Distrital de Juventud
     #    (filtrado por Activo = Sí). Va PRIMERO para que los productos
     #    1.1.x de Juventud queden registrados antes que cualquier otra
     #    política en la dedup, garantizando que aparezcan en la lista.
-    for tipo, tema, producto, cod_actividad in _leer_politica_juventud_activos():
-        _procesar_fila(tipo, tema, producto, cod_actividad)
+    #    Responsable del reporte está en col 7 del Excel PPDJ.
+    for tipo, tema, producto, cod_actividad, observaciones, responsable in _leer_politica_juventud_activos():
+        _procesar_fila(tipo, tema, producto, cod_actividad, observaciones, responsable)
 
-    # 2) Excel oficial de Felipe (Reportes Externos)
+    # 2) Excel oficial de Felipe (Reportes Externos). Observaciones en
+    # col 9 y responsable del reporte en col 5. Cuando un equipo (ej.
+    # Daniela) redacta cómo se reporta un producto y asigna persona
+    # concreta, ambos campos se muestran bajo el producto en el render.
     for nombre_hoja, filtro_equipo in hojas_y_filtro:
         if nombre_hoja not in wb.sheetnames:
             continue
@@ -322,10 +338,12 @@ def _leer_politicas_por_codigo():
             tema = _limpiar(ws.cell(r, 2).value)
             producto = _limpiar(ws.cell(r, 3).value)
             equipo = _limpiar(ws.cell(r, 4).value).lower()
+            responsable = _limpiar(ws.cell(r, 5).value)
             cod_actividad = str(ws.cell(r, 8).value or "")
+            observaciones = _limpiar(ws.cell(r, 9).value)
             if filtro_equipo and filtro_equipo not in equipo:
                 continue
-            _procesar_fila(tipo, tema, producto, cod_actividad)
+            _procesar_fila(tipo, tema, producto, cod_actividad, observaciones, responsable)
     return por_codigo, sin_codigo
 
 
@@ -374,11 +392,16 @@ def _html_seccion_politicas():
 
         # Agrupar productos por tema (política / plan / programa) para
         # listar bajo un solo título de política los varios productos que
-        # se reportan bajo ese código.
+        # se reportan bajo ese código. Cada item conserva el producto,
+        # las observaciones y el responsable del reporte (si están).
         por_tema = {}
         for p in productos:
             clave = (p["tipo"], p["tema"])
-            por_tema.setdefault(clave, []).append(p["producto"])
+            por_tema.setdefault(clave, []).append({
+                "producto": p["producto"],
+                "observaciones": p.get("observaciones", ""),
+                "responsable": p.get("responsable", ""),
+            })
 
         # Orden estricto: Política de Juventud > otras Políticas > Planes
         # > Programas. Regla de Felipe (2026-05-21).
@@ -390,9 +413,13 @@ def _html_seccion_politicas():
         if productos:
             grupos_html = []
             for tipo, tema in orden_temas:
+                # Productos CON código SIRBE: el código ya define cómo y
+                # quién reporta. No se muestra "Cómo se reporta" ni
+                # "Reporta:" aquí — solo el producto. Eso sí se muestra
+                # más abajo, en la tarjeta de productos SIN código SIRBE.
                 lista_prods = "".join(
-                    f'                                <li class="rp-prod">{_esc(prod)}</li>\n'
-                    for prod in por_tema[(tipo, tema)]
+                    f'                                <li class="rp-prod">{_esc(item["producto"])}</li>\n'
+                    for item in por_tema[(tipo, tema)]
                 )
                 grupos_html.append(
                     '                        <div class="rp-grupo">\n'
@@ -406,7 +433,7 @@ def _html_seccion_politicas():
             derecha = "\n".join(grupos_html)
         else:
             derecha = (
-                '                        <p class="rp-vacio">Ningún producto del Excel oficial '
+                '                        <p class="rp-vacio"><strong>Verificar con Felipe.</strong> Ningún producto del Excel '
                 'menciona este código en su columna "Códigos SIRBE ACTIVIDAD".</p>'
             )
 
@@ -496,11 +523,16 @@ def _html_seccion_politicas():
 
         # Agrupar productos sin código también por tipo + tema, con el
         # mismo orden estricto (Pol. Juventud > Políticas > Planes >
-        # Programas).
+        # Programas). Cada item conserva producto, observaciones y
+        # responsable.
         por_tema_sc = {}
         for p in sin_codigo:
             clave = (p["tipo"], p["tema"])
-            por_tema_sc.setdefault(clave, []).append(p["producto"])
+            por_tema_sc.setdefault(clave, []).append({
+                "producto": p["producto"],
+                "observaciones": p.get("observaciones", ""),
+                "responsable": p.get("responsable", ""),
+            })
         orden_temas_sc = sorted(
             por_tema_sc.keys(),
             key=lambda clave: _prioridad_grupo(clave[0], clave[1]),
@@ -514,22 +546,50 @@ def _html_seccion_politicas():
 
         grupos_sc = []
         for tipo, tema in orden_temas_sc:
-            productos_grupo = por_tema_sc[(tipo, tema)]
+            items = por_tema_sc[(tipo, tema)]
+            productos_str = [it["producto"] for it in items]
+            # Observaciones reales que ya llegaron por el Excel maestro
+            # (el equipo redactó cómo se reporta cada producto). Tienen
+            # prioridad sobre cualquier placeholder de "en revisión" y
+            # sobre las reglas de cruce genéricas.
+            observaciones_reales = [it["observaciones"] for it in items if it["observaciones"]]
             cruce_html = ""
-            if _es_pendiente_daniela(tipo, tema, productos_grupo):
+            if observaciones_reales:
+                # Si hay observación por producto, se muestran en el <li>
+                # individual (ver más abajo). El cruce_html solo se usa
+                # cuando NO hay observaciones reales.
+                pass
+            elif _es_pendiente_daniela(tipo, tema, productos_str):
                 cruce_html = (
                     f'\n                            '
                     f'<p class="rp-cruce rp-cruce-pendiente">'
                     f'<strong>{_esc(NOTA_DANIELA)}</strong></p>'
                 )
             else:
-                exp = _explicacion_cruce(" ".join(productos_grupo), tema)
+                exp = _explicacion_cruce(" ".join(productos_str), tema)
                 if exp:
                     cruce_html = f'\n                            <p class="rp-cruce"><strong>Cómo se reporta:</strong> {exp}</p>'
-            lista_prods = "".join(
-                f'                                <li class="rp-prod">{_esc(prod)}</li>\n'
-                for prod in por_tema_sc[(tipo, tema)]
-            )
+            # Renderizar cada producto. Si tiene observación o responsable
+            # propio, se incluyen como bloque "Cómo se reporta" / "Reporta:"
+            # debajo del producto.
+            lis = []
+            for it in items:
+                prod_html = f'                                <li class="rp-prod">{_esc(it["producto"])}'
+                detalles = []
+                if it["observaciones"]:
+                    detalles.append(f'<strong>C&oacute;mo se reporta:</strong> {_esc(it["observaciones"])}')
+                if it["responsable"]:
+                    detalles.append(f'<strong>Reporta:</strong> {_esc(it["responsable"])}')
+                if detalles:
+                    prod_html += (
+                        '\n                                    '
+                        '<div class="rp-prod-obs">'
+                        + '<br>'.join(detalles)
+                        + '</div>\n                                '
+                    )
+                prod_html += '</li>\n'
+                lis.append(prod_html)
+            lista_prods = "".join(lis)
             grupos_sc.append(
                 '                        <div class="rp-grupo">\n'
                 f'                            <p class="rp-grupo-tipo">{_esc(tipo)}</p>\n'
@@ -547,12 +607,9 @@ def _html_seccion_politicas():
             '                    <div class="rp-card-codigo">\n'
             '                        <p class="rp-card-label">Sin código SIRBE propio</p>\n'
             '                        <p class="rp-card-num">+</p>\n'
-            '                        <p class="rp-card-nombre">Productos que se reportan por cruce de variables</p>\n'
-            '                        <p class="rp-aclaracion">Estos productos no tienen un código de actividad SIRBE propio. '
-            'El reporte se logra cruzando las atenciones registradas bajo cualquiera de los cuatro códigos de Bienestar '
-            'con las variables de caracterización del participante en la ficha SIRBE (grupo étnico, orientación sexual, '
-            'rol ocupacional, ubicación territorial, condición de víctima, etc.) o con marcadores específicos en el '
-            'nombre del curso.</p>\n'
+            '                        <p class="rp-card-nombre">Productos sin código SIRBE propio</p>\n'
+            '                        <p class="rp-aclaracion">Estos productos no se reportan a través de los códigos SIRBE de este eje. '
+            'Cada uno tiene su propio mecanismo de reporte; el detalle aparece bajo cada producto.</p>\n'
             '                    </div>\n'
             '                    <div class="rp-card-grupos">\n'
             f'{grupos_html_sc}\n'
@@ -920,25 +977,27 @@ CSS_CHIPS = f"""
 .rp-grupo-tipo {{ font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.66rem; color: #888; margin: 0 0 2px; }}
 .rp-grupo-tema {{ font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; text-transform: uppercase; font-size: 0.86rem; color: #253C5C; letter-spacing: 0.02em; margin: 0 0 8px; line-height: 1.3; }}
 .rp-prods {{ list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }}
-.rp-prod {{ font-family: 'Figtree', sans-serif; font-size: 0.84rem; color: #3a3a3a; line-height: 1.55; padding-left: 14px; position: relative; }}
+.rp-prod {{ font-family: 'Figtree', sans-serif; font-size: 0.84rem; color: #3a3a3a; line-height: 1.55; padding-left: 14px; position: relative; margin-bottom: 8px; }}
 .rp-prod::before {{ content: '·'; position: absolute; left: 0; top: -2px; color: #253C5C; font-weight: 700; font-size: 1.2rem; line-height: 1; }}
+.rp-prod-obs {{ font-family: 'Figtree', sans-serif; font-size: 0.78rem; color: #555; line-height: 1.55; margin: 3px 0 6px 0; }}
+.rp-prod-obs strong {{ color: #253C5C; font-weight: 700; }}
 .rp-vacio {{ font-family: 'Figtree', sans-serif; font-size: 0.85rem; color: #aaa; font-style: italic; margin: 0; }}
 
-/* Tarjeta "Productos que se reportan por cruce de variables": misma
-   estética pero con cruce explicado bajo cada producto. */
+/* Tarjeta "Productos sin código SIRBE propio": misma estética que las
+   demás cards, con el detalle de cada producto debajo. */
 .rp-card-cruce {{ grid-template-columns: 1fr; }}
 .rp-card-cruce .rp-card-codigo {{ border-bottom: 1px solid rgba(47,62,60,0.12); padding-bottom: 14px; margin-bottom: 4px; }}
 .rp-card-cruce .rp-card-num {{ font-size: 1.6rem; color: #555; }}
 .rp-aclaracion {{ font-family: 'Figtree', sans-serif; font-size: 0.85rem; color: #555; line-height: 1.6; margin: 0 0 12px; max-width: 760px; }}
 .rp-aclaracion strong, .rp-aclaracion em {{ color: #253C5C; }}
-.rp-cruce {{ font-family: 'Figtree', sans-serif; font-size: 0.8rem; color: #555; line-height: 1.55; margin: 6px 0 12px 14px; padding: 8px 12px; background: rgba(255,255,255,0.55); border-radius: 6px; }}
+.rp-cruce {{ font-family: 'Figtree', sans-serif; font-size: 0.8rem; color: #555; line-height: 1.55; margin: 6px 0 12px 14px; }}
 .rp-cruce strong {{ color: #253C5C; font-weight: 700; }}
 .rp-cruce em {{ color: #2F3E3C; font-style: italic; }}
 /* Nota pendiente de feedback de Daniela Correa: tono gris neutro,
    sin colores de alarma — la urgencia visual no debe sobrepasar la
    urgencia real (mientras llega el feedback, simplemente está en cola). */
-.rp-cruce-pendiente {{ background: #ececec; color: #555; }}
-.rp-cruce-pendiente strong {{ color: #2F3E3C; font-weight: 700; }}
+.rp-cruce-pendiente {{ color: #555; font-style: italic; }}
+.rp-cruce-pendiente strong {{ color: #2F3E3C; font-weight: 700; font-style: normal; }}
 
 @media (max-width: 720px) {{
     .rp-card {{ grid-template-columns: 1fr; gap: 14px; }}

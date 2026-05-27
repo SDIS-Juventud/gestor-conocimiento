@@ -18,6 +18,11 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _comun.estilos import css_para
 from _comun.aliados import seccion_forjar as seccion_aliados_forjar
 from _comun.diagramas_flujo import svg_diagrama_forjar
+from _comun.reporte_politicas import (
+    CSS_REPORTE_POLITICAS,
+    leer_politicas,
+    html_cards,
+)
 
 # CSS extras del servicio. La l&iacute;nea de tiempo en chevrones encadenados
 # vive ahora en _comun/estilos.py porque la comparten Forjar, JCO y Casas de
@@ -175,7 +180,7 @@ EXTRAS_CSS = """\
 """
 
 # CSS del servicio (base compartido + color propio de Forjar + extras)
-CSS = css_para("forjar", extras=EXTRAS_CSS)
+CSS = css_para("forjar", extras=EXTRAS_CSS + CSS_REPORTE_POLITICAS)
 
 # =====================================================================
 # Header
@@ -227,6 +232,11 @@ SIDEBAR = """\
                 <div class="sidebar-items">
                     <div class="sidebar-item" onclick="showContent('flujo_datos')">Flujo de gesti&oacute;n de la informaci&oacute;n</div>
                     <div class="sidebar-item" onclick="showContent('datos_sirbe')">Datos SIRBE</div>
+                </div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title" onclick="showContent('reporte_politicas')" style="cursor:pointer;">
+                    <span>Reporte a pol&iacute;ticas</span>
                 </div>
             </div>
             <div class="sidebar-section">
@@ -1101,6 +1111,54 @@ SECCION_ESTADISTICAS = f"""\
             </div>"""
 
 # =====================================================================
+# Reporte a políticas — Forjar
+#
+# La lógica de lectura de Excels y render de cards vive en
+# _comun/reporte_politicas.py (compartida con JCO y otros servicios).
+# Aquí quedan solo las constantes específicas de Forjar: las rutas a los
+# Excels maestros y la lista de políticas que Felipe mencionó pero aún
+# no están en los Excels (se mostrarán como cards "En revisión").
+#
+# Nota: Forjar no aparece como responsable directo en el Excel de la PPDJ;
+# por eso la PPDJ va como "En revisión" pendiente de confirmar con Felipe.
+# =====================================================================
+
+_XLSX_PPDJ_FORJAR = os.path.join(BASE, "ejes", "Políticas", "Reporte Política Pública Distrital de Juventud.xlsx")
+_XLSX_REPORTES_EXTERNOS_FORJAR = os.path.join(BASE, "ejes", "Políticas", "Reportes Externos Subdirección Juventud 2026.xlsx")
+
+# Pendientes: una entrada por tema. Cada tupla es
+# (tipo, tema, pendiente_con, nota_revision).
+_POLITICAS_EN_REVISION_FORJAR = [
+    ("Política Pública", "Política Pública Distrital de Juventud", "Felipe", ""),
+    ("Política Pública", "Política Pública Indígena", "Daniela Correa", ""),
+    ("Política Pública", "Política Pública de la Población Negra, Afrocolombiana y Palenquera, en Bogotá D.C. 2024-2036", "Daniela Correa", ""),
+    ("Política Pública", "Política Pública LGBTI", "Daniela Correa", ""),
+    ("Política Pública", "Política Pública del Pueblo Rrom", "Daniela Correa", ""),
+    ("Política Pública", "Política Pública del Pueblo Raizal en Bogotá D.C.", "Daniela Correa", ""),
+    ("Plan", "Plan de Acción Territorial (PAT) de Víctimas", "Daniela Correa", ""),
+    ("Plan", "Plan Operativo de Reincorporación", "Daniela Correa", ""),
+    ("Plan", "PDET (Programas de Desarrollo con Enfoque Territorial)", "Daniela Correa", ""),
+    ("Plan", "Plan de Atención Intersectorial de la Prevención y Atención de la Conducta Suicida", "Felipe", ""),
+]
+
+
+# Sección "Reporte a políticas" en HTML. El cuerpo del grid se reemplaza
+# en el ensamblaje con la salida de html_cards() del módulo común.
+SECCION_REPORTE_POLITICAS = """            <div class="content-section" id="reporte_politicas">
+                <div class="card">
+                    <h2 class="card-title">Reporte a pol&iacute;ticas</h2>
+
+                    <div class="jp-callout">
+                        El servicio <strong>Forjar Restaurativo</strong> reporta de manera transversal a varias <strong>pol&iacute;ticas p&uacute;blicas distritales</strong> y a varios <strong>planes intersectoriales</strong>.
+                    </div>
+
+                    <div class="jp-grid">
+%%CARDS_POLITICAS%%
+                    </div>
+                </div>
+            </div>"""
+
+# =====================================================================
 # JavaScript - navegación del sidebar
 # =====================================================================
 JS_NAVEGACION = """\
@@ -1153,6 +1211,22 @@ def ensamblar_html():
         "%%SVG_DIAGRAMA_FORJAR%%", svg_diagrama_forjar()
     )
 
+    # Reporte a políticas: las cards salen de leer los Excels maestros de
+    # Felipe (PPDJ + Reportes Externos hoja Forjar) y de
+    # _POLITICAS_EN_REVISION_FORJAR. La lectura y render viven en
+    # _comun/reporte_politicas.py.
+    filas_politicas = leer_politicas(
+        xlsx_ppdj=_XLSX_PPDJ_FORJAR,
+        xlsx_externos=_XLSX_REPORTES_EXTERNOS_FORJAR,
+        hoja_externos="Forjar",
+        patron_responsable_ppdj=r"Forjar",
+        tema_ppdj="Política Pública Distrital de Juventud",
+        pendientes_revision=_POLITICAS_EN_REVISION_FORJAR,
+    )
+    seccion_reporte_politicas = SECCION_REPORTE_POLITICAS.replace(
+        "%%CARDS_POLITICAS%%", html_cards(filas_politicas)
+    )
+
     secciones = "\n\n".join([
         SECCION_WELCOME,
         SECCION_LINEA_TIEMPO,
@@ -1163,6 +1237,7 @@ def ensamblar_html():
         SECCION_PROCESO_OPERATIVO,
         seccion_flujo,
         SECCION_DATOS_SIRBE,
+        seccion_reporte_politicas,
         seccion_aliados_forjar(),
         SECCION_ESTADISTICAS,
     ])

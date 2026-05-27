@@ -23,6 +23,12 @@ from _comun.aliados import seccion_casas as seccion_aliados_casas
 from _comun.estilos import CSS_LINEA_TIEMPO_CHEVRON
 # Diagrama de flujo del proceso SIRBE para Casas de Juventud
 from _comun.diagramas_flujo import svg_diagrama_casas
+# Componente "Reporte a políticas" (compartido con JCO y Forjar)
+from _comun.reporte_politicas import (
+    CSS_REPORTE_POLITICAS,
+    leer_politicas,
+    html_cards,
+)
 
 # Raíz del proyecto (un nivel arriba de scripts/)
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -1042,6 +1048,52 @@ CSS = """        @import url('https://fonts.googleapis.com/css2?family=Anton&fam
 
 # Línea de tiempo en chevrones: source of truth en _comun/estilos.py para no duplicar.
 CSS = CSS + "\n        " + CSS_LINEA_TIEMPO_CHEVRON.replace("\n", "\n        ")
+# Componente "Reporte a políticas" (compartido con JCO y Forjar).
+CSS = CSS + "\n        " + CSS_REPORTE_POLITICAS.replace("\n", "\n        ")
+
+# ============================================================
+# Reporte a políticas — Casas de Juventud a nivel servicio
+#
+# La lógica de lectura y render vive en _comun/reporte_politicas.py.
+# Aquí solo se declara la lista de pendientes específicos de Casas.
+#
+# A nivel SERVICIO (esta página raíz) se listan los productos del Excel
+# de la Política Pública Distrital de Juventud con responsable "Casas
+# de Juventud" o "Todos". Los productos de otras políticas que sí son
+# específicos de un eje (Bienestar, Cultura, Inclusión, Liderazgo)
+# viven dentro de la sección "Reporte a políticas" de cada eje y al
+# final de aquellas hay una nota apuntando a esta sección de servicio.
+# ============================================================
+
+_POLITICAS_EN_REVISION_CASAS = [
+    ("Política Pública", "Política Pública Indígena", "Daniela Correa", ""),
+    ("Política Pública", "Política Pública del Pueblo Rrom", "Daniela Correa", ""),
+    ("Política Pública", "Política Pública del Pueblo Raizal en Bogotá D.C.", "Daniela Correa", ""),
+    ("Plan", "Plan de Acción Territorial (PAT) de Víctimas", "Daniela Correa", ""),
+    ("Plan", "Plan Operativo de Reincorporación", "Daniela Correa", ""),
+    ("Plan", "PDET (Programas de Desarrollo con Enfoque Territorial)", "Daniela Correa", ""),
+]
+
+# Productos del Excel de Reportes Externos hoja "Casas de Juventud"
+# que NO son específicos de un eje sino del servicio Casas como tal,
+# y por lo tanto se muestran en esta sección (no en Bienestar/Cultura/
+# Inclusión/Liderazgo). Estos quedan excluidos del eje Bienestar vía
+# Configuracion_politicas_bienestar.xlsx hoja Exclusiones.
+_TEMAS_NIVEL_SERVICIO_CASAS = [
+    "Negra, Afrocolombiana",  # producto 1.3.9 Casa de la juventud que implementa enfoque diferencial étnico
+    "LGBTI",                  # 3 productos, todos en revisión con Daniela
+    "PAD Víctimas",           # producto transversal a los tres servicios
+]
+
+filas_politicas_casas = leer_politicas(
+    xlsx_ppdj=os.path.join(BASE, "ejes", "Políticas", "Reporte Política Pública Distrital de Juventud.xlsx"),
+    xlsx_externos=os.path.join(BASE, "ejes", "Políticas", "Reportes Externos Subdirección Juventud 2026.xlsx"),
+    hoja_externos="Casas de Juventud",
+    patron_responsable_ppdj=r"Casas de Juventud|Todos",
+    pendientes_revision=_POLITICAS_EN_REVISION_CASAS,
+    temas_externos_incluir=_TEMAS_NIVEL_SERVICIO_CASAS,
+)
+cards_politicas_casas = html_cards(filas_politicas_casas)
 
 html = f"""<!DOCTYPE html>
 <html lang="es">
@@ -1081,6 +1133,8 @@ html = f"""<!DOCTYPE html>
                 </div></div>
 
 
+
+            <div class="sidebar-section"><div class="sidebar-title" onclick="showContent('reporte_politicas')" style="cursor:pointer;"><span>Reporte a pol&iacute;ticas</span></div></div>
 
             <div class="sidebar-section"><div class="sidebar-title" onclick="showContent('aliados')" style="cursor:pointer;"><span>Aliados</span></div></div>
 
@@ -1487,6 +1541,18 @@ html = f"""<!DOCTYPE html>
                 <h3 class="card-subtitle" style="margin-top:30px;">Diagrama de flujo del proceso</h3>
                 <p style="color:#666; font-size:0.85rem; margin-bottom:12px;">Representación visual del ciclo de recolección y digitación en SIRBE para las Casas de Juventud.</p>
                 <div style="overflow-x:auto; margin-bottom:8px;">%%SVG_DIAGRAMA_CASAS%%</div>
+            </div></div>
+
+            <div class="content-section" id="reporte_politicas"><div class="card">
+                <h2 class="card-title">Reporte a pol&iacute;ticas</h2>
+
+                <div class="jp-callout">
+                    Esta secci&oacute;n lista los productos a los que reporta el servicio <strong>Casas de Juventud</strong> de manera transversal &mdash; principalmente los de la <strong>Pol&iacute;tica P&uacute;blica Distrital de Juventud</strong>. Para productos espec&iacute;ficos por eje, ver el <em>Reporte a pol&iacute;ticas</em> dentro de cada eje (Bienestar, Cultura, Inclusi&oacute;n, Liderazgo).
+                </div>
+
+                <div class="jp-grid">
+{cards_politicas_casas}
+                </div>
             </div></div>
 
 {seccion_aliados_casas()}

@@ -223,25 +223,27 @@
 .rp-grupo-tipo { font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.66rem; color: #888; margin: 0 0 2px; }
 .rp-grupo-tema { font-family: 'Antonio', 'Anton', 'Figtree', sans-serif; font-weight: 700; text-transform: uppercase; font-size: 0.86rem; color: #253C5C; letter-spacing: 0.02em; margin: 0 0 8px; line-height: 1.3; }
 .rp-prods { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }
-.rp-prod { font-family: 'Figtree', sans-serif; font-size: 0.84rem; color: #3a3a3a; line-height: 1.55; padding-left: 14px; position: relative; }
+.rp-prod { font-family: 'Figtree', sans-serif; font-size: 0.84rem; color: #3a3a3a; line-height: 1.55; padding-left: 14px; position: relative; margin-bottom: 8px; }
 .rp-prod::before { content: '·'; position: absolute; left: 0; top: -2px; color: #253C5C; font-weight: 700; font-size: 1.2rem; line-height: 1; }
+.rp-prod-obs { font-family: 'Figtree', sans-serif; font-size: 0.78rem; color: #555; line-height: 1.55; margin: 3px 0 6px 0; }
+.rp-prod-obs strong { color: #253C5C; font-weight: 700; }
 .rp-vacio { font-family: 'Figtree', sans-serif; font-size: 0.85rem; color: #aaa; font-style: italic; margin: 0; }
 
-/* Tarjeta "Productos que se reportan por cruce de variables": misma
-   estética pero con cruce explicado bajo cada producto. */
+/* Tarjeta "Productos sin código SIRBE propio": misma estética que las
+   demás cards, con el detalle de cada producto debajo. */
 .rp-card-cruce { grid-template-columns: 1fr; }
 .rp-card-cruce .rp-card-codigo { border-bottom: 1px solid rgba(47,62,60,0.12); padding-bottom: 14px; margin-bottom: 4px; }
 .rp-card-cruce .rp-card-num { font-size: 1.6rem; color: #555; }
 .rp-aclaracion { font-family: 'Figtree', sans-serif; font-size: 0.85rem; color: #555; line-height: 1.6; margin: 0 0 12px; max-width: 760px; }
 .rp-aclaracion strong, .rp-aclaracion em { color: #253C5C; }
-.rp-cruce { font-family: 'Figtree', sans-serif; font-size: 0.8rem; color: #555; line-height: 1.55; margin: 6px 0 12px 14px; padding: 8px 12px; background: rgba(255,255,255,0.55); border-radius: 6px; }
+.rp-cruce { font-family: 'Figtree', sans-serif; font-size: 0.8rem; color: #555; line-height: 1.55; margin: 6px 0 12px 14px; }
 .rp-cruce strong { color: #253C5C; font-weight: 700; }
 .rp-cruce em { color: #2F3E3C; font-style: italic; }
 /* Nota pendiente de feedback de Daniela Correa: tono gris neutro,
    sin colores de alarma — la urgencia visual no debe sobrepasar la
    urgencia real (mientras llega el feedback, simplemente está en cola). */
-.rp-cruce-pendiente { background: #ececec; color: #555; }
-.rp-cruce-pendiente strong { color: #2F3E3C; font-weight: 700; }
+.rp-cruce-pendiente { color: #555; font-style: italic; }
+.rp-cruce-pendiente strong { color: #2F3E3C; font-weight: 700; font-style: normal; }
 
 @media (max-width: 720px) {
     .rp-card { grid-template-columns: 1fr; gap: 14px; }
@@ -1371,50 +1373,40 @@
                     <div class="rp-card-codigo">
                         <p class="rp-card-label">Sin código SIRBE propio</p>
                         <p class="rp-card-num">+</p>
-                        <p class="rp-card-nombre">Productos que se reportan por cruce de variables</p>
-                        <p class="rp-aclaracion">Estos productos no tienen un código de actividad SIRBE propio. El reporte se logra cruzando las atenciones registradas bajo cualquiera de los cuatro códigos de Bienestar con las variables de caracterización del participante en la ficha SIRBE (grupo étnico, orientación sexual, rol ocupacional, ubicación territorial, condición de víctima, etc.) o con marcadores específicos en el nombre del curso.</p>
+                        <p class="rp-card-nombre">Productos sin código SIRBE propio</p>
+                        <p class="rp-aclaracion">Estos productos no se reportan a través de los códigos SIRBE de este eje. Cada uno tiene su propio mecanismo de reporte; el detalle aparece bajo cada producto.</p>
                     </div>
                     <div class="rp-card-grupos">
                         <div class="rp-grupo">
                             <p class="rp-grupo-tipo">Política Pública</p>
                             <p class="rp-grupo-tema">Política Pública de Actividades Sexuales Pagadas</p>
                             <ul class="rp-prods">
-                                <li class="rp-prod">2.2.7 Jornadas de atención en estrategias de prevención, desarrollo de capacidades e información sobre el uso de métodos anticonceptivos dirigidas a personas jóvenes que realizan ASP.</li>
+                                <li class="rp-prod">2.2.7 Jornadas de atención en estrategias de prevención, desarrollo de capacidades e información sobre el uso de métodos anticonceptivos dirigidas a personas jóvenes que realizan ASP.
+                                    <div class="rp-prod-obs"><strong>Reporta:</strong> Yenny Fernanda Pinilla Muñoz - Profesional de políticas y planes externos</div>
+                                </li>
                             </ul>
                             <p class="rp-cruce"><strong>Cómo se reporta:</strong> Ficha SIRBE casilla T (Rol Ocupacional, opción Actividades Sexuales pagadas).</p>
-                        </div>
-                        <div class="rp-grupo">
-                            <p class="rp-grupo-tipo">Política Pública</p>
-                            <p class="rp-grupo-tema">Política Pública de la Población Negra, Afrocolombiana y Palenquera, en Bogotá D.C. 2024-2036</p>
-                            <ul class="rp-prods">
-                                <li class="rp-prod">1.3.9 Casa de la juventud que implemente el protocolo que garantiza el cumplimiento del enfoque diferencial étnico negro afrocolombiano, y aporte a la pervivencia cultural de las y los jovenes negros y afrocolombianos, en concertación con la instancia de representación legal de las comunidades negras afrocolombianas en el Distrito Capital.</li>
-                            </ul>
-                            <p class="rp-cruce"><strong>Cómo se reporta:</strong> Ficha SIRBE casilla AA (grupo étnico). El equipo de la DADE toma a los y las jóvenes que reportaron autorreconocimiento étnico.</p>
-                        </div>
-                        <div class="rp-grupo">
-                            <p class="rp-grupo-tipo">Plan</p>
-                            <p class="rp-grupo-tema">PAD Víctimas</p>
-                            <ul class="rp-prods">
-                                <li class="rp-prod">Vincular al 100% de Jóvenes víctimas del conflicto armado a los servicios sociales y estrategias de la Subdirección para la Juventud, con cobertura y atención territorial</li>
-                            </ul>
-                            <p class="rp-cruce rp-cruce-pendiente"><strong>En revisión con Daniela Correa: el detalle de cómo se reporta este instrumento se actualizará cuando llegue el feedback del equipo de Políticas Públicas.</strong></p>
                         </div>
                         <div class="rp-grupo">
                             <p class="rp-grupo-tipo">Plan</p>
                             <p class="rp-grupo-tema">Plan operativo de reincorporación</p>
                             <ul class="rp-prods">
-                                <li class="rp-prod">Realizar jornadas de sensibilización sobre derechos sexuales y reproductivos para jóvenes entre los 14 y 28 años en proceso de reintegración en condiciones de vulnerabilidad segun lo requerido por parte de parte de la ARN y demás entidades del orden nacional y/o distrital.</li>
+                                <li class="rp-prod">Realizar jornadas de sensibilización sobre derechos sexuales y reproductivos para jóvenes entre los 14 y 28 años en proceso de reintegración en condiciones de vulnerabilidad segun lo requerido por parte de parte de la ARN y demás entidades del orden nacional y/o distrital.
+                                    <div class="rp-prod-obs"><strong>C&oacute;mo se reporta:</strong> Estas jornadas se realizan a demanda de la ARN. Según el tema requerido, se concerta con Estrategia móvil u otro grupo de gestores/mentores de la Subdirección la realización de la actividad. De las actividades se dejan actas y, basados en el número de actas, se contabilizan y reportan. El reporte se diligencia en ficha enviada por área de enfoques transversales de la Subsecretaría técnica de SDIS.<br><strong>Reporta:</strong> Equipo Política Pública</div>
+                                </li>
                             </ul>
-                            <p class="rp-cruce rp-cruce-pendiente"><strong>En revisión con Daniela Correa: el detalle de cómo se reporta este instrumento se actualizará cuando llegue el feedback del equipo de Políticas Públicas.</strong></p>
                         </div>
                         <div class="rp-grupo">
                             <p class="rp-grupo-tipo">Programa</p>
                             <p class="rp-grupo-tema">PDET</p>
                             <ul class="rp-prods">
-                                <li class="rp-prod">PROD_49: Promoción del adecuado ejercicio de los derechos sexuales y reproductivos, prevención de violencia sexual en el marco de la prevención de la maternidad y paternidad temprana en los territorios PDET B-R durante cada vigencia.</li>
-                                <li class="rp-prod">PROD_54: Jornadas de oferta institucional de la Subdirección para la Juventud de la Secretaría Distrital de Integración Social dirigidas a la población juvenil en Sumapaz</li>
+                                <li class="rp-prod">PROD_49: Promoción del adecuado ejercicio de los derechos sexuales y reproductivos, prevención de violencia sexual en el marco de la prevención de la maternidad y paternidad temprana en los territorios PDET B-R durante cada vigencia.
+                                    <div class="rp-prod-obs"><strong>C&oacute;mo se reporta:</strong> Se solicita archivo de Personas únicas Atendidas en Casas de Juventud, y se pide incluir la actuación &quot;Prevención Integral&quot; y la variable de ruralidad. Se filtra el archivo basado en la categoría &quot;rural&quot;, se identifican las fechas en que se han realizado actividades y, por tanto, el número de jornadas realizadas. El reporte se diligencia en ficha enviada por área de enfoques transversales de la Subsecretaría técnica de SDIS.<br><strong>Reporta:</strong> Equipo Política Pública</div>
+                                </li>
+                                <li class="rp-prod">PROD_54: Jornadas de oferta institucional de la Subdirección para la Juventud de la Secretaría Distrital de Integración Social dirigidas a la población juvenil en Sumapaz
+                                    <div class="rp-prod-obs"><strong>C&oacute;mo se reporta:</strong> Se solicita al líder del equipo de la Estrategia móvil reporte del número de actividades realizadas semestralmente en la localidad de Sumapaz, con el respectivo desarrollo de las temáticas y número de asistentes. Basados en número de actas, se contabiliza y reporta. El reporte se diligencia en ficha enviada por área de enfoques transversales de la Subsecretaría técnica de SDIS.<br><strong>Reporta:</strong> Equipo Política Pública</div>
+                                </li>
                             </ul>
-                            <p class="rp-cruce rp-cruce-pendiente"><strong>En revisión con Daniela Correa: el detalle de cómo se reporta este instrumento se actualizará cuando llegue el feedback del equipo de Políticas Públicas.</strong></p>
                         </div>
                     </div>
                 </article>

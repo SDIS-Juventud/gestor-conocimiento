@@ -17,6 +17,11 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _comun.estilos import css_para
 from _comun.aliados import seccion_jco as seccion_aliados_jco
 from _comun.diagramas_flujo import svg_diagrama_jco
+from _comun.reporte_politicas import (
+    CSS_REPORTE_POLITICAS,
+    leer_politicas,
+    html_cards,
+)
 
 # ============================================================
 # Inventario de documentación oficial de JCO.
@@ -102,7 +107,35 @@ def _generar_bloques_documentos():
         )
         bloques.append(bloque)
     return "\n\n".join(bloques)
+
+
 # ============================================================
+# Reporte a políticas — JCO
+#
+# La lógica de lectura de Excels y render de cards vive en
+# _comun/reporte_politicas.py (compartida con Forjar y otros servicios).
+# Aquí quedan solo las constantes específicas de JCO: las rutas a los
+# Excels maestros y la lista de políticas que Felipe mencionó pero aún
+# no están en los Excels (se mostrarán como cards "En revisión").
+# ============================================================
+
+_XLSX_PPDJ = os.path.join(_BASE_JCO, "ejes", "Políticas", "Reporte Política Pública Distrital de Juventud.xlsx")
+_XLSX_REPORTES_EXTERNOS = os.path.join(_BASE_JCO, "ejes", "Políticas", "Reportes Externos Subdirección Juventud 2026.xlsx")
+
+# Pendientes: una entrada por tema. Cada tupla es
+# (tipo, tema, pendiente_con, nota_revision).
+_POLITICAS_EN_REVISION = [
+    ("Política Pública", "Política Pública de Infancia y Adolescencia", "Felipe", ""),
+    ("Política Pública", "Política Pública Indígena", "Daniela Correa", ""),
+    ("Política Pública", "Política Pública de la Población Negra, Afrocolombiana y Palenquera, en Bogotá D.C. 2024-2036", "Daniela Correa", ""),
+    ("Política Pública", "Política Pública LGBTI", "Daniela Correa", ""),
+    ("Política Pública", "Política Pública del Pueblo Rrom", "Daniela Correa", ""),
+    ("Plan", "Plan de Acción Territorial (PAT) de Víctimas", "Daniela Correa", ""),
+    ("Plan", "Plan Operativo de Reincorporación", "Daniela Correa", ""),
+    ("Plan", "PDET (Programas de Desarrollo con Enfoque Territorial)", "Daniela Correa", ""),
+]
+
+
 # 1. CSS — estilos del gestor
 # ============================================================
 
@@ -480,9 +513,30 @@ EXTRAS_CSS_JCO = """\
     .comp-icono { width: 40px; height: 40px; }
     .comp-icono svg { width: 20px; height: 20px; }
 }
+
+/* Tablas tipo ficha t&eacute;cnica / comparativa de la secci&oacute;n Ruta intersectorial.
+   El callout superior va en verde oscuro JCO con letra crema, igual al header
+   del sitio para enfatizar el mensaje clave (estrategia intersectorial liderada
+   por SDIS hasta 2032). Las tablas usan el verde oscuro como header y crema en
+   las celdas, sin gradientes ni bandas decorativas. */
+.ri-callout { background: #2F3E3C; color: #F8F4E1; border-radius: 10px; padding: 18px 22px; margin: 0 0 26px; line-height: 1.7; }
+.ri-callout strong { color: #F8F4E1; }
+.ri-subtitulo { font-family: 'Antonio','Figtree',sans-serif; font-weight: 700; color: #2F3E3C; font-size: 1.15rem; margin: 28px 0 6px; letter-spacing: 0.01em; }
+.ri-bajada { color: #555; font-size: 0.92rem; line-height: 1.6; margin: 0 0 14px; }
+.ri-tabla { width: 100%; border-collapse: collapse; margin: 0 0 22px; font-size: 0.92rem; }
+.ri-tabla th { background: #2F3E3C; color: #F8F4E1; text-align: left; padding: 12px 14px; font-weight: 700; font-size: 0.88rem; vertical-align: top; }
+.ri-tabla td { padding: 14px; vertical-align: top; line-height: 1.55; border-bottom: 1px solid #e8e1c4; background: #fbf8ec; }
+.ri-tabla td:first-child { font-weight: 600; color: #2F3E3C; background: #f5efd2; width: 22%; }
+.ri-tabla.ri-tabla-comp td:first-child { background: #f5efd2; }
+.ri-tabla tr:last-child td { border-bottom: 0; }
+@media (max-width: 720px) {
+    .ri-tabla, .ri-tabla thead, .ri-tabla tbody, .ri-tabla tr, .ri-tabla td, .ri-tabla th { display: block; width: 100%; }
+    .ri-tabla th { font-size: 0.95rem; }
+    .ri-tabla td:first-child { width: 100%; }
+}
 """
 
-CSS = css_para("jco", extras=EXTRAS_CSS_JCO)
+CSS = css_para("jco", extras=EXTRAS_CSS_JCO + CSS_REPORTE_POLITICAS)
 
 # ============================================================
 # 2. Encabezado (header)
@@ -519,6 +573,7 @@ SIDEBAR = """\
                 <div class="sidebar-items show">
                     <div class="sidebar-item" onclick="showContent('linea_tiempo')">L&iacute;nea de tiempo</div>
                     <div class="sidebar-item" onclick="showContent('a_tener_en_cuenta')">A tener en cuenta</div>
+                    <div class="sidebar-item" onclick="showContent('ruta_intersectorial')">Ruta intersectorial</div>
                     <div class="sidebar-item" onclick="showContent('equipo')">Equipo</div>
                     <div class="sidebar-item" onclick="showContent('pilares')">Pilares del programa</div>
                     <div class="sidebar-item" onclick="showContent('modulos_proyecto_vida')">M&oacute;dulos de Proyecto de Vida</div>
@@ -535,6 +590,11 @@ SIDEBAR = """\
                 </div>
                 <div class="sidebar-items">
                     <div class="sidebar-item" onclick="showContent('flujo_datos')">Flujo de gesti&oacute;n de la informaci&oacute;n</div>
+                </div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title" onclick="showContent('reporte_politicas')" style="cursor:pointer;">
+                    <span>Reporte a pol&iacute;ticas</span>
                 </div>
             </div>
             <div class="sidebar-section">
@@ -629,6 +689,163 @@ SECCION_A_TENER_EN_CUENTA = """\
 
                     <h3 class="card-subtitle">Financiaci&oacute;n de los programas</h3>
                     <p style="line-height:1.7;">Una caracter&iacute;stica clave de Parceros por Bogot&aacute; fue que se sustent&oacute;, en gran parte, gracias a la uni&oacute;n institucional con los <strong>Fondos de Desarrollo Local (FDL)</strong>. Esto permiti&oacute; una inversi&oacute;n territorializada, donde los alcaldes locales y ediles destinaban recursos para apoyar directamente a los j&oacute;venes de sus respectivas localidades. En J&oacute;venes con Oportunidades, los FDL tambi&eacute;n han venido aportando recursos: con un rol inicial <strong>desde 2025</strong> y una <strong>presencia muy fuerte en 2026</strong>. A estos aportes se suma la inversi&oacute;n distrital proyectada de <strong>$324.053 millones</strong>, que une los esfuerzos sectoriales de las Secretar&iacute;as de Integraci&oacute;n Social, Educaci&oacute;n, Desarrollo Econ&oacute;mico y la Agencia Atenea.</p>
+                </div>
+            </div>"""
+
+# --- Ruta intersectorial ---
+# Sección dedicada a aclarar la dualidad del nombre Jóvenes con Oportunidades:
+# es a la vez (1) la estrategia intersectorial completa que articula a SDIS,
+# Educación, Desarrollo Económico y Agencia Atenea bajo el Convenio 1285 de 2025,
+# y (2) el servicio que lidera SDIS dentro de esa sombrilla. El callout superior
+# enfatiza tres puntos críticos pedidos por Carolina: intersectorialidad, liderazgo
+# de SDIS y plazo hasta 2032. Las cuatro tablas (ficha técnica, responsabilidades,
+# programas de la sombrilla, comparación JcO vs Jóvenes a la E) vienen del PDF
+# operativo que comparte el equipo y se mantienen literales.
+SECCION_RUTA_INTERSECTORIAL = """\
+            <div class="content-section" id="ruta_intersectorial">
+                <div class="card">
+                    <h2 class="card-title">Ruta intersectorial de inclusi&oacute;n social y productiva</h2>
+
+                    <div class="ri-callout">
+                        <strong>J&oacute;venes con Oportunidades (JcO)</strong> es a la vez el nombre de la <strong>estrategia intersectorial</strong> completa y del <strong>servicio liderado por la Secretar&iacute;a Distrital de Integraci&oacute;n Social</strong>. La estrategia se formaliza en el <strong>Convenio Marco Interadministrativo No. 1285 de 2025</strong> entre cuatro entidades distritales y tiene un plazo de ejecuci&oacute;n <strong>hasta el 31 de diciembre de 2032</strong>, para proteger la cobertura de transferencias en carreras de ciclo largo. Su prop&oacute;sito: que los j&oacute;venes en situaci&oacute;n de vulnerabilidad estudien, no deserten y consigan empleo.
+                    </div>
+
+                    <h3 class="card-subtitle">Convenio Marco Interadministrativo No. 1285 de 2025</h3>
+                    <p class="ri-bajada">Base jur&iacute;dica que formaliza la Estrategia Intersectorial J&oacute;venes con Oportunidades y define los compromisos de cada entidad participante.</p>
+
+                    <div class="ri-subtitulo">Ficha t&eacute;cnica</div>
+                    <table class="ri-tabla">
+                        <tr>
+                            <td>Nombre</td>
+                            <td>Convenio Marco Interadministrativo No. 1285 de 2025</td>
+                        </tr>
+                        <tr>
+                            <td>Objeto</td>
+                            <td>Aunar esfuerzos t&eacute;cnicos, administrativos, operativos, financieros y log&iacute;sticos entre cuatro entidades distritales para implementar la Estrategia Intersectorial de Inclusi&oacute;n Social y Productiva &mdash; J&oacute;venes con Oportunidades.</td>
+                        </tr>
+                        <tr>
+                            <td>Entidades suscriptoras</td>
+                            <td>Secretar&iacute;a Distrital de Integraci&oacute;n Social (lidera) &middot; Secretar&iacute;a de Educaci&oacute;n del Distrito &middot; Secretar&iacute;a Distrital de Desarrollo Econ&oacute;mico &middot; Agencia Atenea</td>
+                        </tr>
+                        <tr>
+                            <td>Plazo de ejecuci&oacute;n</td>
+                            <td>Hasta el <strong>31 de diciembre de 2032</strong>. El plazo extendido protege la cobertura de transferencias para j&oacute;venes en carreras de ciclo largo (2 a 5 a&ntilde;os).</td>
+                        </tr>
+                        <tr>
+                            <td>Modificaciones</td>
+                            <td>Modificaci&oacute;n No. 1: ajuste a montos y porcentajes de actividades condicionadas en las rutas de cursos cortos y EPJA, con base en resultados de la primera cohorte de 2024.</td>
+                        </tr>
+                        <tr>
+                            <td>Poblaci&oacute;n objetivo</td>
+                            <td>J&oacute;venes entre 14 y 28 a&ntilde;os en pobreza extrema, pobreza moderada o vulnerabilidad por inseguridad alimentaria. Focalizaci&oacute;n mediante Sisb&eacute;n IV (categor&iacute;as A, B o hasta C09).</td>
+                        </tr>
+                    </table>
+
+                    <h3 class="card-subtitle">Divisi&oacute;n de responsabilidades por entidad</h3>
+                    <table class="ri-tabla">
+                        <thead>
+                            <tr>
+                                <th>Responsabilidad</th>
+                                <th>Secretar&iacute;a de Integraci&oacute;n Social</th>
+                                <th>Secretar&iacute;a de Educaci&oacute;n / Agencia Atenea</th>
+                                <th>Secretar&iacute;a de Desarrollo Econ&oacute;mico</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Compromiso principal</td>
+                                <td>Focalizaci&oacute;n y selecci&oacute;n de participantes. Acompa&ntilde;amiento psicosocial. Pago de las transferencias monetarias. P&oacute;lizas de seguro contra accidentes.</td>
+                                <td>Secretar&iacute;a de Educaci&oacute;n: cupos en la ruta EPJA y articulaci&oacute;n con colegios distritales. Atenea: oferta de cursos cortos y programas de educaci&oacute;n superior posmedia.</td>
+                                <td>Oferta de cursos cortos y actividades de intermediaci&oacute;n con el sector productivo. Conexi&oacute;n con vacantes a trav&eacute;s de aliados estrat&eacute;gicos.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 class="card-subtitle">Programas que integran la sombrilla</h3>
+                    <table class="ri-tabla">
+                        <thead>
+                            <tr>
+                                <th>Programa</th>
+                                <th>Entidad responsable</th>
+                                <th>&iquest;Qu&eacute; hace de forma independiente?</th>
+                                <th>Rol dentro de la sombrilla (JcO)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>J&oacute;venes con Oportunidades (JcO)</td>
+                                <td>Secretar&iacute;a de Integraci&oacute;n Social &mdash; lidera la alianza</td>
+                                <td>Servicio de la SDIS, que genera una articulaci&oacute;n intersectorial mediante el Convenio 1285 de 2025 junto a la Secretar&iacute;a de Educaci&oacute;n, la Secretar&iacute;a de Desarrollo Econ&oacute;mico y la Agencia Atenea. Opera con cuatro componentes: acompa&ntilde;amiento psicosocial, acceso a formaci&oacute;n, intermediaci&oacute;n laboral y transferencias monetarias condicionadas.</td>
+                                <td>Es el brazo social de la sombrilla: ejecuta el acompa&ntilde;amiento psicosocial y entrega las transferencias monetarias mientras las dem&aacute;s entidades aportan la oferta de formaci&oacute;n y empleo.</td>
+                            </tr>
+                            <tr>
+                                <td>J&oacute;venes a la E</td>
+                                <td>Agencia Atenea / Secretar&iacute;a de Educaci&oacute;n</td>
+                                <td>Financia el 100% de la matr&iacute;cula en educaci&oacute;n superior (t&eacute;cnica, tecnol&oacute;gica o universitaria) y educaci&oacute;n y formaci&oacute;n para el trabajo (EFT); as&iacute; mismo, entrega un apoyo de sostenimiento de un salario m&iacute;nimo por semestre cursado para la modalidad de educaci&oacute;n superior. Exige pasant&iacute;a social como contraprestaci&oacute;n.</td>
+                                <td>Es la ruta de educaci&oacute;n posmedia de ciclo largo dentro de JcO. Un joven vulnerable de este programa puede recibir adem&aacute;s los incentivos de la Secretar&iacute;a de Integraci&oacute;n Social por el componente psicosocial y de transferencias monetarias condicionadas.</td>
+                            </tr>
+                            <tr>
+                                <td>Talento Capital</td>
+                                <td>Agencia Atenea / Secretar&iacute;a de Desarrollo Econ&oacute;mico</td>
+                                <td>Cursos cortos (40 a 160 horas) orientados a generar competencias con alta demanda laboral.</td>
+                                <td>Brinda el componente de acceso a rutas de formaci&oacute;n en la oferta para la Ruta de Formaci&oacute;n en curso corto y su realizaci&oacute;n satisfactoria constituye una actividad condicionada.</td>
+                            </tr>
+                            <tr>
+                                <td>Educaci&oacute;n para Personas J&oacute;venes y Adultas (EPJA)</td>
+                                <td>Secretar&iacute;a de Educaci&oacute;n del Distrito</td>
+                                <td>Educaci&oacute;n flexible para j&oacute;venes en extraedad que no han terminado el bachillerato (grados 10.&ordm; y 11.&ordm;). Al graduarse, el joven puede continuar hacia Talento Capital o J&oacute;venes a la E.</td>
+                                <td>Es la ruta de educaci&oacute;n para las y los j&oacute;venes que desean finalizar la educaci&oacute;n media dentro de JcO. La Secretar&iacute;a de Integraci&oacute;n Social entrega transferencias condicionadas a matr&iacute;cula, permanencia y aprobaci&oacute;n del ciclo.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 class="card-subtitle">J&oacute;venes con Oportunidades vs. J&oacute;venes a la E: diferencias clave</h3>
+                    <table class="ri-tabla ri-tabla-comp">
+                        <thead>
+                            <tr>
+                                <th>Criterio</th>
+                                <th>J&oacute;venes con Oportunidades &mdash; Secretar&iacute;a de Integraci&oacute;n Social</th>
+                                <th>J&oacute;venes a la E &mdash; Agencia Atenea</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>&iquest;Qu&eacute; ofrece?</td>
+                                <td>
+                                    Transferencias monetarias condicionadas + acompa&ntilde;amiento psicosocial (40 horas en proyecto de vida, finanzas personales y salud mental). <strong>No gestiona cupos ni financia matr&iacute;culas.</strong><br><br>
+                                    Rutas de formaci&oacute;n que articulan el acompa&ntilde;amiento psicosocial, el acceso a procesos formativos, la intermediaci&oacute;n laboral y transferencias monetarias condicionadas. Oferta <strong>tres rutas de formaci&oacute;n</strong> diferentes:
+                                    <ol style="margin: 6px 0 6px 18px; padding: 0;">
+                                        <li>Para la finalizaci&oacute;n de la educaci&oacute;n media.</li>
+                                        <li>Para la obtenci&oacute;n r&aacute;pida de habilidades para la vinculaci&oacute;n al mercado laboral formal.</li>
+                                        <li>Para la educaci&oacute;n posmedia de ciclo largo.</li>
+                                    </ol>
+                                    Para realizar las actividades establece una articulaci&oacute;n con otras entidades.
+                                </td>
+                                <td>Financia el <strong>100% de la matr&iacute;cula</strong> en educaci&oacute;n posmedia de ciclo largo. En la modalidad de educaci&oacute;n superior brinda apoyo de sostenimiento de un salario m&iacute;nimo por semestre. Gestiona cupos en instituciones aliadas. Exige pasant&iacute;a social.</td>
+                            </tr>
+                            <tr>
+                                <td>Apoyo econ&oacute;mico al joven</td>
+                                <td>
+                                    El servicio tiene un modelo de transferencias monetarias condicionadas, por ello, las transferencias se realizan luego del desarrollo, verificaci&oacute;n y validaci&oacute;n del cumplimiento.<br><br>
+                                    <strong>Monto m&aacute;ximo por ruta:</strong>
+                                    <ul style="margin: 6px 0 0 18px; padding: 0;">
+                                        <li>Curso corto: $1.200.000</li>
+                                        <li>EPJA: $2.000.000</li>
+                                        <li>Posmedia de ciclo largo: $400.000 por semestre; para el caso de EFT, 1 SMMLV por cada semestre.</li>
+                                    </ul>
+                                </td>
+                                <td>Un salario m&iacute;nimo mensual por cada semestre cursado, depositado directamente en la cuenta o billetera digital del estudiante.</td>
+                            </tr>
+                            <tr>
+                                <td>&iquest;Cu&aacute;ndo act&uacute;a?</td>
+                                <td>
+                                    <strong>Para curso corto:</strong> desde antes de la matr&iacute;cula. Focaliza en bases Sisb&eacute;n, prioriza por vulnerabilidad y direcciona al joven hacia la ruta de formaci&oacute;n adecuada.<br><br>
+                                    <strong>Para EPJA y posmedia de ciclo largo:</strong> despu&eacute;s de la matr&iacute;cula en SED o Agencia Atenea. El o la joven se presenta en los programas de EPJA o J&oacute;venes a la E; si es seleccionado/a se remitir&aacute; por registros administrativos a SDIS para realizar la focalizaci&oacute;n y priorizaci&oacute;n.
+                                </td>
+                                <td>Desde la convocatoria: el joven aplica, es seleccionado y Atenea gestiona su vinculaci&oacute;n al programa acad&eacute;mico.</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>"""
 
@@ -961,6 +1178,26 @@ SECCION_ESTADISTICAS = """\
                 </div>
             </div>"""
 
+# --- Reporte a políticas ---
+# Lista las políticas y planes a los que JCO le reporta. Las cards se
+# generan en _comun/reporte_politicas.py a partir de los Excels maestros
+# de Felipe (PPDJ + Reportes Externos hoja "Jóvenes Con Oportunidades")
+# y de la lista _POLITICAS_EN_REVISION declarada arriba.
+SECCION_REPORTE_POLITICAS = """\
+            <div class="content-section" id="reporte_politicas">
+                <div class="card">
+                    <h2 class="card-title">Reporte a pol&iacute;ticas</h2>
+
+                    <div class="jp-callout">
+                        El servicio <strong>J&oacute;venes con Oportunidades</strong> reporta de manera transversal a varias <strong>pol&iacute;ticas p&uacute;blicas distritales</strong> y a varios <strong>planes intersectoriales</strong>, m&aacute;s all&aacute; de la Pol&iacute;tica P&uacute;blica Distrital de Juventud.
+                    </div>
+
+                    <div class="jp-grid">
+%%CARDS_POLITICAS%%
+                    </div>
+                </div>
+            </div>"""
+
 # ============================================================
 # 5. JavaScript — navegación del sidebar
 # ============================================================
@@ -993,15 +1230,32 @@ def generar_html():
         "%%SVG_DIAGRAMA_JCO%%", svg_diagrama_jco()
     )
 
+    # Reporte a políticas: las cards salen de leer los Excels maestros de
+    # Felipe (PPDJ + Reportes Externos hoja JCO) y de _POLITICAS_EN_REVISION.
+    # La lectura y el render viven en _comun/reporte_politicas.py.
+    filas_politicas = leer_politicas(
+        xlsx_ppdj=_XLSX_PPDJ,
+        xlsx_externos=_XLSX_REPORTES_EXTERNOS,
+        hoja_externos="Jóvenes Con Oportunidades",
+        patron_responsable_ppdj=r"JCO|JcO|Jóvenes con Oportunidades|Jovenes con Oportunidades",
+        tema_ppdj="Política Pública Distrital de Juventud",
+        pendientes_revision=_POLITICAS_EN_REVISION,
+    )
+    seccion_reporte_politicas = SECCION_REPORTE_POLITICAS.replace(
+        "%%CARDS_POLITICAS%%", html_cards(filas_politicas)
+    )
+
     secciones = "\n\n".join([
         SECCION_WELCOME,
         SECCION_LINEA_TIEMPO,
         SECCION_A_TENER_EN_CUENTA,
+        SECCION_RUTA_INTERSECTORIAL,
         SECCION_EQUIPO,
         SECCION_PILARES,
         SECCION_MODULOS_PROYECTO_VIDA,
         SECCION_DOCUMENTACION,
         seccion_gestion,
+        seccion_reporte_politicas,
         seccion_aliados_jco(),
         SECCION_ESTADISTICAS,
     ])

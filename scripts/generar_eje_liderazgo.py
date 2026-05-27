@@ -406,7 +406,7 @@ def _html_seccion_politicas():
             derecha = "\n".join(grupos_html)
         else:
             derecha = (
-                '                        <p class="rp-vacio">Ningún producto del Excel oficial '
+                '                        <p class="rp-vacio"><strong>Verificar con Felipe.</strong> Ningún producto del Excel '
                 'menciona este código en su columna "Códigos SIRBE ACTIVIDAD".</p>'
             )
 
@@ -548,12 +548,9 @@ def _html_seccion_politicas():
             '                    <div class="rp-card-codigo">\n'
             '                        <p class="rp-card-label">Sin código SIRBE propio</p>\n'
             '                        <p class="rp-card-num">+</p>\n'
-            '                        <p class="rp-card-nombre">Productos que se reportan por cruce de variables</p>\n'
-            '                        <p class="rp-aclaracion">Estos productos no tienen un código de actividad SIRBE propio. '
-            'El reporte se logra cruzando las atenciones registradas bajo cualquiera de los seis códigos del eje Liderazgo y Participación '
-            'con las variables de caracterización del participante en la ficha SIRBE (grupo étnico, orientación sexual, '
-            'rol ocupacional, ubicación territorial, condición de víctima, etc.) o con marcadores específicos en el '
-            'nombre del curso.</p>\n'
+            '                        <p class="rp-card-nombre">Productos sin código SIRBE propio</p>\n'
+            '                        <p class="rp-aclaracion">Estos productos no se reportan a través de los códigos SIRBE de este eje. '
+            'Cada uno tiene su propio mecanismo de reporte; el detalle aparece bajo cada producto.</p>\n'
             '                    </div>\n'
             '                    <div class="rp-card-grupos">\n'
             f'{grupos_html_sc}\n'
@@ -947,8 +944,8 @@ CSS_CHIPS = f"""
 .rp-prod::before {{ content: '·'; position: absolute; left: 0; top: -2px; color: #253C5C; font-weight: 700; font-size: 1.2rem; line-height: 1; }}
 .rp-vacio {{ font-family: 'Figtree', sans-serif; font-size: 0.85rem; color: #aaa; font-style: italic; margin: 0; }}
 
-/* Tarjeta "Productos que se reportan por cruce de variables": misma
-   estética pero con cruce explicado bajo cada producto. */
+/* Tarjeta "Productos sin código SIRBE propio": misma estética que las
+   demás cards, con el detalle de cada producto debajo. */
 .rp-card-cruce {{ grid-template-columns: 1fr; }}
 .rp-card-cruce .rp-card-codigo {{ border-bottom: 1px solid rgba(47,62,60,0.12); padding-bottom: 14px; margin-bottom: 4px; }}
 .rp-card-cruce .rp-card-num {{ font-size: 1.6rem; color: #555; }}

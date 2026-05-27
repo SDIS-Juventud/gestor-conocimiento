@@ -424,7 +424,7 @@ def _html_seccion_politicas():
             derecha = "\n".join(grupos_html)
         else:
             derecha = (
-                '                        <p class="rp-vacio">Ningún producto del Excel oficial '
+                '                        <p class="rp-vacio"><strong>Verificar con Felipe.</strong> Ningún producto del Excel '
                 'menciona este código en su columna "Códigos SIRBE ACTIVIDAD".</p>'
             )
 

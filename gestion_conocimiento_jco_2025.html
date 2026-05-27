@@ -465,7 +465,51 @@ body { font-family: 'Figtree', 'Segoe UI', sans-serif; background-color: #ffffff
     .comp-jco .comp-celda-badge { background: rgba(248, 244, 225, 0.22); color: #F8F4E1; }
     .comp-icono { width: 40px; height: 40px; }
     .comp-icono svg { width: 20px; height: 20px; }
-}</style>
+}
+
+/* Tablas tipo ficha t&eacute;cnica / comparativa de la secci&oacute;n Ruta intersectorial.
+   El callout superior va en verde oscuro JCO con letra crema, igual al header
+   del sitio para enfatizar el mensaje clave (estrategia intersectorial liderada
+   por SDIS hasta 2032). Las tablas usan el verde oscuro como header y crema en
+   las celdas, sin gradientes ni bandas decorativas. */
+.ri-callout { background: #2F3E3C; color: #F8F4E1; border-radius: 10px; padding: 18px 22px; margin: 0 0 26px; line-height: 1.7; }
+.ri-callout strong { color: #F8F4E1; }
+.ri-subtitulo { font-family: 'Antonio','Figtree',sans-serif; font-weight: 700; color: #2F3E3C; font-size: 1.15rem; margin: 28px 0 6px; letter-spacing: 0.01em; }
+.ri-bajada { color: #555; font-size: 0.92rem; line-height: 1.6; margin: 0 0 14px; }
+.ri-tabla { width: 100%; border-collapse: collapse; margin: 0 0 22px; font-size: 0.92rem; }
+.ri-tabla th { background: #2F3E3C; color: #F8F4E1; text-align: left; padding: 12px 14px; font-weight: 700; font-size: 0.88rem; vertical-align: top; }
+.ri-tabla td { padding: 14px; vertical-align: top; line-height: 1.55; border-bottom: 1px solid #e8e1c4; background: #fbf8ec; }
+.ri-tabla td:first-child { font-weight: 600; color: #2F3E3C; background: #f5efd2; width: 22%; }
+.ri-tabla.ri-tabla-comp td:first-child { background: #f5efd2; }
+.ri-tabla tr:last-child td { border-bottom: 0; }
+@media (max-width: 720px) {
+    .ri-tabla, .ri-tabla thead, .ri-tabla tbody, .ri-tabla tr, .ri-tabla td, .ri-tabla th { display: block; width: 100%; }
+    .ri-tabla th { font-size: 0.95rem; }
+    .ri-tabla td:first-child { width: 100%; }
+}
+
+/* Reporte a pol&iacute;ticas: tarjetas peque&ntilde;as por pol&iacute;tica o
+   plan. Una sola superficie por card (header verde institucional + body
+   crema), jerarqu&iacute;a por tipograf&iacute;a y color, sin chips ni
+   recuadros anidados. El estado "En revisi&oacute;n" usa grises neutros
+   para indicar pendiente sin alarmar. */
+.jp-callout { color: #3a3a3a; margin: 0 0 22px; line-height: 1.7; font-size: 0.95rem; max-width: 820px; }
+.jp-callout strong { color: #2F3E3C; font-weight: 700; }
+.jp-grid { display: grid; grid-template-columns: 1fr; gap: 18px; margin: 18px 0 0; }
+.jp-card { background: #fbf8ec; border-radius: 12px; padding: 0; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
+.jp-card-header { background: #2F3E3C; color: #F8F4E1; padding: 16px 22px 14px; }
+.jp-card-tema { font-family: 'Antonio','Anton','Figtree',sans-serif; font-weight: 700; font-size: 1.05rem; margin: 0; line-height: 1.3; letter-spacing: 0.01em; }
+.jp-card-body { padding: 18px 22px 20px; }
+.jp-card-productos { list-style: none; padding: 0; margin: 0; }
+.jp-card-producto { font-family: 'Figtree', sans-serif; font-size: 0.92rem; color: #3a3a3a; line-height: 1.55; padding-left: 14px; position: relative; margin-bottom: 10px; }
+.jp-card-producto:last-child { margin-bottom: 0; }
+.jp-card-producto::before { content: '·'; position: absolute; left: 0; top: -2px; color: #2F3E3C; font-weight: 700; font-size: 1.2rem; line-height: 1; }
+.jp-card-codigo { font-family: 'Antonio','Anton','Figtree',sans-serif; font-weight: 700; font-size: 0.95rem; color: #2F3E3C; margin-right: 6px; letter-spacing: 0.02em; }
+.jp-card-prod-obs { font-family: 'Figtree', sans-serif; font-size: 0.85rem; color: #555; line-height: 1.6; margin: 6px 0 0; }
+.jp-card-pendiente { background: #f0eee9; box-shadow: none; }
+.jp-card-pendiente .jp-card-header { background: #6b6963; color: #f0eee9; }
+.jp-card-revision-nota { font-size: 0.92rem; line-height: 1.6; color: #555; margin: 0; }
+.jp-card-revision-nota strong { color: #2F3E3C; font-weight: 700; }</style>
 </head>
 <body>
     <header class="header">
@@ -493,6 +537,7 @@ body { font-family: 'Figtree', 'Segoe UI', sans-serif; background-color: #ffffff
                 <div class="sidebar-items show">
                     <div class="sidebar-item" onclick="showContent('linea_tiempo')">L&iacute;nea de tiempo</div>
                     <div class="sidebar-item" onclick="showContent('a_tener_en_cuenta')">A tener en cuenta</div>
+                    <div class="sidebar-item" onclick="showContent('ruta_intersectorial')">Ruta intersectorial</div>
                     <div class="sidebar-item" onclick="showContent('equipo')">Equipo</div>
                     <div class="sidebar-item" onclick="showContent('pilares')">Pilares del programa</div>
                     <div class="sidebar-item" onclick="showContent('modulos_proyecto_vida')">M&oacute;dulos de Proyecto de Vida</div>
@@ -509,6 +554,11 @@ body { font-family: 'Figtree', 'Segoe UI', sans-serif; background-color: #ffffff
                 </div>
                 <div class="sidebar-items">
                     <div class="sidebar-item" onclick="showContent('flujo_datos')">Flujo de gesti&oacute;n de la informaci&oacute;n</div>
+                </div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title" onclick="showContent('reporte_politicas')" style="cursor:pointer;">
+                    <span>Reporte a pol&iacute;ticas</span>
                 </div>
             </div>
             <div class="sidebar-section">
@@ -642,6 +692,153 @@ body { font-family: 'Figtree', 'Segoe UI', sans-serif; background-color: #ffffff
 
                     <h3 class="card-subtitle">Financiaci&oacute;n de los programas</h3>
                     <p style="line-height:1.7;">Una caracter&iacute;stica clave de Parceros por Bogot&aacute; fue que se sustent&oacute;, en gran parte, gracias a la uni&oacute;n institucional con los <strong>Fondos de Desarrollo Local (FDL)</strong>. Esto permiti&oacute; una inversi&oacute;n territorializada, donde los alcaldes locales y ediles destinaban recursos para apoyar directamente a los j&oacute;venes de sus respectivas localidades. En J&oacute;venes con Oportunidades, los FDL tambi&eacute;n han venido aportando recursos: con un rol inicial <strong>desde 2025</strong> y una <strong>presencia muy fuerte en 2026</strong>. A estos aportes se suma la inversi&oacute;n distrital proyectada de <strong>$324.053 millones</strong>, que une los esfuerzos sectoriales de las Secretar&iacute;as de Integraci&oacute;n Social, Educaci&oacute;n, Desarrollo Econ&oacute;mico y la Agencia Atenea.</p>
+                </div>
+            </div>
+
+            <div class="content-section" id="ruta_intersectorial">
+                <div class="card">
+                    <h2 class="card-title">Ruta intersectorial de inclusi&oacute;n social y productiva</h2>
+
+                    <div class="ri-callout">
+                        <strong>J&oacute;venes con Oportunidades (JcO)</strong> es a la vez el nombre de la <strong>estrategia intersectorial</strong> completa y del <strong>servicio liderado por la Secretar&iacute;a Distrital de Integraci&oacute;n Social</strong>. La estrategia se formaliza en el <strong>Convenio Marco Interadministrativo No. 1285 de 2025</strong> entre cuatro entidades distritales y tiene un plazo de ejecuci&oacute;n <strong>hasta el 31 de diciembre de 2032</strong>, para proteger la cobertura de transferencias en carreras de ciclo largo. Su prop&oacute;sito: que los j&oacute;venes en situaci&oacute;n de vulnerabilidad estudien, no deserten y consigan empleo.
+                    </div>
+
+                    <h3 class="card-subtitle">Convenio Marco Interadministrativo No. 1285 de 2025</h3>
+                    <p class="ri-bajada">Base jur&iacute;dica que formaliza la Estrategia Intersectorial J&oacute;venes con Oportunidades y define los compromisos de cada entidad participante.</p>
+
+                    <div class="ri-subtitulo">Ficha t&eacute;cnica</div>
+                    <table class="ri-tabla">
+                        <tr>
+                            <td>Nombre</td>
+                            <td>Convenio Marco Interadministrativo No. 1285 de 2025</td>
+                        </tr>
+                        <tr>
+                            <td>Objeto</td>
+                            <td>Aunar esfuerzos t&eacute;cnicos, administrativos, operativos, financieros y log&iacute;sticos entre cuatro entidades distritales para implementar la Estrategia Intersectorial de Inclusi&oacute;n Social y Productiva &mdash; J&oacute;venes con Oportunidades.</td>
+                        </tr>
+                        <tr>
+                            <td>Entidades suscriptoras</td>
+                            <td>Secretar&iacute;a Distrital de Integraci&oacute;n Social (lidera) &middot; Secretar&iacute;a de Educaci&oacute;n del Distrito &middot; Secretar&iacute;a Distrital de Desarrollo Econ&oacute;mico &middot; Agencia Atenea</td>
+                        </tr>
+                        <tr>
+                            <td>Plazo de ejecuci&oacute;n</td>
+                            <td>Hasta el <strong>31 de diciembre de 2032</strong>. El plazo extendido protege la cobertura de transferencias para j&oacute;venes en carreras de ciclo largo (2 a 5 a&ntilde;os).</td>
+                        </tr>
+                        <tr>
+                            <td>Modificaciones</td>
+                            <td>Modificaci&oacute;n No. 1: ajuste a montos y porcentajes de actividades condicionadas en las rutas de cursos cortos y EPJA, con base en resultados de la primera cohorte de 2024.</td>
+                        </tr>
+                        <tr>
+                            <td>Poblaci&oacute;n objetivo</td>
+                            <td>J&oacute;venes entre 14 y 28 a&ntilde;os en pobreza extrema, pobreza moderada o vulnerabilidad por inseguridad alimentaria. Focalizaci&oacute;n mediante Sisb&eacute;n IV (categor&iacute;as A, B o hasta C09).</td>
+                        </tr>
+                    </table>
+
+                    <h3 class="card-subtitle">Divisi&oacute;n de responsabilidades por entidad</h3>
+                    <table class="ri-tabla">
+                        <thead>
+                            <tr>
+                                <th>Responsabilidad</th>
+                                <th>Secretar&iacute;a de Integraci&oacute;n Social</th>
+                                <th>Secretar&iacute;a de Educaci&oacute;n / Agencia Atenea</th>
+                                <th>Secretar&iacute;a de Desarrollo Econ&oacute;mico</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Compromiso principal</td>
+                                <td>Focalizaci&oacute;n y selecci&oacute;n de participantes. Acompa&ntilde;amiento psicosocial. Pago de las transferencias monetarias. P&oacute;lizas de seguro contra accidentes.</td>
+                                <td>Secretar&iacute;a de Educaci&oacute;n: cupos en la ruta EPJA y articulaci&oacute;n con colegios distritales. Atenea: oferta de cursos cortos y programas de educaci&oacute;n superior posmedia.</td>
+                                <td>Oferta de cursos cortos y actividades de intermediaci&oacute;n con el sector productivo. Conexi&oacute;n con vacantes a trav&eacute;s de aliados estrat&eacute;gicos.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 class="card-subtitle">Programas que integran la sombrilla</h3>
+                    <table class="ri-tabla">
+                        <thead>
+                            <tr>
+                                <th>Programa</th>
+                                <th>Entidad responsable</th>
+                                <th>&iquest;Qu&eacute; hace de forma independiente?</th>
+                                <th>Rol dentro de la sombrilla (JcO)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>J&oacute;venes con Oportunidades (JcO)</td>
+                                <td>Secretar&iacute;a de Integraci&oacute;n Social &mdash; lidera la alianza</td>
+                                <td>Servicio de la SDIS, que genera una articulaci&oacute;n intersectorial mediante el Convenio 1285 de 2025 junto a la Secretar&iacute;a de Educaci&oacute;n, la Secretar&iacute;a de Desarrollo Econ&oacute;mico y la Agencia Atenea. Opera con cuatro componentes: acompa&ntilde;amiento psicosocial, acceso a formaci&oacute;n, intermediaci&oacute;n laboral y transferencias monetarias condicionadas.</td>
+                                <td>Es el brazo social de la sombrilla: ejecuta el acompa&ntilde;amiento psicosocial y entrega las transferencias monetarias mientras las dem&aacute;s entidades aportan la oferta de formaci&oacute;n y empleo.</td>
+                            </tr>
+                            <tr>
+                                <td>J&oacute;venes a la E</td>
+                                <td>Agencia Atenea / Secretar&iacute;a de Educaci&oacute;n</td>
+                                <td>Financia el 100% de la matr&iacute;cula en educaci&oacute;n superior (t&eacute;cnica, tecnol&oacute;gica o universitaria) y educaci&oacute;n y formaci&oacute;n para el trabajo (EFT); as&iacute; mismo, entrega un apoyo de sostenimiento de un salario m&iacute;nimo por semestre cursado para la modalidad de educaci&oacute;n superior. Exige pasant&iacute;a social como contraprestaci&oacute;n.</td>
+                                <td>Es la ruta de educaci&oacute;n posmedia de ciclo largo dentro de JcO. Un joven vulnerable de este programa puede recibir adem&aacute;s los incentivos de la Secretar&iacute;a de Integraci&oacute;n Social por el componente psicosocial y de transferencias monetarias condicionadas.</td>
+                            </tr>
+                            <tr>
+                                <td>Talento Capital</td>
+                                <td>Agencia Atenea / Secretar&iacute;a de Desarrollo Econ&oacute;mico</td>
+                                <td>Cursos cortos (40 a 160 horas) orientados a generar competencias con alta demanda laboral.</td>
+                                <td>Brinda el componente de acceso a rutas de formaci&oacute;n en la oferta para la Ruta de Formaci&oacute;n en curso corto y su realizaci&oacute;n satisfactoria constituye una actividad condicionada.</td>
+                            </tr>
+                            <tr>
+                                <td>Educaci&oacute;n para Personas J&oacute;venes y Adultas (EPJA)</td>
+                                <td>Secretar&iacute;a de Educaci&oacute;n del Distrito</td>
+                                <td>Educaci&oacute;n flexible para j&oacute;venes en extraedad que no han terminado el bachillerato (grados 10.&ordm; y 11.&ordm;). Al graduarse, el joven puede continuar hacia Talento Capital o J&oacute;venes a la E.</td>
+                                <td>Es la ruta de educaci&oacute;n para las y los j&oacute;venes que desean finalizar la educaci&oacute;n media dentro de JcO. La Secretar&iacute;a de Integraci&oacute;n Social entrega transferencias condicionadas a matr&iacute;cula, permanencia y aprobaci&oacute;n del ciclo.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 class="card-subtitle">J&oacute;venes con Oportunidades vs. J&oacute;venes a la E: diferencias clave</h3>
+                    <table class="ri-tabla ri-tabla-comp">
+                        <thead>
+                            <tr>
+                                <th>Criterio</th>
+                                <th>J&oacute;venes con Oportunidades &mdash; Secretar&iacute;a de Integraci&oacute;n Social</th>
+                                <th>J&oacute;venes a la E &mdash; Agencia Atenea</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>&iquest;Qu&eacute; ofrece?</td>
+                                <td>
+                                    Transferencias monetarias condicionadas + acompa&ntilde;amiento psicosocial (40 horas en proyecto de vida, finanzas personales y salud mental). <strong>No gestiona cupos ni financia matr&iacute;culas.</strong><br><br>
+                                    Rutas de formaci&oacute;n que articulan el acompa&ntilde;amiento psicosocial, el acceso a procesos formativos, la intermediaci&oacute;n laboral y transferencias monetarias condicionadas. Oferta <strong>tres rutas de formaci&oacute;n</strong> diferentes:
+                                    <ol style="margin: 6px 0 6px 18px; padding: 0;">
+                                        <li>Para la finalizaci&oacute;n de la educaci&oacute;n media.</li>
+                                        <li>Para la obtenci&oacute;n r&aacute;pida de habilidades para la vinculaci&oacute;n al mercado laboral formal.</li>
+                                        <li>Para la educaci&oacute;n posmedia de ciclo largo.</li>
+                                    </ol>
+                                    Para realizar las actividades establece una articulaci&oacute;n con otras entidades.
+                                </td>
+                                <td>Financia el <strong>100% de la matr&iacute;cula</strong> en educaci&oacute;n posmedia de ciclo largo. En la modalidad de educaci&oacute;n superior brinda apoyo de sostenimiento de un salario m&iacute;nimo por semestre. Gestiona cupos en instituciones aliadas. Exige pasant&iacute;a social.</td>
+                            </tr>
+                            <tr>
+                                <td>Apoyo econ&oacute;mico al joven</td>
+                                <td>
+                                    El servicio tiene un modelo de transferencias monetarias condicionadas, por ello, las transferencias se realizan luego del desarrollo, verificaci&oacute;n y validaci&oacute;n del cumplimiento.<br><br>
+                                    <strong>Monto m&aacute;ximo por ruta:</strong>
+                                    <ul style="margin: 6px 0 0 18px; padding: 0;">
+                                        <li>Curso corto: $1.200.000</li>
+                                        <li>EPJA: $2.000.000</li>
+                                        <li>Posmedia de ciclo largo: $400.000 por semestre; para el caso de EFT, 1 SMMLV por cada semestre.</li>
+                                    </ul>
+                                </td>
+                                <td>Un salario m&iacute;nimo mensual por cada semestre cursado, depositado directamente en la cuenta o billetera digital del estudiante.</td>
+                            </tr>
+                            <tr>
+                                <td>&iquest;Cu&aacute;ndo act&uacute;a?</td>
+                                <td>
+                                    <strong>Para curso corto:</strong> desde antes de la matr&iacute;cula. Focaliza en bases Sisb&eacute;n, prioriza por vulnerabilidad y direcciona al joven hacia la ruta de formaci&oacute;n adecuada.<br><br>
+                                    <strong>Para EPJA y posmedia de ciclo largo:</strong> despu&eacute;s de la matr&iacute;cula en SED o Agencia Atenea. El o la joven se presenta en los programas de EPJA o J&oacute;venes a la E; si es seleccionado/a se remitir&aacute; por registros administrativos a SDIS para realizar la focalizaci&oacute;n y priorizaci&oacute;n.
+                                </td>
+                                <td>Desde la convocatoria: el joven aplica, es seleccionado y Atenea gestiona su vinculaci&oacute;n al programa acad&eacute;mico.</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
@@ -1348,6 +1545,138 @@ body { font-family: 'Figtree', 'Segoe UI', sans-serif; background-color: #ffffff
       <text text-anchor="middle" font-family="'Figtree', 'Segoe UI', sans-serif" font-size="12" font-weight="700" fill="#f4f5de"><tspan x="770.0" y="996.3000000000001">Mantener actualizado y</tspan><tspan x="770.0" y="1010.1">egresar del servicio</tspan></text>
     </g><polyline points="110.0,229.0 110.0,249.0 330.0,249.0 330.0,269.0" fill="none" stroke="#9aa3a1" stroke-width="1.6" marker-end="url(#flecha)"/><line x1="330.0" y1="329.0" x2="330.0" y2="369.0" stroke="#9aa3a1" stroke-width="1.6" marker-end="url(#flecha)"/><line x1="330.0" y1="429.0" x2="330.0" y2="469.0" stroke="#9aa3a1" stroke-width="1.6" marker-end="url(#flecha)"/><polyline points="330.0,529.0 330.0,549.0 550.0,549.0 550.0,569.0" fill="none" stroke="#9aa3a1" stroke-width="1.6" marker-end="url(#flecha)"/><polyline points="550.0,629.0 550.0,649.0 330.0,649.0 330.0,669.0" fill="none" stroke="#9aa3a1" stroke-width="1.6" marker-end="url(#flecha)"/><line x1="330.0" y1="729.0" x2="330.0" y2="769.0" stroke="#9aa3a1" stroke-width="1.6" marker-end="url(#flecha)"/><line x1="770.0" y1="829.0" x2="770.0" y2="869.0" stroke="#9aa3a1" stroke-width="1.6" marker-end="url(#flecha)"/><line x1="770.0" y1="929.0" x2="770.0" y2="969.0" stroke="#9aa3a1" stroke-width="1.6" marker-end="url(#flecha)"/><line x1="420.0" y1="799.0" x2="685.0" y2="799.0" stroke="#9aa3a1" stroke-width="1.6" marker-end="url(#flecha)"/><text x="552.5" y="791.0" text-anchor="middle" font-family="'Antonio', 'Anton', 'Figtree', sans-serif" font-size="10" font-weight="700" fill="#2F3E3C" letter-spacing="0.5">SÍ</text><line x1="330.0" y1="839.0" x2="330.0" y2="869.0" stroke="#9aa3a1" stroke-width="1.6" marker-end="url(#flecha)"/><text x="344.0" y="854.0" text-anchor="middle" font-family="'Antonio', 'Anton', 'Figtree', sans-serif" font-size="10" font-weight="700" fill="#2F3E3C" letter-spacing="0.5">NO</text><line x1="415.0" y1="899.0" x2="465.0" y2="899.0" stroke="#9aa3a1" stroke-width="1.6" marker-end="url(#flecha)"/><polyline points="550.0,929.0 550.0,959.0 223.0,959.0 223.0,699.0 245.0,699.0" fill="none" stroke="#9aa3a1" stroke-width="1.6" marker-end="url(#flecha)" stroke-dasharray="4 3"/><text text-anchor="start" font-family="'Figtree', 'Segoe UI', sans-serif" font-size="9.5" font-weight="500" fill="#2F3E3C"><tspan x="892" y="189.975">El proceso de caracterización toma como</tspan><tspan x="892" y="202.325">insumo principal la información del SISBEN</tspan><tspan x="892" y="214.67499999999998">VI.</tspan></text><text text-anchor="start" font-family="'Figtree', 'Segoe UI', sans-serif" font-size="9.5" font-weight="500" fill="#2F3E3C"><tspan x="892" y="296.15">Aplicación del criterio de priorización y del</tspan><tspan x="892" y="308.5">portafolio de servicios. Punto de control.</tspan></text><text text-anchor="start" font-family="'Figtree', 'Segoe UI', sans-serif" font-size="9.5" font-weight="500" fill="#2F3E3C"><tspan x="892" y="396.15">Confirmación del ingreso del joven al</tspan><tspan x="892" y="408.5">servicio. Punto de control.</tspan></text><text text-anchor="start" font-family="'Figtree', 'Segoe UI', sans-serif" font-size="9.5" font-weight="500" fill="#2F3E3C"><tspan x="892" y="496.15">Se consolida la base con las variables</tspan><tspan x="892" y="508.5">necesarias para el registro en SIRBE.</tspan></text><text text-anchor="start" font-family="'Figtree', 'Segoe UI', sans-serif" font-size="9.5" font-weight="500" fill="#2F3E3C"><tspan x="892" y="596.1500000000001">Recibir y revisar la base de datos antes del</tspan><tspan x="892" y="608.5000000000001">cargue.</tspan></text><text text-anchor="start" font-family="'Figtree', 'Segoe UI', sans-serif" font-size="9.5" font-weight="500" fill="#2F3E3C"><tspan x="892" y="883.8000000000001">Supervisión del cumplimiento, por parte de</tspan><tspan x="892" y="896.1500000000001">los y las jóvenes, de los requisitos</tspan><tspan x="892" y="908.5000000000001">establecidos en el marco de las actividades</tspan><tspan x="892" y="920.85">condicionadas.</tspan></text><text text-anchor="start" font-family="'Figtree', 'Segoe UI', sans-serif" font-size="9.5" font-weight="500" fill="#2F3E3C"><tspan x="892" y="989.975">Mantener los registros actualizados y egresar</tspan><tspan x="892" y="1002.325">a los jóvenes cuando aplique o finalice el</tspan><tspan x="892" y="1014.6750000000001">servicio.</tspan></text>
 </svg></div>
+                </div>
+            </div>
+
+            <div class="content-section" id="reporte_politicas">
+                <div class="card">
+                    <h2 class="card-title">Reporte a pol&iacute;ticas</h2>
+
+                    <div class="jp-callout">
+                        El servicio <strong>J&oacute;venes con Oportunidades</strong> reporta de manera transversal a varias <strong>pol&iacute;ticas p&uacute;blicas distritales</strong> y a varios <strong>planes intersectoriales</strong>, m&aacute;s all&aacute; de la Pol&iacute;tica P&uacute;blica Distrital de Juventud.
+                    </div>
+
+                    <div class="jp-grid">
+                    <article class="jp-card">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">Política Pública Distrital de Juventud</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <ul class="jp-card-productos">
+                                <li class="jp-card-producto"><span class="jp-card-codigo">3.1.4</span> Jóvenes vinculados a la Estrategia de empleo para jóvenes en condición de vulnerabilidad aplicando el enfoque diferencial, que contenga el desarrollo de formación técnica en competencias laborales y posibilite la inserción laboral formal de jóvenes.
+                                    <p class="jp-card-prod-obs">este producto se reporta con datos del servicio de jovenes con oportunidades</p></li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="jp-card">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">Política Pública de Superación de la pobreza</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <ul class="jp-card-productos">
+                                <li class="jp-card-producto"><span class="jp-card-codigo">1.1.4</span> Transferencias monetarias condicionadas para jóvenes
+                                    <p class="jp-card-prod-obs">Sacar este reporte de la petición de reporte de la PPDJ del producto 1.1.5 Jóvenes beneficiados con Transferencias Monetarias Condicionadas</p></li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="jp-card">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">Política Pública del Pueblo Raizal en Bogotá D.C.2024-2036</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <ul class="jp-card-productos">
+                                <li class="jp-card-producto"><span class="jp-card-codigo">4.1.12</span> Jóvenes raizales vinculados a la estrategia de oportunidades juveniles por medio de transferencias monetarias condicionadas
+                                    <p class="jp-card-prod-obs">Preguntarle a DADE si en los listados de priorizados hay jóvenes raizales</p></li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="jp-card jp-card-pendiente">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">Política Pública Indígena</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <p class="jp-card-revision-nota"><strong>En revisi&oacute;n con Daniela Correa.</strong></p>
+                        </div>
+                    </article>
+
+                    <article class="jp-card jp-card-pendiente">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">Política Pública LGBTI</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <p class="jp-card-revision-nota"><strong>En revisi&oacute;n con Daniela Correa.</strong></p>
+                        </div>
+                    </article>
+
+                    <article class="jp-card jp-card-pendiente">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">Política Pública de Infancia y Adolescencia</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <p class="jp-card-revision-nota"><strong>En revisi&oacute;n con Felipe.</strong></p>
+                        </div>
+                    </article>
+
+                    <article class="jp-card jp-card-pendiente">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">Política Pública de la Población Negra, Afrocolombiana y Palenquera, en Bogotá D.C. 2024-2036</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <p class="jp-card-revision-nota"><strong>En revisi&oacute;n con Daniela Correa.</strong></p>
+                        </div>
+                    </article>
+
+                    <article class="jp-card jp-card-pendiente">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">Política Pública del Pueblo Rrom</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <p class="jp-card-revision-nota"><strong>En revisi&oacute;n con Daniela Correa.</strong></p>
+                        </div>
+                    </article>
+
+                    <article class="jp-card">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">PAD Víctimas</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <ul class="jp-card-productos">
+                                <li class="jp-card-producto">Vincular al 100% de Jóvenes víctimas del conflicto armado en la estrategia de oportunidades juveniles, a través de transferencias monetarias condicionadas que cumplan el proceso requerido para su focalización.
+                                    <p class="jp-card-prod-obs">La información es enviada directamente por DADE, quienes hacen el cruce con el RUV.</p></li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="jp-card jp-card-pendiente">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">PDET (Programas de Desarrollo con Enfoque Territorial)</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <p class="jp-card-revision-nota"><strong>En revisi&oacute;n con Daniela Correa.</strong></p>
+                        </div>
+                    </article>
+
+                    <article class="jp-card jp-card-pendiente">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">Plan Operativo de Reincorporación</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <p class="jp-card-revision-nota"><strong>En revisi&oacute;n con Daniela Correa.</strong></p>
+                        </div>
+                    </article>
+
+                    <article class="jp-card jp-card-pendiente">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">Plan de Acción Territorial (PAT) de Víctimas</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <p class="jp-card-revision-nota"><strong>En revisi&oacute;n con Daniela Correa.</strong></p>
+                        </div>
+                    </article>
+                    </div>
                 </div>
             </div>
 

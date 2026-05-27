@@ -175,6 +175,30 @@
             .lt-icono svg { width: 30px; height: 30px; }
             .lt-titulo { text-align: left; }
         }
+        
+        /* Reporte a pol&iacute;ticas: tarjetas peque&ntilde;as por pol&iacute;tica o
+           plan. Una sola superficie por card (header verde institucional + body
+           crema), jerarqu&iacute;a por tipograf&iacute;a y color, sin chips ni
+           recuadros anidados. El estado "En revisi&oacute;n" usa grises neutros
+           para indicar pendiente sin alarmar. */
+        .jp-callout { color: #3a3a3a; margin: 0 0 22px; line-height: 1.7; font-size: 0.95rem; max-width: 820px; }
+        .jp-callout strong { color: #2F3E3C; font-weight: 700; }
+        .jp-grid { display: grid; grid-template-columns: 1fr; gap: 18px; margin: 18px 0 0; }
+        .jp-card { background: #fbf8ec; border-radius: 12px; padding: 0; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
+        .jp-card-header { background: #2F3E3C; color: #F8F4E1; padding: 16px 22px 14px; }
+        .jp-card-tema { font-family: 'Antonio','Anton','Figtree',sans-serif; font-weight: 700; font-size: 1.05rem; margin: 0; line-height: 1.3; letter-spacing: 0.01em; }
+        .jp-card-body { padding: 18px 22px 20px; }
+        .jp-card-productos { list-style: none; padding: 0; margin: 0; }
+        .jp-card-producto { font-family: 'Figtree', sans-serif; font-size: 0.92rem; color: #3a3a3a; line-height: 1.55; padding-left: 14px; position: relative; margin-bottom: 10px; }
+        .jp-card-producto:last-child { margin-bottom: 0; }
+        .jp-card-producto::before { content: '·'; position: absolute; left: 0; top: -2px; color: #2F3E3C; font-weight: 700; font-size: 1.2rem; line-height: 1; }
+        .jp-card-codigo { font-family: 'Antonio','Anton','Figtree',sans-serif; font-weight: 700; font-size: 0.95rem; color: #2F3E3C; margin-right: 6px; letter-spacing: 0.02em; }
+        .jp-card-prod-obs { font-family: 'Figtree', sans-serif; font-size: 0.85rem; color: #555; line-height: 1.6; margin: 6px 0 0; }
+        .jp-card-pendiente { background: #f0eee9; box-shadow: none; }
+        .jp-card-pendiente .jp-card-header { background: #6b6963; color: #f0eee9; }
+        .jp-card-revision-nota { font-size: 0.92rem; line-height: 1.6; color: #555; margin: 0; }
+        .jp-card-revision-nota strong { color: #2F3E3C; font-weight: 700; }
+        
     </style>
 </head>
 <body>
@@ -205,6 +229,8 @@
                 </div></div>
 
 
+
+            <div class="sidebar-section"><div class="sidebar-title" onclick="showContent('reporte_politicas')" style="cursor:pointer;"><span>Reporte a pol&iacute;ticas</span></div></div>
 
             <div class="sidebar-section"><div class="sidebar-title" onclick="showContent('aliados')" style="cursor:pointer;"><span>Aliados</span></div></div>
 
@@ -916,6 +942,131 @@
       <text text-anchor="middle" font-family="'Figtree', 'Segoe UI', sans-serif" font-size="12" font-weight="700" fill="#f4f5de"><tspan x="375.0" y="1303.2">Fin del servicio</tspan></text>
     </g><line x1="125.0" y1="229.0" x2="125.0" y2="269.0" stroke="#9aa3a1" stroke-width="1.6" marker-end="url(#flecha)"/><polyline points="125.0,329.0 125.0,349.0 375.0,349.0 375.0,369.0" fill="none" stroke="#9aa3a1" stroke-width="1.6" marker-end="url(#flecha)"/><line x1="375.0" y1="429.0" x2="375.0" y2="469.0" stroke="#9aa3a1" stroke-width="1.6" marker-end="url(#flecha)"/><line x1="375.0" y1="629.0" x2="375.0" y2="669.0" stroke="#9aa3a1" stroke-width="1.6" marker-end="url(#flecha)"/><polyline points="375.0,829.0 375.0,849.0 625.0,849.0 625.0,869.0" fill="none" stroke="#9aa3a1" stroke-width="1.6" marker-end="url(#flecha)"/><line x1="625.0" y1="929.0" x2="625.0" y2="969.0" stroke="#9aa3a1" stroke-width="1.6" marker-end="url(#flecha)"/><line x1="375.0" y1="1229.0" x2="375.0" y2="1269.0" stroke="#9aa3a1" stroke-width="1.6" marker-end="url(#flecha)"/><line x1="375.0" y1="541.0" x2="375.0" y2="569.0" stroke="#9aa3a1" stroke-width="1.6" marker-end="url(#flecha)"/><text x="389.0" y="555.0" text-anchor="middle" font-family="'Antonio', 'Anton', 'Figtree', sans-serif" font-size="10" font-weight="700" fill="#2F3E3C" letter-spacing="0.5">SÍ</text><polyline points="275.0,499.0 18,499.0 18,199.0 35.0,199.0" fill="none" stroke="#9aa3a1" stroke-width="1.6" marker-end="url(#flecha)" stroke-dasharray="4 3"/><text x="257.0" y="491.0" text-anchor="middle" font-family="'Antonio', 'Anton', 'Figtree', sans-serif" font-size="10" font-weight="700" fill="#2F3E3C" letter-spacing="0.5">NO</text><line x1="375.0" y1="741.0" x2="375.0" y2="769.0" stroke="#9aa3a1" stroke-width="1.6" marker-end="url(#flecha)"/><text x="389.0" y="755.0" text-anchor="middle" font-family="'Antonio', 'Anton', 'Figtree', sans-serif" font-size="10" font-weight="700" fill="#2F3E3C" letter-spacing="0.5">SÍ</text><polyline points="275.0,699.0 247.0,699.0 247.0,1299.0 285.0,1299.0" fill="none" stroke="#9aa3a1" stroke-width="1.6" marker-end="url(#flecha)"/><text x="233.0" y="691.0" text-anchor="middle" font-family="'Antonio', 'Anton', 'Figtree', sans-serif" font-size="10" font-weight="700" fill="#2F3E3C" letter-spacing="0.5">NO</text><polyline points="525.0,999.0 500.0,999.0 500.0,1151.0 375.0,1151.0 375.0,1169.0" fill="none" stroke="#9aa3a1" stroke-width="1.6" marker-end="url(#flecha)"/><text x="512.5" y="991.0" text-anchor="middle" font-family="'Antonio', 'Anton', 'Figtree', sans-serif" font-size="10" font-weight="700" fill="#2F3E3C" letter-spacing="0.5">SÍ</text><line x1="625.0" y1="1041.0" x2="625.0" y2="1069.0" stroke="#9aa3a1" stroke-width="1.6" marker-end="url(#flecha)"/><text x="639.0" y="1055.0" text-anchor="middle" font-family="'Antonio', 'Anton', 'Figtree', sans-serif" font-size="10" font-weight="700" fill="#2F3E3C" letter-spacing="0.5">NO</text><polyline points="715.0,1099.0 743.0,1099.0 743.0,999.0 725.0,999.0" fill="none" stroke="#9aa3a1" stroke-width="1.6" marker-end="url(#flecha)" stroke-dasharray="4 3"/><text text-anchor="start" font-family="'Figtree', 'Segoe UI', sans-serif" font-size="9.5" font-weight="500" fill="#2F3E3C"><tspan x="762" y="196.14999999999998">La ficha se registra en el desarrollo de la</tspan><tspan x="762" y="208.49999999999997">actividad.</tspan></text><text text-anchor="start" font-family="'Figtree', 'Segoe UI', sans-serif" font-size="9.5" font-weight="500" fill="#2F3E3C"><tspan x="762" y="296.15">Se diligencia el drive de control con la</tspan><tspan x="762" y="308.5">información recolectada en territorio.</tspan></text><text text-anchor="start" font-family="'Figtree', 'Segoe UI', sans-serif" font-size="9.5" font-weight="500" fill="#2F3E3C"><tspan x="762" y="396.15">Se revisa que las fichas estén bien</tspan><tspan x="762" y="408.5">diligenciadas antes del cargue en SIRBE.</tspan></text><text text-anchor="start" font-family="'Figtree', 'Segoe UI', sans-serif" font-size="9.5" font-weight="500" fill="#2F3E3C"><tspan x="762" y="796.1500000000001">Se diligencia el formato que corresponde y se</tspan><tspan x="762" y="808.5000000000001">envía la solicitud por Aranda.</tspan></text><text text-anchor="start" font-family="'Figtree', 'Segoe UI', sans-serif" font-size="9.5" font-weight="500" fill="#2F3E3C"><tspan x="762" y="1196.15">Una vez confirmado el ajuste, el equipo</tspan><tspan x="762" y="1208.5">administrativo carga los cambios en SIRBE.</tspan></text><text text-anchor="start" font-family="'Figtree', 'Segoe UI', sans-serif" font-size="9.5" font-weight="500" fill="#2F3E3C"><tspan x="762" y="1296.15">Cierre del registro tras confirmar el ajuste</tspan><tspan x="762" y="1308.5">o tras descartar novedades.</tspan></text>
 </svg></div>
+            </div></div>
+
+            <div class="content-section" id="reporte_politicas"><div class="card">
+                <h2 class="card-title">Reporte a pol&iacute;ticas</h2>
+
+                <div class="jp-callout">
+                    Esta secci&oacute;n lista los productos a los que reporta el servicio <strong>Casas de Juventud</strong> de manera transversal &mdash; principalmente los de la <strong>Pol&iacute;tica P&uacute;blica Distrital de Juventud</strong>. Para productos espec&iacute;ficos por eje, ver el <em>Reporte a pol&iacute;ticas</em> dentro de cada eje (Bienestar, Cultura, Inclusi&oacute;n, Liderazgo).
+                </div>
+
+                <div class="jp-grid">
+                    <article class="jp-card">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">Política Pública Distrital de Juventud</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <ul class="jp-card-productos">
+                                <li class="jp-card-producto"><span class="jp-card-codigo">1.1.1</span> Implementación de las atenciones integrales para jóvenes
+                                    <p class="jp-card-prod-obs">La diferencia entre los producto 1.1.1 y 1.1.2 es el firltro que se hace en la unidad operativa,  para el 1.1.2 solo se reporta las unidades operativas de la casa de la juventud</p></li>
+                                <li class="jp-card-producto"><span class="jp-card-codigo">1.1.2</span> Jóvenes que asisten a las casas de juventud en las localidades que brindan espacios para el reconocimiento de su diversidad y el desarrollo de capacidades.
+                                    <p class="jp-card-prod-obs">La diefrencia entre los producto 1.1.1 y 1.1.2 es el firltro que se hace en la unidad operativa,  para el 1.1.2 solo se reporta las unidades operativas de la casa de la juventud</p></li>
+                                <li class="jp-card-producto"><span class="jp-card-codigo">1.2.4</span> Iniciativas juveniles realizadas por jóvenes, procesos, prácticas y organizaciones juveniles con impacto local.</li>
+                                <li class="jp-card-producto"><span class="jp-card-codigo">1.2.5</span> Jóvenes que participan en las semanas de la juventud.</li>
+                                <li class="jp-card-producto"><span class="jp-card-codigo">1.4.1</span> Sistema Distrital de Juventud implementado</li>
+                                <li class="jp-card-producto"><span class="jp-card-codigo">3.1.5</span> Jóvenes vinculados a la Estrategia de orientación Socio Ocupacional y acompañamiento socioemocional.</li>
+                                <li class="jp-card-producto"><span class="jp-card-codigo">4.4.1</span> Programa de prevención y atención de la maternidad y paternidad temprana con acciones fortalecidas en las localidades con mayores tasas de fecundidad en mujeres jóvenes.</li>
+                                <li class="jp-card-producto"><span class="jp-card-codigo">6.1.1</span> Jóvenes beneficiarios de la Estrategia de prevención de violencias y conflictos que involucren al arte, la cultura, el deporte y la recreación para prevenir vulneraciones de derechos.
+                                    <p class="jp-card-prod-obs">Es importante validar esta informacion con el equipo de Daniela ya que como se transformo el servicio tengo dudas de su fuente en SIRBE</p></li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="jp-card">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">Política Pública LGBTI</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <ul class="jp-card-productos">
+                                <li class="jp-card-producto"><span class="jp-card-codigo">1.2.11</span> Vinculación a la oferta de servicios de prevención de la maternidad y paternidad temprana y promoción de los derechos sexuales y los derechos reproductivos a los jóvenes de los sectores LGBTI
+                                    <p class="jp-card-prod-obs">En revisión con Daniela Correa - Profesional de enfoques diferenciales.</p></li>
+                                <li class="jp-card-producto"><span class="jp-card-codigo">1.2.12</span> Estrategia de Orientación Socioocupacional  que vincula a  los Jóvenes de los sectores LGBTI a la oferta de los servicios de la subdirección para la juventud de la SDIS para facilitar su inclusión socio laboral.
+                                    <p class="jp-card-prod-obs">En revisión con Daniela Correa - Profesional de enfoques diferenciales.</p></li>
+                                <li class="jp-card-producto"><span class="jp-card-codigo">1.3.10</span> Participación en la oferta de las casas de la juventud generando apropiación del espacio sin situaciones de discriminación y fortaleciendo el tejido social de los y las jóvenes de los sectores LGBTI.
+                                    <p class="jp-card-prod-obs">En revisión con Daniela Correa - Profesional de enfoques diferenciales.</p></li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="jp-card">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">Política Pública de la Población Negra, Afrocolombiana y Palenquera, en Bogotá D.C. 2024-2036</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <ul class="jp-card-productos">
+                                <li class="jp-card-producto"><span class="jp-card-codigo">1.3.9</span> Casa de la juventud que implemente el protocolo que garantiza el cumplimiento del enfoque diferencial étnico negro afrocolombiano, y aporte a la pervivencia cultural de las y los jovenes negros y afrocolombianos, en concertación con la instancia de representación legal de las comunidades negras afrocolombianas en el Distrito Capital.
+                                    <p class="jp-card-prod-obs">En revisión con Daniela Correa - Profesional de enfoques diferenciales.</p></li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="jp-card jp-card-pendiente">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">Política Pública Indígena</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <p class="jp-card-revision-nota"><strong>En revisi&oacute;n con Daniela Correa.</strong></p>
+                        </div>
+                    </article>
+
+                    <article class="jp-card jp-card-pendiente">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">Política Pública del Pueblo Raizal en Bogotá D.C.</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <p class="jp-card-revision-nota"><strong>En revisi&oacute;n con Daniela Correa.</strong></p>
+                        </div>
+                    </article>
+
+                    <article class="jp-card jp-card-pendiente">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">Política Pública del Pueblo Rrom</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <p class="jp-card-revision-nota"><strong>En revisi&oacute;n con Daniela Correa.</strong></p>
+                        </div>
+                    </article>
+
+                    <article class="jp-card">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">PAD Víctimas</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <ul class="jp-card-productos">
+                                <li class="jp-card-producto">Vincular al 100% de Jóvenes víctimas del conflicto armado a los servicios sociales y estrategias de la Subdirección para la Juventud, con cobertura y atención territorial
+                                    <p class="jp-card-prod-obs">El reporte del Plan de Acción Distrital de víctimas se realiza con base en dos archivos. (i) La Subdirección de Diseño, Evaluación y Sistematización remite archivo de Excel con las cifras de las personas atendidas únicas víctimas de conflicto armado atendidas por la SDIS de manera trimestral. Dentro del archivo se identifican las cifras reportadas para el servicio Casas de Juventud y Forjar Restaurativo. La PUA víctimas se consolida a través del cruce de la ficha SIRBE de la SDIS, el reporte de víctimas elaborado por la Alta Consejería para las víctimas, Ingreso Mínimo Garantizado y reporte SISBEN IV de la Secretaría Distrital de Planeación. (ii) Para el caso de Jóvenes con Oportunidades, David Quiceno (del servicio Jóvenes con Oportunidades) remite archivo de Excel que reporta atención trimestral, y en la columna "M" se filtra la opción "Sí", para contabilizar número de jóvenes que durante el trimestre recibieron transferencia y están inscritos en el Registro Único de Víctimas.</p></li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="jp-card jp-card-pendiente">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">PDET (Programas de Desarrollo con Enfoque Territorial)</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <p class="jp-card-revision-nota"><strong>En revisi&oacute;n con Daniela Correa.</strong></p>
+                        </div>
+                    </article>
+
+                    <article class="jp-card jp-card-pendiente">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">Plan Operativo de Reincorporación</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <p class="jp-card-revision-nota"><strong>En revisi&oacute;n con Daniela Correa.</strong></p>
+                        </div>
+                    </article>
+
+                    <article class="jp-card jp-card-pendiente">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">Plan de Acción Territorial (PAT) de Víctimas</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <p class="jp-card-revision-nota"><strong>En revisi&oacute;n con Daniela Correa.</strong></p>
+                        </div>
+                    </article>
+                </div>
             </div></div>
 
             <div class="content-section" id="aliados">

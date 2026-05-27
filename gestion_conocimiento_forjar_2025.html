@@ -70,6 +70,7 @@ body { font-family: 'Figtree', 'Segoe UI', sans-serif; background-color: #ffffff
     .container { flex-direction: column; }
     .sidebar { width: 100%; border-right: none; border-bottom: 1px solid #e0e0e0; }
     .rutas-formacion-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
+    .equipo-fila-inferior { grid-template-columns: 1fr !important; gap: 22px !important; }
 }
 .linea-tiempo { display: grid; grid-template-columns: repeat(var(--lt-cols, 7), 1fr); grid-template-rows: auto auto; row-gap: 22px; }
 .lt-hito { display: contents; }
@@ -249,7 +250,30 @@ body { font-family: 'Figtree', 'Segoe UI', sans-serif; background-color: #ffffff
     letter-spacing: 0.04em;
     font-size: 1.05rem;
     opacity: 1;
-}</style>
+}
+
+/* Reporte a pol&iacute;ticas: tarjetas peque&ntilde;as por pol&iacute;tica o
+   plan. Una sola superficie por card (header verde institucional + body
+   crema), jerarqu&iacute;a por tipograf&iacute;a y color, sin chips ni
+   recuadros anidados. El estado "En revisi&oacute;n" usa grises neutros
+   para indicar pendiente sin alarmar. */
+.jp-callout { color: #3a3a3a; margin: 0 0 22px; line-height: 1.7; font-size: 0.95rem; max-width: 820px; }
+.jp-callout strong { color: #2F3E3C; font-weight: 700; }
+.jp-grid { display: grid; grid-template-columns: 1fr; gap: 18px; margin: 18px 0 0; }
+.jp-card { background: #fbf8ec; border-radius: 12px; padding: 0; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
+.jp-card-header { background: #2F3E3C; color: #F8F4E1; padding: 16px 22px 14px; }
+.jp-card-tema { font-family: 'Antonio','Anton','Figtree',sans-serif; font-weight: 700; font-size: 1.05rem; margin: 0; line-height: 1.3; letter-spacing: 0.01em; }
+.jp-card-body { padding: 18px 22px 20px; }
+.jp-card-productos { list-style: none; padding: 0; margin: 0; }
+.jp-card-producto { font-family: 'Figtree', sans-serif; font-size: 0.92rem; color: #3a3a3a; line-height: 1.55; padding-left: 14px; position: relative; margin-bottom: 10px; }
+.jp-card-producto:last-child { margin-bottom: 0; }
+.jp-card-producto::before { content: '·'; position: absolute; left: 0; top: -2px; color: #2F3E3C; font-weight: 700; font-size: 1.2rem; line-height: 1; }
+.jp-card-codigo { font-family: 'Antonio','Anton','Figtree',sans-serif; font-weight: 700; font-size: 0.95rem; color: #2F3E3C; margin-right: 6px; letter-spacing: 0.02em; }
+.jp-card-prod-obs { font-family: 'Figtree', sans-serif; font-size: 0.85rem; color: #555; line-height: 1.6; margin: 6px 0 0; }
+.jp-card-pendiente { background: #f0eee9; box-shadow: none; }
+.jp-card-pendiente .jp-card-header { background: #6b6963; color: #f0eee9; }
+.jp-card-revision-nota { font-size: 0.92rem; line-height: 1.6; color: #555; margin: 0; }
+.jp-card-revision-nota strong { color: #2F3E3C; font-weight: 700; }</style>
 </head>
 <body>
     <header class="header">
@@ -294,6 +318,11 @@ body { font-family: 'Figtree', 'Segoe UI', sans-serif; background-color: #ffffff
                 <div class="sidebar-items">
                     <div class="sidebar-item" onclick="showContent('flujo_datos')">Flujo de gesti&oacute;n de la informaci&oacute;n</div>
                     <div class="sidebar-item" onclick="showContent('datos_sirbe')">Datos SIRBE</div>
+                </div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title" onclick="showContent('reporte_politicas')" style="cursor:pointer;">
+                    <span>Reporte a pol&iacute;ticas</span>
                 </div>
             </div>
             <div class="sidebar-section">
@@ -1157,6 +1186,175 @@ body { font-family: 'Figtree', 'Segoe UI', sans-serif; background-color: #ffffff
                     <p style="line-height:1.7;"><strong>Actuaciones de seguimiento:</strong> Sirven para reportar los traslados que se hacen de los j&oacute;venes entre las diferentes unidades operativas o los cambios entre modalidades del servicio dentro de SIRBE.</p>
 
                     <p style="line-height:1.7; margin-top:10px;"><strong>Actuaciones de intervenci&oacute;n:</strong> Actualmente se est&aacute;n parametrizando en SIRBE para poder registrar el soporte de los procesos de atenci&oacute;n detallados del joven.</p>
+                </div>
+            </div>
+
+            <div class="content-section" id="reporte_politicas">
+                <div class="card">
+                    <h2 class="card-title">Reporte a pol&iacute;ticas</h2>
+
+                    <div class="jp-callout">
+                        El servicio <strong>Forjar Restaurativo</strong> reporta de manera transversal a varias <strong>pol&iacute;ticas p&uacute;blicas distritales</strong> y a varios <strong>planes intersectoriales</strong>.
+                    </div>
+
+                    <div class="jp-grid">
+                    <article class="jp-card jp-card-pendiente">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">Política Pública Distrital de Juventud</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <p class="jp-card-revision-nota"><strong>En revisi&oacute;n con Felipe.</strong></p>
+                        </div>
+                    </article>
+
+                    <article class="jp-card">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">Política Pública de Infancia y Adolescencia</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <ul class="jp-card-productos">
+                                <li class="jp-card-producto"><span class="jp-card-codigo">1.1.11</span> Atención integral a adolescentes vinculados al Sistema de Responsabilidad Penal Adolescente (SRPA) en los servicios especializados de  la Secretaría Distrital de Integración Social
+                                    <p class="jp-card-prod-obs">Petición directa del equipo de PP a Diego Forero. Solo adolescentes</p></li>
+                                <li class="jp-card-producto"><span class="jp-card-codigo">1.4.4</span> Programa de prevención de reincidencias en violencias sexuales con jóvenes del SRPA
+                                    <p class="jp-card-prod-obs">El conteo se realiza sobre ingresos individuales al servicio Forjar Restaurativo de jóvenes por la comisión de delitos sexuales o contra la libertad y que cuentan con sanciones efectivas, y que pasan todas las fases de intervención señaladas.</p></li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="jp-card">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">Política Pública de Seguridad Alimentaria</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <ul class="jp-card-productos">
+                                <li class="jp-card-producto"><span class="jp-card-codigo">3.5.5</span> Participantes de los servicios sociales de la SDIS con apoyo alimentario vinculados en acciones de promoción de estilos de vida saludable
+                                    <p class="jp-card-prod-obs">- FOR-PSS-298 Formato Base de Consolidación Mensual de Promoción en Estilos de Vida Saludable
+- FOR-PSS-545 Formato Reporte Trimestral Consolidado Cuantitativo y Cualitativo De Promoción De Hábitos En Estilos De Vida Saludable</p></li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="jp-card">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">Política Pública de Seguridad paz y convivencia</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <ul class="jp-card-productos">
+                                <li class="jp-card-producto"><span class="jp-card-codigo">3.1.5</span> Jóvenes del Sistema de Responsabilidad Penal Adolescente (SRPA)  atendidos en los servicios de la Secretaría Distrital de Integración Social - FORJAR Restaurativo
+                                    <p class="jp-card-prod-obs">Duplicado dentro del ecosistema. Reportar a partir del reporte de la PP Infancia 1.1.11. Atención integral a adolescentes vinculados al Sistema de Responsabilidad Penal Adolescente (SRPA) en los servicios especializados de  la Secretaría Distrital de Integración Social</p></li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="jp-card jp-card-pendiente">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">Política Pública Indígena</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <p class="jp-card-revision-nota"><strong>En revisi&oacute;n con Daniela Correa.</strong></p>
+                        </div>
+                    </article>
+
+                    <article class="jp-card jp-card-pendiente">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">Política Pública LGBTI</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <p class="jp-card-revision-nota"><strong>En revisi&oacute;n con Daniela Correa.</strong></p>
+                        </div>
+                    </article>
+
+                    <article class="jp-card jp-card-pendiente">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">Política Pública de la Población Negra, Afrocolombiana y Palenquera, en Bogotá D.C. 2024-2036</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <p class="jp-card-revision-nota"><strong>En revisi&oacute;n con Daniela Correa.</strong></p>
+                        </div>
+                    </article>
+
+                    <article class="jp-card jp-card-pendiente">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">Política Pública del Pueblo Raizal en Bogotá D.C.</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <p class="jp-card-revision-nota"><strong>En revisi&oacute;n con Daniela Correa.</strong></p>
+                        </div>
+                    </article>
+
+                    <article class="jp-card jp-card-pendiente">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">Política Pública del Pueblo Rrom</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <p class="jp-card-revision-nota"><strong>En revisi&oacute;n con Daniela Correa.</strong></p>
+                        </div>
+                    </article>
+
+                    <article class="jp-card">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">PAD Víctimas</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <ul class="jp-card-productos">
+                                <li class="jp-card-producto">Atender al 100% de Jóvenes víctimas del conflicto armado entre los 14 y 28 años con sanciones no privativas de la libertad o en apoyo al restablecimiento de derechos en la administración de justicia, en los Centros Forjar.
+                                    <p class="jp-card-prod-obs">La información es enviada directamente por DADE, quienes hacen el cruce con el RUV.</p></li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="jp-card">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">Sistema de Monitoreo de las Condiciones de Vida de Infancia y Adolescencia de Bogotá</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <ul class="jp-card-productos">
+                                <li class="jp-card-producto">Número de adolescentes y jóvenes vinculados al Sistema de Responsabilidad Penal para Adolescentes atendidos por la SDIS
+                                    <p class="jp-card-prod-obs">Se debe reportar toda la PUA de Forjar del año para jóvenes entre 14 y 17 años, desagregados por las siguientes variables para diligenciar el formato de reporte:
+Localidad (Suba, Rafael Uribe Uribe, Ciudad Bolívar)
+Sexo
+Discapacidad
+Grupo étnico</p></li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="jp-card jp-card-pendiente">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">PDET (Programas de Desarrollo con Enfoque Territorial)</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <p class="jp-card-revision-nota"><strong>En revisi&oacute;n con Daniela Correa.</strong></p>
+                        </div>
+                    </article>
+
+                    <article class="jp-card jp-card-pendiente">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">Plan Operativo de Reincorporación</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <p class="jp-card-revision-nota"><strong>En revisi&oacute;n con Daniela Correa.</strong></p>
+                        </div>
+                    </article>
+
+                    <article class="jp-card jp-card-pendiente">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">Plan de Acción Territorial (PAT) de Víctimas</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <p class="jp-card-revision-nota"><strong>En revisi&oacute;n con Daniela Correa.</strong></p>
+                        </div>
+                    </article>
+
+                    <article class="jp-card jp-card-pendiente">
+                        <div class="jp-card-header">
+                            <h3 class="jp-card-tema">Plan de Atención Intersectorial de la Prevención y Atención de la Conducta Suicida</h3>
+                        </div>
+                        <div class="jp-card-body">
+                            <p class="jp-card-revision-nota"><strong>En revisi&oacute;n con Felipe.</strong></p>
+                        </div>
+                    </article>
+                    </div>
                 </div>
             </div>
 

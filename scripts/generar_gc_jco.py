@@ -125,7 +125,7 @@ _XLSX_REPORTES_EXTERNOS = os.path.join(_BASE_JCO, "ejes", "Políticas", "Reporte
 # Pendientes: una entrada por tema. Cada tupla es
 # (tipo, tema, pendiente_con, nota_revision).
 _POLITICAS_EN_REVISION = [
-    ("Política Pública", "Política Pública de Infancia y Adolescencia", "Felipe", ""),
+    ("Política Pública", "Política Pública de Infancia y Adolescencia", "Felipe Calvo", ""),
     ("Política Pública", "Política Pública Indígena", "Daniela Correa", ""),
     ("Política Pública", "Política Pública de la Población Negra, Afrocolombiana y Palenquera, en Bogotá D.C. 2024-2036", "Daniela Correa", ""),
     ("Política Pública", "Política Pública LGBTI", "Daniela Correa", ""),

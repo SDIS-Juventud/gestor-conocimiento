@@ -545,7 +545,6 @@ def _html_seccion_politicas():
             '\n\n                <article class="rp-card rp-card-cruce">\n'
             '                    <div class="rp-card-codigo">\n'
             '                        <p class="rp-card-label">Sin código SIRBE propio</p>\n'
-            '                        <p class="rp-card-num">+</p>\n'
             '                        <p class="rp-card-nombre">Productos sin código SIRBE propio</p>\n'
             '                        <p class="rp-aclaracion">Estos productos no se reportan a través de los códigos SIRBE de este eje. '
             'Cada uno tiene su propio mecanismo de reporte; el detalle aparece bajo cada producto.</p>\n'

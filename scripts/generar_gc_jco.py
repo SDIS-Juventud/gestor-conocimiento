@@ -124,14 +124,25 @@ _XLSX_REPORTES_EXTERNOS = os.path.join(_BASE_JCO, "ejes", "Políticas", "Reporte
 
 # Pendientes: una entrada por tema. Cada tupla es
 # (tipo, tema, pendiente_con, nota_revision).
-_POLITICAS_EN_REVISION = [
-    ("Política Pública", "Política Pública Indígena", "Daniela Correa", ""),
-    ("Política Pública", "Política Pública de la Población Negra, Afrocolombiana y Palenquera, en Bogotá D.C. 2024-2036", "Daniela Correa", ""),
-    ("Política Pública", "Política Pública LGBTI", "Daniela Correa", ""),
-    ("Política Pública", "Política Pública del Pueblo Rrom", "Daniela Correa", ""),
-    ("Plan", "Plan Operativo de Reincorporación", "Daniela Correa", ""),
-    ("Plan", "PDET (Programas de Desarrollo con Enfoque Territorial)", "Daniela Correa", ""),
-]
+# Leyenda común para las políticas étnicas: se reportan filtrando la PUA
+# del servicio por la variable de pertenencia étnica. La marca final indica
+# qué se necesita de Daniela Correa (que corrobore / pase el dato definitivo).
+# Nota: el Pueblo Raizal NO va aquí porque JCO sí tiene producto propio
+# confirmado para Raizal (4.1.12, con transferencias monetarias).
+_LEYENDA_ETNICA_JCO = (
+    'De SIRBE se pide toda la PUA de Jóvenes con Oportunidades y el reporte para '
+    'cada política se realiza filtrando por la variable de pertenencia étnica. '
+    '<strong>(En revisión con Daniela Correa.)</strong>'
+)
+
+# JCO solo muestra las políticas/planes que tienen producto confirmado en
+# el Excel maestro: PPDJ 3.1.4 (estrategia de empleo), Superación de la
+# Pobreza 1.1.4, Pueblo Raizal 4.1.12, PAD Víctimas e Infancia 1.2.8.
+# Las étnicas (Indígena, Negra/Afro, Rrom), Reincorporación y PDET NO están
+# en la hoja de JCO, así que no se listan como pendientes. Si Daniela/Felipe
+# confirman que JCO reporta a alguna, se agrega el producto al Excel
+# (o se reintroduce como pendiente con _LEYENDA_ETNICA_JCO).
+_POLITICAS_EN_REVISION = []
 
 
 # 1. CSS — estilos del gestor

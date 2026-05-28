@@ -271,6 +271,16 @@ def html_cards(filas):
         # se muestra como párrafo bajo el producto. Otros campos del
         # Excel (meta, responsable, indicador) no se muestran a nivel
         # de card — viven en el Excel y se consultan ahí cuando hace falta.
+        #
+        # Caso especial: si todos los productos del tema comparten la
+        # MISMA observación (ej. el Plan de Reincorporación, cuyos dos
+        # productos se reportan igual), se muestra una sola vez al final
+        # de la card en lugar de repetirla bajo cada producto.
+        obs_no_vacias = [f.get("observaciones", "") for f in items if f.get("observaciones", "")]
+        obs_comun = ""
+        if len(items) > 1 and len(obs_no_vacias) == len(items) and len(set(obs_no_vacias)) == 1:
+            obs_comun = obs_no_vacias[0]
+
         productos_html = []
         for f in items:
             codigo = f["codigo"]
@@ -281,12 +291,18 @@ def html_cards(filas):
             else:
                 cabeza = prod
             extra = ""
-            if obs:
+            # Solo se muestra la observación bajo el producto si NO es
+            # la observación común a toda la card (esa va una vez al final).
+            if obs and not obs_comun:
                 extra = f'\n                                    <p class="jp-card-prod-obs">{obs}</p>'
             productos_html.append(
                 f'                                <li class="jp-card-producto">{cabeza}{extra}</li>'
             )
         lista_prods = "\n".join(productos_html)
+
+        obs_comun_html = ""
+        if obs_comun:
+            obs_comun_html = f'                            <p class="jp-card-prod-obs">{obs_comun}</p>\n'
 
         cards.append(
             '                    <article class="jp-card">\n'
@@ -297,6 +313,7 @@ def html_cards(filas):
             '                            <ul class="jp-card-productos">\n'
             f'{lista_prods}\n'
             '                            </ul>\n'
+            f'{obs_comun_html}'
             '                        </div>\n'
             '                    </article>'
         )

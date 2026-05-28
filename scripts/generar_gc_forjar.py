@@ -1128,15 +1128,23 @@ _XLSX_REPORTES_EXTERNOS_FORJAR = os.path.join(BASE, "ejes", "Políticas", "Repor
 
 # Pendientes: una entrada por tema. Cada tupla es
 # (tipo, tema, pendiente_con, nota_revision).
-_POLITICAS_EN_REVISION_FORJAR = [
-    ("Política Pública", "Política Pública Indígena", "Daniela Correa", ""),
-    ("Política Pública", "Política Pública de la Población Negra, Afrocolombiana y Palenquera, en Bogotá D.C. 2024-2036", "Daniela Correa", ""),
-    ("Política Pública", "Política Pública LGBTI", "Daniela Correa", ""),
-    ("Política Pública", "Política Pública del Pueblo Rrom", "Daniela Correa", ""),
-    ("Política Pública", "Política Pública del Pueblo Raizal en Bogotá D.C.", "Daniela Correa", ""),
-    ("Plan", "Plan Operativo de Reincorporación", "Daniela Correa", ""),
-    ("Plan", "PDET (Programas de Desarrollo con Enfoque Territorial)", "Daniela Correa", ""),
-]
+# Leyenda común para las políticas étnicas: se reportan filtrando la PUA
+# del servicio por la variable de pertenencia étnica. La marca final indica
+# qué se necesita de Daniela Correa (que corrobore / pase el dato definitivo).
+_LEYENDA_ETNICA_FORJAR = (
+    'De SIRBE se pide toda la PUA de Forjar y el reporte para cada política se '
+    'realiza filtrando por la variable de pertenencia étnica. '
+    '<strong>(En revisión con Daniela Correa.)</strong>'
+)
+
+# Forjar solo muestra las políticas/planes que tienen producto confirmado
+# en la hoja "Forjar" del Excel maestro (Infancia y Adolescencia, Seguridad
+# Paz y Convivencia, Seguridad Alimentaria, PAD Víctimas, Sistema de
+# Monitoreo). Las étnicas, Reincorporación y PDET NO están en la hoja de
+# Forjar, así que no se listan como pendientes acá. Si Daniela/Felipe
+# confirman que Forjar reporta a alguna, se agrega el producto al Excel
+# (o se reintroduce como pendiente con _LEYENDA_ETNICA_FORJAR).
+_POLITICAS_EN_REVISION_FORJAR = []
 
 
 # Sección "Reporte a políticas" en HTML. El cuerpo del grid se reemplaza
@@ -1146,7 +1154,7 @@ SECCION_REPORTE_POLITICAS = """            <div class="content-section" id="repo
                     <h2 class="card-title">Reporte a pol&iacute;ticas</h2>
 
                     <div class="jp-callout">
-                        El servicio <strong>Forjar Restaurativo</strong> reporta de manera transversal a varias <strong>pol&iacute;ticas p&uacute;blicas distritales</strong> y a varios <strong>planes intersectoriales</strong>.
+                        El <strong>Servicio Forjar Restaurativo</strong> reporta de manera transversal a varias <strong>pol&iacute;ticas p&uacute;blicas distritales</strong> y a varios <strong>planes intersectoriales</strong>.
                     </div>
 
                     <div class="jp-grid">

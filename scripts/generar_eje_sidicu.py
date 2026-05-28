@@ -1071,6 +1071,22 @@ def _reemplazar_intro_que_es(html_actual, bloque_nuevo):
     )
 
 
+def _quitar_img_ofertas(html_actual):
+    """Garantiza que la cabecera de la sección Ofertas 2026 no tenga la
+    imagen decorativa de manos (decisión 2026-05-27: Ofertas 2026 va sin
+    imagen). Si el HTML trae el <img manos/...> justo tras abrir el card
+    de ofertas_2026, lo elimina; si no está, no hace nada. Así el cambio
+    queda blindado en el script y no depende del estado previo del HTML.
+    No afecta otras imágenes (ej. la de elementos/ en la sección que_es)."""
+    patron = re.compile(
+        r'(<div class="content-section"[^>]*id="ofertas_2026"[^>]*>\s*'
+        r'<div class="card"[^>]*>\s*)'
+        r'<img[^>]*manos/[^>]*>\s*',
+        re.DOTALL,
+    )
+    return patron.sub(r'\1', html_actual, count=1)
+
+
 def _inyectar_css(html_actual):
     if CSS_MARKER_INI in html_actual:
         return re.sub(
@@ -1115,6 +1131,7 @@ def generar():
     bloque = _bloque_ofertas(ofertas, mapeo_sirbe)
     html_nuevo = _reemplazar_bloque_ofertas(html_actual, bloque)
     html_nuevo = _reemplazar_intro_que_es(html_nuevo, BLOQUE_INTRO_QUE_ES)
+    html_nuevo = _quitar_img_ofertas(html_nuevo)
     html_nuevo = _inyectar_css(html_nuevo)
     html_nuevo = _inyectar_js(html_nuevo)
 

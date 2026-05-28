@@ -247,13 +247,20 @@ def html_cards(filas):
             # Una pendiente trae una sola fila por tema (los pendientes se
             # declaran como entradas individuales). Tomamos la primera.
             f = items[0]
+            # Si la entrada trae una nota propia (nota_revision), se usa
+            # esa; si no, se muestra el "En revisión con {persona}".
+            nota = f.get("nota_revision", "")
+            if nota:
+                cuerpo = f'<p class="jp-card-revision-nota">{nota}</p>'
+            else:
+                cuerpo = f'<p class="jp-card-revision-nota"><strong>En revisi&oacute;n con {f["pendiente_con"]}.</strong></p>'
             cards.append(
                 '                    <article class="jp-card jp-card-pendiente">\n'
                 '                        <div class="jp-card-header">\n'
                 f'                            <h3 class="jp-card-tema">{tema}</h3>\n'
                 '                        </div>\n'
                 '                        <div class="jp-card-body">\n'
-                f'                            <p class="jp-card-revision-nota"><strong>En revisi&oacute;n con {f["pendiente_con"]}.</strong></p>\n'
+                f'                            {cuerpo}\n'
                 '                        </div>\n'
                 '                    </article>'
             )

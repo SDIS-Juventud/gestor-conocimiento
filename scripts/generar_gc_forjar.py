@@ -1129,16 +1129,13 @@ _XLSX_REPORTES_EXTERNOS_FORJAR = os.path.join(BASE, "ejes", "Políticas", "Repor
 # Pendientes: una entrada por tema. Cada tupla es
 # (tipo, tema, pendiente_con, nota_revision).
 _POLITICAS_EN_REVISION_FORJAR = [
-    ("Política Pública", "Política Pública Distrital de Juventud", "Felipe Calvo", ""),
     ("Política Pública", "Política Pública Indígena", "Daniela Correa", ""),
     ("Política Pública", "Política Pública de la Población Negra, Afrocolombiana y Palenquera, en Bogotá D.C. 2024-2036", "Daniela Correa", ""),
     ("Política Pública", "Política Pública LGBTI", "Daniela Correa", ""),
     ("Política Pública", "Política Pública del Pueblo Rrom", "Daniela Correa", ""),
     ("Política Pública", "Política Pública del Pueblo Raizal en Bogotá D.C.", "Daniela Correa", ""),
-    ("Plan", "Plan de Acción Territorial (PAT) de Víctimas", "Daniela Correa", ""),
     ("Plan", "Plan Operativo de Reincorporación", "Daniela Correa", ""),
     ("Plan", "PDET (Programas de Desarrollo con Enfoque Territorial)", "Daniela Correa", ""),
-    ("Plan", "Plan de Atención Intersectorial de la Prevención y Atención de la Conducta Suicida", "Felipe Calvo", ""),
 ]
 
 

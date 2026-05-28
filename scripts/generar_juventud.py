@@ -1065,13 +1065,21 @@ CSS = CSS + "\n        " + CSS_REPORTE_POLITICAS.replace("\n", "\n        ")
 # final de aquellas hay una nota apuntando a esta sección de servicio.
 # ============================================================
 
+# Leyenda común para las políticas étnicas: todas se reportan filtrando la
+# PUA de Casas por la variable de pertenencia étnica. La marca final indica
+# qué se necesita de Daniela Correa (que corrobore / pase el dato definitivo).
+_LEYENDA_ETNICA = (
+    'De SIRBE se pide toda la PUA de Casas y el reporte para cada política se '
+    'realiza filtrando por la variable de pertenencia étnica. '
+    '<strong>(En revisión con Daniela Correa.)</strong>'
+)
+
+# PAT de Víctimas se eliminó de los pendientes: es el mismo instrumento que
+# el PAD Víctimas, que ya aparece confirmado en esta sección.
 _POLITICAS_EN_REVISION_CASAS = [
-    ("Política Pública", "Política Pública Indígena", "Daniela Correa", ""),
-    ("Política Pública", "Política Pública del Pueblo Rrom", "Daniela Correa", ""),
-    ("Política Pública", "Política Pública del Pueblo Raizal en Bogotá D.C.", "Daniela Correa", ""),
-    ("Plan", "Plan de Acción Territorial (PAT) de Víctimas", "Daniela Correa", ""),
-    ("Plan", "Plan Operativo de Reincorporación", "Daniela Correa", ""),
-    ("Plan", "PDET (Programas de Desarrollo con Enfoque Territorial)", "Daniela Correa", ""),
+    ("Política Pública", "Política Pública Indígena", "Daniela Correa", _LEYENDA_ETNICA),
+    ("Política Pública", "Política Pública del Pueblo Rrom", "Daniela Correa", _LEYENDA_ETNICA),
+    ("Política Pública", "Política Pública del Pueblo Raizal en Bogotá D.C.", "Daniela Correa", _LEYENDA_ETNICA),
 ]
 
 # Productos del Excel de Reportes Externos hoja "Casas de Juventud"
@@ -1083,6 +1091,8 @@ _TEMAS_NIVEL_SERVICIO_CASAS = [
     "Negra, Afrocolombiana",  # producto 1.3.9 Casa de la juventud que implementa enfoque diferencial étnico
     "LGBTI",                  # 3 productos, todos en revisión con Daniela
     "PAD Víctimas",           # producto transversal a los tres servicios
+    "Plan operativo de reincorporación",  # transversal del servicio Casas, no de un eje específico
+    "PDET",                   # transversal del servicio Casas (territorios PDET + Sumapaz)
 ]
 
 filas_politicas_casas = leer_politicas(

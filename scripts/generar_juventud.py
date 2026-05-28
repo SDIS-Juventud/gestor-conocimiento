@@ -1093,8 +1093,6 @@ _TEMAS_NIVEL_SERVICIO_CASAS = [
     "PAD Víctimas",           # producto transversal a los tres servicios
     "Plan operativo de reincorporación",  # transversal del servicio Casas, no de un eje específico
     "PDET",                   # transversal del servicio Casas (territorios PDET + Sumapaz)
-    "Comité Intersectorial de Salud",  # plan transversal (orientación socio-ocupacional + centros de escucha)
-    "Formación Artística",    # SIDFAC: Sistema Distrital de Formación Artística y Cultural
 ]
 
 filas_politicas_casas = leer_politicas(

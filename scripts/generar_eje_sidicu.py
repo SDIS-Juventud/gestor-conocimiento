@@ -15,10 +15,20 @@ Fuente: ejes/oferta 2026/Oferta 2026.xlsx, hoja 'SIDICU'.
 """
 
 import html
+import os
 import re
+import sys
 from pathlib import Path
 
 import openpyxl
+
+# Componente compartido "Reporte a políticas" (mismo que JCO, Forjar, Casas)
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _comun.reporte_politicas import (
+    CSS_REPORTE_POLITICAS,
+    leer_politicas as _leer_politicas_comun,
+    html_cards as _html_cards_comun,
+)
 
 
 # Marcadores adicionales para la nueva pestaña "Reporte a políticas"
@@ -1118,6 +1128,72 @@ def _inyectar_js(html_actual):
 
 
 # ---------------------------------------------------------------------------
+# Reporte a políticas (una sola ficha): SIDICU reporta al producto 1.1.8 de
+# la PPDJ (Número de jóvenes atendidos en los servicios del Sistema Distrital
+# de Cuidado). Se lee del Excel PPDJ filtrando por responsable "SIDICU".
+# ---------------------------------------------------------------------------
+
+CSS_POL_MARKER_INI = "/* === CSS reporte politicas (generado) === */"
+CSS_POL_MARKER_FIN = "/* === fin CSS reporte politicas === */"
+
+_XLSX_PPDJ_SIDICU = str(BASE / "ejes" / "Políticas" / "Reporte Política Pública Distrital de Juventud.xlsx")
+
+
+def _bloque_reporte_politicas():
+    filas = _leer_politicas_comun(
+        xlsx_ppdj=_XLSX_PPDJ_SIDICU,
+        patron_responsable_ppdj=r"SIDICU",
+        tema_ppdj="Política Pública Distrital de Juventud",
+    )
+    cards = _html_cards_comun(filas)
+    return (
+        MARKER_POL_INI + "\n"
+        '            <div class="content-section" id="reporte_politicas"><div class="card">\n'
+        '                <h2 class="card-title">Reporte a pol&iacute;ticas</h2>\n'
+        '                <div class="jp-callout">SIDICU reporta a la <strong>Pol&iacute;tica P&uacute;blica Distrital de Juventud</strong> a trav&eacute;s de un producto propio del Sistema Distrital de Cuidado.</div>\n'
+        '                <div class="jp-grid">\n'
+        + cards + "\n"
+        '                </div>\n'
+        '            </div></div>\n'
+        '            ' + MARKER_POL_FIN
+    )
+
+
+def _inyectar_reporte_politicas(html_actual, bloque):
+    if MARKER_POL_INI in html_actual and MARKER_POL_FIN in html_actual:
+        return re.sub(
+            re.escape(MARKER_POL_INI) + r".*?" + re.escape(MARKER_POL_FIN),
+            lambda _: bloque,
+            html_actual,
+            count=1,
+            flags=re.DOTALL,
+        )
+    # Primera vez: insertar antes del cierre del <main>.
+    return html_actual.replace("</main>", bloque + "\n            </main>", 1)
+
+
+def _inyectar_sidebar_politicas(html_actual):
+    if "showContent('reporte_politicas')" in html_actual:
+        return html_actual
+    item = "\n            <div class=\"sidebar-item\" onclick=\"showContent('reporte_politicas')\">Reporte a pol&iacute;ticas</div>"
+    ancla = "<div class=\"sidebar-item\" onclick=\"showContent('ofertas_2026')\">Ofertas 2026</div>"
+    return html_actual.replace(ancla, ancla + item, 1)
+
+
+def _inyectar_css_politicas(html_actual):
+    bloque = CSS_POL_MARKER_INI + "\n" + CSS_REPORTE_POLITICAS.strip() + "\n" + CSS_POL_MARKER_FIN
+    if CSS_POL_MARKER_INI in html_actual:
+        return re.sub(
+            re.escape(CSS_POL_MARKER_INI) + r".*?" + re.escape(CSS_POL_MARKER_FIN),
+            lambda _: bloque,
+            html_actual,
+            count=1,
+            flags=re.DOTALL,
+        )
+    return html_actual.replace("</style>", bloque + "\n</style>", 1)
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -1135,7 +1211,11 @@ def generar():
     html_nuevo = _inyectar_css(html_nuevo)
     html_nuevo = _inyectar_js(html_nuevo)
 
-    # SIDICU NO tiene sección "Reporte a políticas" — saltamos esa inyección.
+    # SIDICU tiene una sola ficha de Reporte a políticas: el producto 1.1.8
+    # de la PPDJ (Sistema Distrital de Cuidado).
+    html_nuevo = _inyectar_css_politicas(html_nuevo)
+    html_nuevo = _inyectar_reporte_politicas(html_nuevo, _bloque_reporte_politicas())
+    html_nuevo = _inyectar_sidebar_politicas(html_nuevo)
 
     HTML_PATH.write_text(html_nuevo, encoding="utf-8")
     print(f"Actualizado: {HTML_PATH}")

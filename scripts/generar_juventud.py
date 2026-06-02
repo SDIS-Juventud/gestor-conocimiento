@@ -1065,22 +1065,19 @@ CSS = CSS + "\n        " + CSS_REPORTE_POLITICAS.replace("\n", "\n        ")
 # final de aquellas hay una nota apuntando a esta sección de servicio.
 # ============================================================
 
-# Leyenda común para las políticas étnicas: todas se reportan filtrando la
-# PUA de Casas por la variable de pertenencia étnica. La marca final indica
-# qué se necesita de Daniela Correa (que corrobore / pase el dato definitivo).
-_LEYENDA_ETNICA = (
-    'De SIRBE se pide toda la PUA de Casas y el reporte para cada política se '
-    'realiza filtrando por la variable de pertenencia étnica. '
-    '<strong>(En revisión con Daniela Correa.)</strong>'
-)
-
+# Las tres políticas étnicas transversales (Indígena 1.3.12, Rrom 6.1.8 y
+# Palenquera 6.3.15 — parte de Negra/Afro/Palenquera) se leen desde la hoja
+# "Mapeo general" del Excel de Reportes Externos. En esa hoja tienen
+# responsable "Todos" y aplican a los tres servicios (Casas, JCO y Forjar).
+# La observación literal sobre el flujo de PUA y DADE vive en el Excel.
+#
+# Raizal 4.1.12 NO aplica a Casas (es JCO específico, transferencias
+# monetarias). Negra/Afro 1.3.9 aplica solo a Casas (habla de "Casa de la
+# juventud que implemente el protocolo...") y viene de la hoja Casas.
+#
 # PAT de Víctimas se eliminó de los pendientes: es el mismo instrumento que
 # el PAD Víctimas, que ya aparece confirmado en esta sección.
-_POLITICAS_EN_REVISION_CASAS = [
-    ("Política Pública", "Política Pública Indígena", "Daniela Correa", _LEYENDA_ETNICA),
-    ("Política Pública", "Política Pública del Pueblo Rrom", "Daniela Correa", _LEYENDA_ETNICA),
-    ("Política Pública", "Política Pública del Pueblo Raizal en Bogotá D.C.", "Daniela Correa", _LEYENDA_ETNICA),
-]
+_POLITICAS_EN_REVISION_CASAS = []
 
 # Productos del Excel de Reportes Externos hoja "Casas de Juventud"
 # que NO son específicos de un eje sino del servicio Casas como tal,
@@ -1102,6 +1099,7 @@ filas_politicas_casas = leer_politicas(
     patron_responsable_ppdj=r"Casas de Juventud|Todos",
     pendientes_revision=_POLITICAS_EN_REVISION_CASAS,
     temas_externos_incluir=_TEMAS_NIVEL_SERVICIO_CASAS,
+    temas_mapeo_general_incluir=["1.3.12", "6.1.8", "6.3.15"],
 )
 cards_politicas_casas = html_cards(filas_politicas_casas)
 

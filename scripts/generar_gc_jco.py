@@ -122,26 +122,15 @@ def _generar_bloques_documentos():
 _XLSX_PPDJ = os.path.join(_BASE_JCO, "ejes", "Políticas", "Reporte Política Pública Distrital de Juventud.xlsx")
 _XLSX_REPORTES_EXTERNOS = os.path.join(_BASE_JCO, "ejes", "Políticas", "Reportes Externos Subdirección Juventud 2026.xlsx")
 
-# Pendientes: una entrada por tema. Cada tupla es
-# (tipo, tema, pendiente_con, nota_revision).
-# Leyenda común para las políticas étnicas: se reportan filtrando la PUA
-# del servicio por la variable de pertenencia étnica. La marca final indica
-# qué se necesita de Daniela Correa (que corrobore / pase el dato definitivo).
-# Nota: el Pueblo Raizal NO va aquí porque JCO sí tiene producto propio
-# confirmado para Raizal (4.1.12, con transferencias monetarias).
-_LEYENDA_ETNICA_JCO = (
-    'De SIRBE se pide toda la PUA de Jóvenes con Oportunidades y el reporte para '
-    'cada política se realiza filtrando por la variable de pertenencia étnica. '
-    '<strong>(En revisión con Daniela Correa.)</strong>'
-)
-
-# JCO solo muestra las políticas/planes que tienen producto confirmado en
-# el Excel maestro: PPDJ 3.1.4 (estrategia de empleo), Superación de la
-# Pobreza 1.1.4, Pueblo Raizal 4.1.12, PAD Víctimas e Infancia 1.2.8.
-# Las étnicas (Indígena, Negra/Afro, Rrom), Reincorporación y PDET NO están
-# en la hoja de JCO, así que no se listan como pendientes. Si Daniela/Felipe
-# confirman que JCO reporta a alguna, se agrega el producto al Excel
-# (o se reintroduce como pendiente con _LEYENDA_ETNICA_JCO).
+# Las políticas étnicas transversales (Indígena 1.3.12, Rrom 6.1.8 y
+# Palenquera 6.3.15 — parte de Negra/Afro/Palenquera) se leen desde la hoja
+# "Mapeo general" del Excel de Reportes Externos. Aplican a los tres
+# servicios (Casas, JCO y Forjar) con la observación literal sobre el flujo
+# de PUA y DADE.
+# Pueblo Raizal 4.1.12 (transferencias monetarias) sigue viniendo de la
+# hoja "Jóvenes Con Oportunidades" porque es específica de JCO.
+# Reincorporación, PDET y PAT no están en la hoja JCO; si Daniela/Felipe
+# confirman que JCO reporta a alguna, se agrega el producto al Excel.
 _POLITICAS_EN_REVISION = []
 
 
@@ -1249,6 +1238,7 @@ def generar_html():
         patron_responsable_ppdj=r"JCO|JcO|Jóvenes con Oportunidades|Jovenes con Oportunidades",
         tema_ppdj="Política Pública Distrital de Juventud",
         pendientes_revision=_POLITICAS_EN_REVISION,
+        temas_mapeo_general_incluir=["1.3.12", "6.1.8", "6.3.15"],
     )
     seccion_reporte_politicas = SECCION_REPORTE_POLITICAS.replace(
         "%%CARDS_POLITICAS%%", html_cards(filas_politicas)

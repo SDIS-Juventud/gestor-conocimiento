@@ -1128,22 +1128,14 @@ _XLSX_REPORTES_EXTERNOS_FORJAR = os.path.join(BASE, "ejes", "Políticas", "Repor
 
 # Pendientes: una entrada por tema. Cada tupla es
 # (tipo, tema, pendiente_con, nota_revision).
-# Leyenda común para las políticas étnicas: se reportan filtrando la PUA
-# del servicio por la variable de pertenencia étnica. La marca final indica
-# qué se necesita de Daniela Correa (que corrobore / pase el dato definitivo).
-_LEYENDA_ETNICA_FORJAR = (
-    'De SIRBE se pide toda la PUA de Forjar y el reporte para cada política se '
-    'realiza filtrando por la variable de pertenencia étnica. '
-    '<strong>(En revisión con Daniela Correa.)</strong>'
-)
-
-# Forjar solo muestra las políticas/planes que tienen producto confirmado
-# en la hoja "Forjar" del Excel maestro (Infancia y Adolescencia, Seguridad
-# Paz y Convivencia, Seguridad Alimentaria, PAD Víctimas, Sistema de
-# Monitoreo). Las étnicas, Reincorporación y PDET NO están en la hoja de
-# Forjar, así que no se listan como pendientes acá. Si Daniela/Felipe
-# confirman que Forjar reporta a alguna, se agrega el producto al Excel
-# (o se reintroduce como pendiente con _LEYENDA_ETNICA_FORJAR).
+# Las políticas étnicas transversales (Indígena 1.3.12, Rrom 6.1.8 y
+# Palenquera 6.3.15 — parte de Negra/Afro/Palenquera) se leen desde la hoja
+# "Mapeo general" del Excel de Reportes Externos. Aplican a los tres
+# servicios (Casas, JCO y Forjar) con la observación literal sobre el flujo
+# de PUA y DADE (los datos de Casas y Forjar vienen juntos por Diego Forero).
+# Pueblo Raizal NO aplica a Forjar (es JCO específico, transferencias
+# monetarias). Reincorporación, PDET y PAT no están en la hoja Forjar; si
+# Daniela/Felipe confirman que Forjar reporta a alguno, se agrega al Excel.
 _POLITICAS_EN_REVISION_FORJAR = []
 
 
@@ -1227,6 +1219,7 @@ def ensamblar_html():
         patron_responsable_ppdj=r"Forjar",
         tema_ppdj="Política Pública Distrital de Juventud",
         pendientes_revision=_POLITICAS_EN_REVISION_FORJAR,
+        temas_mapeo_general_incluir=["1.3.12", "6.1.8", "6.3.15"],
     )
     seccion_reporte_politicas = SECCION_REPORTE_POLITICAS.replace(
         "%%CARDS_POLITICAS%%", html_cards(filas_politicas)

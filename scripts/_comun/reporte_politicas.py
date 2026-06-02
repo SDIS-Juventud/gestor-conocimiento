@@ -69,7 +69,10 @@ def _separar_codigo_producto(texto):
     s = (texto or "").strip()
     if not s:
         return "", ""
-    m = re.match(r"^(\d+(?:\.\d+)+)\.?\s+(.+)$", s)
+    # Algunos productos vienen como "1.3.12.Vinculación..." sin espacio
+    # tras el punto final del código. El \s* permite ese caso además del
+    # patrón estándar "3.1.4. Jóvenes...".
+    m = re.match(r"^(\d+(?:\.\d+)+)\.?\s*(.+)$", s)
     if m:
         return m.group(1), m.group(2).strip()
     return "", s
@@ -83,6 +86,7 @@ def leer_politicas(
     tema_ppdj="Política Pública Distrital de Juventud",
     pendientes_revision=None,
     temas_externos_incluir=None,
+    temas_mapeo_general_incluir=None,
 ):
     """Lee los dos Excels maestros y devuelve una lista ordenada de dicts.
 
@@ -105,11 +109,20 @@ def leer_politicas(
             Se muestran como tarjetas "En revisión". Si es None, no se agrega
             ningún pendiente.
         temas_externos_incluir: whitelist opcional para la lectura de
-            Externos. Si se pasa, solo se incluyen las filas cuyo tema o
-            producto contenga (case-insensitive) alguno de los strings de
-            la lista. Útil para traer productos puntuales a una sección
-            (ej. Afro 1.3.9 y PAD Víctimas a la sección servicio Casas).
-            Si es None, no hay filtro.
+            Externos. Si se pasa, solo se incluyen las filas cuyo tema,
+            código o producto contenga (case-insensitive) alguno de los
+            strings de la lista. Útil para traer productos puntuales a
+            una sección (ej. Afro 1.3.9 y PAD Víctimas a la sección
+            servicio Casas). Si es None, no hay filtro.
+        temas_mapeo_general_incluir: whitelist opcional para activar la
+            lectura adicional de la hoja "Mapeo general" del Excel de
+            Externos. Esa hoja contiene productos transversales que
+            aplican a varios servicios y no están en las hojas
+            individuales (ej. Indígena 1.3.12, Rrom 6.1.8, Palenquera
+            6.3.15, todos con responsable "Todos"). Se filtra de la
+            misma manera que `temas_externos_incluir` (substring
+            case-insensitive contra tema + código + producto). Si es
+            None, no se lee Mapeo general.
 
     Devuelve lista de dicts con las claves: tipo, tema, codigo, producto,
     indicador, meta, periodicidad, responsable, observaciones, estado
@@ -163,10 +176,12 @@ def leer_politicas(
                 if not producto:
                     continue
                 # Whitelist opcional: si se pasó temas_externos_incluir,
-                # solo se incluyen filas cuyo tema o producto contenga
-                # alguno de los strings de la lista (case-insensitive).
+                # solo se incluyen filas cuyo tema, código o producto
+                # contenga alguno de los strings de la lista
+                # (case-insensitive). Incluir el código permite filtrar
+                # por número de producto (ej. "6.3.15").
                 if temas_externos_incluir:
-                    blanco = (tema_fila + " " + producto).lower()
+                    blanco = (tema_fila + " " + codigo + " " + producto).lower()
                     if not any(t.lower() in blanco for t in temas_externos_incluir):
                         continue
                 # En algunas hojas existe "Persona responsable del reporte"
@@ -189,6 +204,41 @@ def leer_politicas(
                 })
         except Exception as e:
             print(f"  ! No se pudo leer hoja '{hoja_externos}': {e}")
+
+    # 2bis) Lectura adicional desde la hoja "Mapeo general" del Excel de
+    # Externos. Solo se activa si se pasa temas_mapeo_general_incluir.
+    # Trae productos transversales (responsable "Todos") que aplican a
+    # varios servicios y no viven en las hojas individuales.
+    if xlsx_externos and temas_mapeo_general_incluir and os.path.exists(xlsx_externos):
+        try:
+            df = pd.read_excel(xlsx_externos, sheet_name="Mapeo general")
+            for _, fila in df.iterrows():
+                tema_fila = _limpiar_celda(fila.get("Tema"))
+                codigo, producto = _separar_codigo_producto(
+                    _limpiar_celda(fila.get("Productos"))
+                )
+                if not producto:
+                    continue
+                blanco = (tema_fila + " " + codigo + " " + producto).lower()
+                if not any(t.lower() in blanco for t in temas_mapeo_general_incluir):
+                    continue
+                persona = _limpiar_celda(fila.get("Persona responsable del reporte"))
+                equipo = _limpiar_celda(fila.get("Equipo responsable del reporte"))
+                responsable = persona if persona else equipo
+                filas.append({
+                    "tipo": _limpiar_celda(fila.get("Tipo de reporte")) or "Política Pública",
+                    "tema": tema_fila,
+                    "codigo": codigo,
+                    "producto": producto,
+                    "indicador": "",
+                    "meta": _limpiar_celda(fila.get("Meta 2026")),
+                    "periodicidad": _limpiar_celda(fila.get("Cada cuánto se reporta")),
+                    "responsable": responsable,
+                    "observaciones": _limpiar_celda(fila.get("Observaciones")),
+                    "estado": "confirmado",
+                })
+        except Exception as e:
+            print(f"  ! No se pudo leer hoja 'Mapeo general': {e}")
 
     # 3) Agregar pendientes "En revisión"
     for tipo, tema, pendiente_con, nota in pendientes_revision:

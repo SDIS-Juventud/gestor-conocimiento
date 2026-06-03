@@ -573,12 +573,26 @@ SECCION_PROTOCOLOS = """\
                             </tbody>
                         </table>
                     </div>
-
-                    <h3 class="card-subtitle">Persona de contacto</h3>
-                    <p style="line-height:1.7;"><strong>Paula Nikoll Murillo Velandia</strong></p>
-
+<!--CONTACTO_PARCHE-->
                 </div>
             </div>"""
+
+# Persona(s) de contacto de Parche seguro: viven en datos/equipo.xlsx hoja
+# "parche_seguro" para poder actualizarlas sin tocar codigo. Si la hoja esta
+# vacia, la subseccion "Persona de contacto" simplemente no aparece.
+_equipo_excel_parche = os.path.join(BASE, "datos", "equipo.xlsx")
+_contacto_html = ""
+if os.path.exists(_equipo_excel_parche):
+    _df_contacto = pd.read_excel(_equipo_excel_parche, sheet_name="parche_seguro")
+    _nombres_contacto = [str(n).strip() for n in _df_contacto["Nombre"].tolist()
+                         if str(n).strip() and str(n).strip().lower() != "nan"]
+    if _nombres_contacto:
+        _contacto_html = '\n                    <h3 class="card-subtitle">Persona de contacto</h3>\n'
+        _contacto_html += "\n".join(
+            f'                    <p style="line-height:1.7;"><strong>{_n}</strong></p>'
+            for _n in _nombres_contacto)
+        _contacto_html += "\n"
+SECCION_PROTOCOLOS = SECCION_PROTOCOLOS.replace("<!--CONTACTO_PARCHE-->", _contacto_html)
 
 # =====================================================================
 # Protocolos: cards con los PDFs de protocolos de atencion.

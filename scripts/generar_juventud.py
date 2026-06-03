@@ -415,7 +415,8 @@ print(f"Cursos/persona:   {str(cursos_por_persona).replace('.', ',')}")
 
 # ========== celda 11: equipo_gen_001 ==========
 # Generar sección Equipo desde Excel + imagen de estructura
-equipo_excel = os.path.join(DATOS, "equipo_casas_juventud.xlsx")
+# El equipo vive en el libro unico datos/equipo.xlsx, hoja "casas_juventud".
+equipo_excel = os.path.join(DATOS, "equipo.xlsx")
 
 # Colores fijos por subgrupo
 COLORES_SUBGRUPO = {
@@ -435,7 +436,7 @@ SUBGRUPOS_ESTILO_ROJO = {"Unidades operativas", "Estrategia móvil"}
 GRUPOS_ESTILO_OSCURO = {"Equipo transversal"}
 
 if os.path.exists(equipo_excel):
-    df_equipo = pd.read_excel(equipo_excel)
+    df_equipo = pd.read_excel(equipo_excel, sheet_name="casas_juventud")
 
     # Reorganización del equipo:
     # - Renombrar el grupo de modalidades para simplificar el título

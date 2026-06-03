@@ -911,53 +911,89 @@ SECCION_LINEA_TIEMPO = """\
 # bloques 50/50 abajo (metodológico/gestión documental y administrativo).
 # Paleta JCO: fondo morado #663a93 + sombra verde #1eaf76 + títulos en verde
 # claro #b8f0d4. Listas centradas sin recuadros internos.
-SECCION_EQUIPO = """\
+# El contenido del equipo (nombres, cargos, bloques) vive en
+# datos/equipo.xlsx hoja "jco", para poder actualizarlo sin tocar codigo. La
+# maquetacion (paleta y disposicion full-width / fila 50/50) se mantiene aqui.
+# Tipos de fila en la hoja: "destacado" (coordinacion), "item" (Cargo: Nombre)
+# y "etiqueta" (sub-equipo sin nombre propio: el texto va en Nombre).
+_XLSX_EQUIPO_JCO = os.path.join(_BASE_JCO, "datos", "equipo.xlsx")
+
+
+def _li_jco(cargo, nombre, indent):
+    return f'{indent}<li><span style="color:#b8f0d4; font-weight:700;">{cargo}:</span> {nombre}</li>'
+
+
+def _generar_seccion_equipo():
+    df = pd.read_excel(_XLSX_EQUIPO_JCO, sheet_name="jco")
+    df["Tipo"] = df["Tipo"].astype(str).str.strip()
+    df["Cargo"] = df["Cargo"].fillna("").astype(str).str.strip()
+    df["Nombre"] = df["Nombre"].fillna("").astype(str).str.strip()
+
+    def bloque(n):
+        return df[df["Bloque"] == n]
+
+    def titulo(n):
+        return str(bloque(n).iloc[0]["Titulo_bloque"]).strip()
+
+    b1 = bloque(1).iloc[0]
+    b2 = bloque(2)
+    b2_items = "\n".join(_li_jco(r.Cargo, r.Nombre, " " * 28)
+                         for r in b2[b2["Tipo"] == "item"].itertuples())
+    b2_etiq = "\n".join(f'{" " * 28}<div>{r.Nombre}</div>'
+                        for r in b2[b2["Tipo"] == "etiqueta"].itertuples())
+    b3 = bloque(3)
+    b3_items = "\n".join(_li_jco(r.Cargo, r.Nombre, " " * 32)
+                         for r in b3[b3["Tipo"] == "item"].itertuples())
+    b4 = bloque(4)
+    b4_items = "\n".join(_li_jco(r.Cargo, r.Nombre, " " * 32)
+                         for r in b4[b4["Tipo"] == "item"].itertuples())
+    b4_etiq = "\n".join(
+        f'{" " * 28}<div style="font-weight:700; font-size:0.95rem; color:#b8f0d4;">{r.Nombre}</div>'
+        for r in b4[b4["Tipo"] == "etiqueta"].itertuples())
+
+    return f"""\
             <div class="content-section" id="equipo">
                 <div class="card">
                     <h2 class="card-title">Equipo y gesti&oacute;n de J&oacute;venes con Oportunidades</h2>
                     <p style="line-height:1.7; margin-bottom:24px;">El servicio J&oacute;venes con Oportunidades es un esfuerzo articulado entre la <strong>Secretar&iacute;a Distrital de Integraci&oacute;n Social (SDIS)</strong>, la <strong>Secretar&iacute;a de Educaci&oacute;n</strong>, la <strong>Secretar&iacute;a de Desarrollo Econ&oacute;mico</strong> y la <strong>Agencia Atenea</strong>. La gesti&oacute;n operativa recae principalmente en la Subdirecci&oacute;n para la Juventud de la SDIS, cuyo equipo se organiza as&iacute;:</p>
 
                     <div style="background:#663a93; color:#fff; border-radius:10px; padding:18px 25px; text-align:center; margin-bottom:28px; box-shadow:7px 7px 0 #1eaf76;">
-                        <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1.5px; color:#b8f0d4; margin-bottom:4px; font-weight:700;">1. Coordinaci&oacute;n general</div>
-                        <div style="font-size:1.15rem; font-weight:700; color:#fff;">Ana Catalina Su&aacute;rez</div>
-                        <div style="font-size:0.78rem; color:rgba(255,255,255,0.75); margin-top:2px;">L&iacute;der del servicio</div>
+                        <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1.5px; color:#b8f0d4; margin-bottom:4px; font-weight:700;">1. {titulo(1)}</div>
+                        <div style="font-size:1.15rem; font-weight:700; color:#fff;">{b1.Nombre}</div>
+                        <div style="font-size:0.78rem; color:rgba(255,255,255,0.75); margin-top:2px;">{b1.Cargo}</div>
                     </div>
 
                     <div style="background:#663a93; border-radius:14px; padding:26px 26px 22px; box-shadow:7px 7px 0 #1eaf76; color:#fff; margin-bottom:34px; text-align:center;">
-                        <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1.5px; color:#b8f0d4; font-weight:700; margin-bottom:18px;">2. Equipo territorial</div>
+                        <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1.5px; color:#b8f0d4; font-weight:700; margin-bottom:18px;">2. {titulo(2)}</div>
                         <ul style="list-style:none; padding:0; margin:0 0 18px; font-size:0.95rem; line-height:2;">
-                            <li><span style="color:#b8f0d4; font-weight:700;">Referente psicosocial y de alertas:</span> Diana Lozano</li>
-                            <li><span style="color:#b8f0d4; font-weight:700;">Referente log&iacute;stica y de FDL:</span> Pamela Bar&oacute;n</li>
-                            <li><span style="color:#b8f0d4; font-weight:700;">Referente proceso formativo:</span> Alejandra Sosa Aponte</li>
-                            <li><span style="color:#b8f0d4; font-weight:700;">Referente inclusi&oacute;n productiva:</span> Edgardo Montes</li>
+{b2_items}
                         </ul>
                         <div style="font-weight:700; font-size:0.95rem; line-height:1.8; color:#b8f0d4;">
-                            <div>Equipo psicosocial</div>
-                            <div>Equipo de alertas</div>
+{b2_etiq}
                         </div>
                     </div>
 
                     <div class="equipo-fila-inferior" style="display:grid; grid-template-columns:1fr 1fr; gap:22px;">
                         <div style="background:#663a93; border-radius:14px; padding:26px 26px 22px; box-shadow:7px 7px 0 #1eaf76; color:#fff; text-align:center;">
-                            <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1.5px; color:#b8f0d4; font-weight:700; margin-bottom:18px;">3. Equipo metodol&oacute;gico y gesti&oacute;n documental</div>
+                            <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1.5px; color:#b8f0d4; font-weight:700; margin-bottom:18px;">3. {titulo(3)}</div>
                             <ul style="list-style:none; padding:0; margin:0; font-size:0.95rem; line-height:2;">
-                                <li><span style="color:#b8f0d4; font-weight:700;">Referente metodol&oacute;gico:</span> Ana Mar&iacute;a Altamar</li>
-                                <li><span style="color:#b8f0d4; font-weight:700;">Referente control pol&iacute;tico:</span> Alejandro Osorio</li>
+{b3_items}
                             </ul>
                         </div>
 
                         <div style="background:#663a93; border-radius:14px; padding:26px 26px 22px; box-shadow:7px 7px 0 #1eaf76; color:#fff; text-align:center;">
-                            <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1.5px; color:#b8f0d4; font-weight:700; margin-bottom:18px;">4. Equipo administrativo</div>
+                            <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1.5px; color:#b8f0d4; font-weight:700; margin-bottom:18px;">4. {titulo(4)}</div>
                             <ul style="list-style:none; padding:0; margin:0 0 18px; font-size:0.95rem; line-height:2;">
-                                <li><span style="color:#b8f0d4; font-weight:700;">L&iacute;der administrativo:</span> John Garz&oacute;n</li>
-                                <li><span style="color:#b8f0d4; font-weight:700;">L&iacute;der financiero:</span> David Quiceno</li>
-                                <li><span style="color:#b8f0d4; font-weight:700;">Gesti&oacute;n documental:</span> Andr&eacute;s Rodr&iacute;guez</li>
+{b4_items}
                             </ul>
-                            <div style="font-weight:700; font-size:0.95rem; color:#b8f0d4;">3 apoyos</div>
+{b4_etiq}
                         </div>
                     </div>
                 </div>
             </div>"""
+
+
+SECCION_EQUIPO = _generar_seccion_equipo()
 
 # --- Pilares ---
 SECCION_PILARES = """\

@@ -446,9 +446,9 @@ SECCION_EQUIPO = """\
             </div>"""
 
 # Generar cajas del equipo desde Excel
-equipo_excel = os.path.join(DATOS, "equipo_forjar.xlsx")
+equipo_excel = os.path.join(DATOS, "equipo.xlsx")  # hoja "forjar" del libro unico
 if os.path.exists(equipo_excel):
-    df_equipo = pd.read_excel(equipo_excel)
+    df_equipo = pd.read_excel(equipo_excel, sheet_name="forjar")
     # Posicion -> (grid-column, grid-row, alineacion). Layout octogonal:
     # filas 1 y 4 ocupan columnas centrales (2,3); filas 2 y 3 ocupan columnas
     # exteriores (1,4); el logo central abarca filas 2-3 y columnas 2-3.
@@ -484,7 +484,7 @@ if os.path.exists(equipo_excel):
     print(f"Equipo Forjar generado desde Excel: {len(df_equipo)} roles en {df_equipo['Posicion'].nunique()} componentes")
 else:
     SECCION_EQUIPO = SECCION_EQUIPO.replace("<!--CAJAS_EQUIPO-->", "")
-    print("Excel de equipo Forjar no encontrado en datos/equipo_forjar.xlsx")
+    print("Excel de equipo Forjar no encontrado en datos/equipo.xlsx (hoja forjar)")
 
 SECCION_UBICACION = """\
             <div class="content-section" id="ubicacion">

@@ -4,6 +4,7 @@ alianzas/
 forjar/
 *.ipynb
 *.xlsx
+!datos/equipo.xlsx
 !datos/equipo_casas_juventud.xlsx
 !datos/directorio_casas_juventud.xlsx
 !datos/directorio_forjar.xlsx
@@ -57,3 +58,5 @@ Preguntas_pendientes_*.pdf
 .DS_Store
 Thumbs.db
 ppt/
+# Copias de HTML usadas para verificar la migracion del equipo a equipo.xlsx.
+scripts/_ref_html_pre_equipo/

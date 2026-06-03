@@ -574,6 +574,9 @@ SECCION_PROTOCOLOS = """\
                         </table>
                     </div>
 
+                    <h3 class="card-subtitle">Persona de contacto</h3>
+                    <p style="line-height:1.7;"><strong>Paula Nikoll Murillo Velandia</strong></p>
+
                 </div>
             </div>"""
 

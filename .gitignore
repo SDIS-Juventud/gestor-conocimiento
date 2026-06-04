@@ -58,5 +58,5 @@ Preguntas_pendientes_*.pdf
 .DS_Store
 Thumbs.db
 ppt/
-# Copias de HTML usadas para verificar la migracion del equipo a equipo.xlsx.
-scripts/_ref_html_pre_equipo/
+# Copias de HTML usadas para verificar migraciones (equipo, power bi, etc.).
+scripts/_ref_html_*/

@@ -27,25 +27,6 @@
         /* Contenido */
         .main { max-width: 1100px; margin: 0 auto; padding: 60px 30px 60px; }
 
-        /* Encabezado de sección: título centrado uppercase, sin línea
-           separadora. La jerarquía la da el espaciado entre secciones. */
-        .seccion { margin-bottom: 64px; }
-        .seccion:last-child { margin-bottom: 0; }
-        .seccion-eyebrow {
-            text-align: center;
-            margin-bottom: 28px;
-        }
-        .eyebrow-titulo {
-            font-family: 'Figtree', sans-serif;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.14em;
-            color: #2F3E3C;
-            font-weight: 700;
-            line-height: 1.4;
-        }
-        .eyebrow-titulo span { color: #888; font-weight: 500; letter-spacing: 0.1em; }
-
         /* Grid */
         .services-grid {
             display: grid;
@@ -53,7 +34,7 @@
             gap: 72px 36px;
             max-width: 1080px;
             margin: 0 auto;
-            padding: 20px 0 20px;
+            padding: 40px 0 40px;
         }
 
         /* Tarjetas - flex column, logo sobresale por abajo (mitad dentro / mitad fuera) */
@@ -140,40 +121,11 @@
         }
         .modal-close:hover { opacity: 1; }
 
-        /* Card del chat (NotebookLM): mismo estilo blanco de las
-           service-card. La diferenciación visual con los servicios reales
-           viene únicamente del eyebrow "02 — ASISTENTE". */
-        .chat-wrapper {
-            display: flex;
-            justify-content: center;
-            max-width: 1080px;
-            margin: 0 auto;
-            padding: 20px 0;
-        }
-        .chat-card {
-            max-width: 560px;
-            width: 100%;
-        }
-        .chat-card .service-desc strong {
-            display: block;
-            font-family: 'Anton', 'Segoe UI', sans-serif;
-            font-size: 1.55rem;
-            color: #253C5C;
-            margin-bottom: 8px;
-            letter-spacing: 0.01em;
-            font-weight: 400;
-        }
-        /* El logo GECO CHAT ya viene con su sticker amarillo + texto, así
-           que solo le subimos un poco la altura para que se note más que
-           los logos de los servicios. */
-        .chat-card .service-logo { height: 80px; margin-bottom: -40px; }
-
         @media (max-width: 700px) {
             .services-grid { grid-template-columns: 1fr; gap: 40px; padding: 30px 0 30px; }
             .main { padding: 35px 20px 40px; }
             .service-desc { font-size: 0.9rem; }
             .service-logo { height: 46px; }
-            .chat-wrapper { margin-top: 40px; padding: 0 10px; }
         }
     </style>
 </head>
@@ -182,11 +134,7 @@
         <img src="imagenes/Header - gestor.jpeg" alt="Gestor de conocimiento - SDIS Juventud">
     </div>
     <main class="main">
-        <section class="seccion">
-            <header class="seccion-eyebrow">
-                <span class="eyebrow-titulo">Servicios de la Subdirección <span>para la Juventud</span></span>
-            </header>
-            <div class="services-grid">
+        <div class="services-grid">
 
             <a class="service-card" href="gestion_conocimiento_juventud_2025.html" style="--accent:#1a237e;">
                 <div class="service-desc">Espacios distritales para j&oacute;venes entre 14 y 28 a&ntilde;os. Oferta integral a trav&eacute;s de 5 ejes: bienestar, cultura, inclusi&oacute;n, liderazgo y SIDICU.</div>
@@ -216,25 +164,7 @@
                 </div>
             </a>
 
-            </div>
-        </section>
-
-        <section class="seccion">
-            <header class="seccion-eyebrow">
-                <span class="eyebrow-titulo">Asistente <span>para preguntas sobre los servicios</span></span>
-            </header>
-            <div class="chat-wrapper">
-            <a class="service-card chat-card" href="https://notebooklm.google.com/notebook/1b538574-c4c7-4d49-957a-24230c433bc0" target="_blank" rel="noopener" style="--accent:#253C5C;">
-                <div class="service-desc">
-                    Cualquier pregunta sobre los servicios, ofertas, datos o normatividad se puede consultar aquí. Útil para responder derechos de petición, preparar informes y resolver dudas del equipo.
-                    <span style="display:block; margin-top:10px; font-size:0.78rem; color:#888; font-style:italic;">Vinculado a NotebookLM (Google). Requiere iniciar sesión con cualquier cuenta de Gmail.</span>
-                </div>
-                <div class="service-logo">
-                    <img src="imagenes/servicios/GECO%20CHAT.png" alt="GECO Chat">
-                </div>
-            </a>
-            </div>
-        </section>
+        </div>
     </main>
     <button class="help-btn" onclick="document.getElementById('modal-info').classList.add('show')" title="&iquest;Qu&eacute; es esto?">?</button>
 

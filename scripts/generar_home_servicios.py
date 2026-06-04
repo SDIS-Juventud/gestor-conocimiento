@@ -1,118 +1,14 @@
-# Genera el home (index.html) y las páginas placeholder de cada servicio
-# de la Subdirección para la Juventud.
-# Todos comparten el mismo CSS base y estructura de navegación.
+# Genera el home (index.html) del gestor de conocimiento de la
+# Subdirección para la Juventud: la rejilla de tarjetas de servicios.
 
 import os
 import sys
-import pandas as pd
-import folium
 
-# CSS compartido con los demás generadores
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _comun.estilos import css_para
 
 # Raíz del proyecto (un nivel arriba de scripts/)
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATOS = os.path.join(BASE, "datos")
-
-# --- Iframe de Power BI (mismo para todos los servicios) ---
-POWERBI_SRC = "https://app.powerbi.com/view?r=eyJrIjoiMzRiNWRkMDQtNThmNC00Yzk5LThjNTItOWI4MzZkYzYwM2EzIiwidCI6ImIzZTMwODA4LWU5YTgtNGYyYS05YmMxLWE3NjBhZTkxMGNmNSIsImMiOjR9"
-
-# =====================================================================
-# CSS compartido (mismo estilo que Casas de Juventud)
-# =====================================================================
-CSS_BASE = css_para("home")
-
-# =====================================================================
-# JavaScript compartido (navegación sidebar)
-# =====================================================================
-JS_BASE = """
-function toggleSection(el) {
-    el.classList.toggle('active');
-    var items = el.nextElementSibling;
-    if (items) items.classList.toggle('show');
-}
-function showContent(id) {
-    document.querySelectorAll('.content-section').forEach(function(s) { s.classList.remove('active'); });
-    document.querySelectorAll('.sidebar-item').forEach(function(s) { s.classList.remove('active'); });
-    var el = document.getElementById(id);
-    if (el) el.classList.add('active');
-    if (event && event.target && event.target.classList.contains('sidebar-item')) {
-        event.target.classList.add('active');
-    }
-}
-"""
-
-# =====================================================================
-# Función auxiliar: genera HTML completo de un servicio
-# =====================================================================
-# Colores por servicio: (accent, accent-bg, accent-border)
-COLORES_SERVICIO = {
-    "jco":     ("#8e6bbf", "#f3eef9", "#e5ddf0"),      # morado atenuado
-    "forjar":  ("#5f9ea0", "#edf6f6", "#d4eaeb"),      # teal (azul-verde Forjar)
-    "alertas": ("#e67e22", "#fdf2e9", "#f5d9b5"),      # naranja (Parche seguro)
-}
-
-def generar_pagina_servicio(titulo, subtitulo, sidebar_html, contenido_html, archivo, logo_img="", color_key=""):
-    """Genera un HTML con la estructura estándar del gestor."""
-    # Override de color si se especifica
-    css_override = ""
-    if color_key in COLORES_SERVICIO:
-        ac, bg, bd = COLORES_SERVICIO[color_key]
-        css_override = f":root {{ --accent: {ac}; --accent-bg: {bg}; --accent-border: {bd}; }}"
-
-    html = f"""<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestor de conocimiento - {titulo}</title>
-    <style>{CSS_BASE}
-    {css_override}</style>
-</head>
-<body>
-    <header class="header">
-        <div>
-            <h1>Gestor de conocimiento - {titulo}</h1>
-            <div class="subtitle">{subtitulo}</div>
-        </div>
-        <div class="header-btns">
-            <a class="home-btn" href="index.html" title="Todos los servicios">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F8F4E1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-            </a>
-            <div class="home-btn" onclick="showContent('welcome')" title="Inicio {titulo}">
-                <img src="{logo_img}" alt="{titulo}" style="height:32px; border-radius:16px; object-fit:contain; vertical-align:middle;">
-            </div>
-        </div>
-    </header>
-    <div class="container">
-        <nav class="sidebar">
-{sidebar_html}
-            <div class="sidebar-section">
-                <div class="sidebar-title" onclick="showContent('estadisticas')" style="cursor:pointer;">
-                    <span>Estad&iacute;sticas</span>
-                </div>
-            </div>
-        </nav>
-        <main class="main-content">
-{contenido_html}
-
-            <div class="content-section" id="estadisticas">
-                <div class="card">
-                    <h2 class="card-title">Estad&iacute;sticas</h2>
-                    <iframe title="Seguimiento t&eacute;cnico" width="100%" height="600" src="{POWERBI_SRC}" frameborder="0" allowFullScreen="true" style="border:1px solid #e0e0e0; border-radius:8px;"></iframe>
-                </div>
-            </div>
-        </main>
-    </div>
-    <script>{JS_BASE}</script>
-</body>
-</html>"""
-    ruta = os.path.join(BASE, archivo)
-    with open(ruta, "w", encoding="utf-8") as f:
-        f.write(html)
-    print(f"  Generado: {archivo} ({len(html):,} caracteres)".replace(",", "."))
-
 
 # =====================================================================
 # INDEX.HTML — Home de todos los servicios

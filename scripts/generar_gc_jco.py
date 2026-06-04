@@ -17,6 +17,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _comun.estilos import css_para
 from _comun.aliados import seccion_jco as seccion_aliados_jco
 from _comun.diagramas_flujo import svg_diagrama_jco
+from _comun.tablero import powerbi_src
 from _comun.reporte_politicas import (
     CSS_REPORTE_POLITICAS,
     leer_politicas,
@@ -43,6 +44,9 @@ CATEGORIAS_DOCS = {
 
 _BASE_JCO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _XLSX_JCO_DOCS = os.path.join(_BASE_JCO, "enlaces", "enlaces.xlsx")
+
+# Iframe de Power BI (el enlace vive en enlaces/enlaces.xlsx, no en el codigo)
+POWERBI_SRC = powerbi_src(_BASE_JCO)
 
 def _cargar_documentos_desde_excel():
     """Lee la hoja jco_documentacion de enlaces.xlsx y devuelve una lista de
@@ -1204,11 +1208,11 @@ SECCION_DOCUMENTACION = """\
 SECCION_DOCUMENTACION = SECCION_DOCUMENTACION.replace("%%BLOQUES_DOCS%%", _generar_bloques_documentos())
 
 # --- Estadísticas ---
-SECCION_ESTADISTICAS = """\
+SECCION_ESTADISTICAS = f"""\
             <div class="content-section" id="estadisticas">
                 <div class="card">
                     <h2 class="card-title">Estad&iacute;sticas</h2>
-                    <iframe title="Seguimiento t&eacute;cnico" width="100%" height="600" src="https://app.powerbi.com/view?r=eyJrIjoiMzRiNWRkMDQtNThmNC00Yzk5LThjNTItOWI4MzZkYzYwM2EzIiwidCI6ImIzZTMwODA4LWU5YTgtNGYyYS05YmMxLWE3NjBhZTkxMGNmNSIsImMiOjR9" frameborder="0" allowFullScreen="true" style="border:1px solid #e0e0e0; border-radius:8px;"></iframe>
+                    <iframe title="Seguimiento t&eacute;cnico" width="100%" height="600" src="{POWERBI_SRC}" frameborder="0" allowFullScreen="true" style="border:1px solid #e0e0e0; border-radius:8px;"></iframe>
                 </div>
             </div>"""
 

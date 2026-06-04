@@ -18,6 +18,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _comun.estilos import css_para
 from _comun.aliados import seccion_forjar as seccion_aliados_forjar
 from _comun.diagramas_flujo import svg_diagrama_forjar
+from _comun.tablero import powerbi_src
 from _comun.reporte_politicas import (
     CSS_REPORTE_POLITICAS,
     leer_politicas,
@@ -1099,8 +1100,8 @@ SECCION_DATOS_SIRBE = """\
                 </div>
             </div>"""
 
-# Iframe de Power BI para estadísticas
-POWERBI_SRC = "https://app.powerbi.com/view?r=eyJrIjoiMzRiNWRkMDQtNThmNC00Yzk5LThjNTItOWI4MzZkYzYwM2EzIiwidCI6ImIzZTMwODA4LWU5YTgtNGYyYS05YmMxLWE3NjBhZTkxMGNmNSIsImMiOjR9"
+# Iframe de Power BI para estadísticas (el enlace vive en enlaces/enlaces.xlsx, no en el codigo)
+POWERBI_SRC = powerbi_src(BASE)
 
 SECCION_ESTADISTICAS = f"""\
             <div class="content-section" id="estadisticas">

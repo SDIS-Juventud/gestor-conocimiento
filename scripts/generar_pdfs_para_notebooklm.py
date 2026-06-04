@@ -17,7 +17,6 @@ display:none todas las secciones excepto la activa).
 
 from pathlib import Path
 import subprocess
-import sys
 import tempfile
 
 BASE = Path(__file__).resolve().parent.parent

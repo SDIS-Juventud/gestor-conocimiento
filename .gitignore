@@ -22,9 +22,12 @@ forjar/
 *.xls
 *.pptx
 validacion_*.html
-# Documentación oficial JCO: PDFs muy pesados que viven en Google Drive
-# y eventualmente en SharePoint. Los enlaces se gestionan desde enlaces.xlsx.
+# Documentación oficial (PDFs y Word pesados que viven en Google Drive y
+# SharePoint). Los enlaces se gestionan desde enlaces.xlsx. Aplica a la
+# carpeta nueva unificada y a las carpetas viejas por servicio.
+Documentación/
 Documentación JCO/
+Documentación Forjar/
 # Script auxiliar local (no va al repo: extrae HTMLs para alimentar NotebookLM).
 scripts/extraer_htmls_para_notebooklm.py
 __pycache__/

@@ -658,7 +658,10 @@ if os.path.exists(directorio_excel) and os.path.exists(geojson_path):
 
     locs_con_casa = set(normalizar(l) for l in df_mapa["Localidad"].unique())
 
-    m = folium.Map(location=[4.55, -74.15], zoom_start=10, tiles="CartoDB positron", width="100%", height="100%")
+    # Centro y zoom FIJOS (no fit_bounds): este mapa vive en una pestana
+    # oculta y, al cargarse sin tamano, fit_bounds hace que Leaflet se vaya
+    # al globo. [4.28, -74.2] zoom 9 encuadra toda Bogota incluida Sumapaz.
+    m = folium.Map(location=[4.28, -74.2], zoom_start=9, tiles="CartoDB positron", width="100%", height="100%")
 
     def style_localidad(feature):
         nombre = normalizar(feature["properties"]["nombre"])
@@ -669,11 +672,8 @@ if os.path.exists(directorio_excel) and os.path.exists(geojson_path):
             # borde gris visible, para ver el croquis completo de Bogota.
             return {"fillColor": "#ececec", "color": "#7a7a7a", "weight": 1.4, "fillOpacity": 0.45}
 
-    gj_layer = folium.GeoJson(localidades_gj, name="Localidades", style_function=style_localidad,
-        tooltip=folium.GeoJsonTooltip(fields=["nombre"], aliases=["Localidad:"]))
-    gj_layer.add_to(m)
-    # Encuadrar a toda Bogota (incluida Sumapaz), no solo la zona urbana.
-    m.fit_bounds(gj_layer.get_bounds())
+    folium.GeoJson(localidades_gj, name="Localidades", style_function=style_localidad,
+        tooltip=folium.GeoJsonTooltip(fields=["nombre"], aliases=["Localidad:"])).add_to(m)
 
     for _, row in df_mapa.iterrows():
         if pd.notna(row.get("Latitud")) and pd.notna(row.get("Longitud")):

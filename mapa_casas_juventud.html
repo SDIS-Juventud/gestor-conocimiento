@@ -79,10 +79,10 @@
             var map_001 = L.map(
                 "map_001",
                 {
-                    center: [4.55, -74.15],
+                    center: [4.28, -74.2],
                     crs: L.CRS.EPSG3857,
                     ...{
-  "zoom": 10,
+  "zoom": 9,
   "zoomControl": true,
   "preferCanvas": false,
 }
@@ -180,12 +180,6 @@
                      
     
             geo_json_001.addTo(map_001);
-        
-    
-            map_001.fitBounds(
-                [[3.7310303420000537, -74.44977952799991], [4.836779095000054, -73.98653427799991]],
-                {}
-            );
         
     
             var circle_marker_001 = L.circleMarker(

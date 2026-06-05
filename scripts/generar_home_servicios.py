@@ -241,6 +241,29 @@ def generar_index():
         .chat-card {{
             max-width: 560px;
             width: 100%;
+            background: #aacf6a url('imagenes/fondo_verde.png') center/cover no-repeat;
+            border: none;
+            box-shadow: 0 6px 26px rgba(0,0,0,0.10);
+        }}
+        .chat-card:hover {{ transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.16); border-color: transparent; }}
+        /* Texto oscuro y en negrilla, para que se lea con fuerza sobre el
+           verde texturizado (como las piezas Distrito Joven). */
+        .chat-card .service-desc {{ color: #2f3e2a; font-weight: 700; }}
+        /* Nota "Vinculado a NotebookLM": resaltado inverso al de Unidades
+           operativas (recuadro morado, texto crema), pegado al texto. */
+        .geco-nota {{
+            display: inline;
+            font-family: 'Anton', 'Segoe UI', sans-serif;
+            font-weight: 400;
+            text-transform: uppercase;
+            font-size: 1.4rem;
+            letter-spacing: 0.01em;
+            line-height: 1.7;
+            color: #f4f5de;
+            background: #5a4a8c;
+            padding: 0.08em 0.3em;
+            -webkit-box-decoration-break: clone;
+            box-decoration-break: clone;
         }}
         .chat-card .service-desc strong {{
             display: block;
@@ -343,8 +366,9 @@ def generar_index():
             <div class="chat-wrapper">
             <a class="service-card chat-card" href="https://notebooklm.google.com/notebook/1b538574-c4c7-4d49-957a-24230c433bc0" target="_blank" rel="noopener" style="--accent:#253C5C;">
                 <div class="service-desc">
-                    Cualquier pregunta sobre los servicios, ofertas, datos o normatividad se puede consultar aqu&iacute;. &Uacute;til para responder derechos de petici&oacute;n, preparar informes y resolver dudas del equipo.
-                    <span style="display:block; margin-top:10px; font-size:0.78rem; color:#888; font-style:italic;">Vinculado a NotebookLM (Google). Requiere iniciar sesi&oacute;n con cualquier cuenta de Gmail.</span>
+                    <span class="geco-nota">&iquest;Preguntas? Consulta aqu&iacute;</span>
+                    <span style="display:block; margin-top:16px; color:#1a1a1a; font-weight:600; font-size:0.9rem; line-height:1.5;">Servicios, ofertas, datos y normatividad. &Uacute;til para derechos de petici&oacute;n e informes.</span>
+                    <span style="display:block; margin-top:10px; color:#5a6a4a; font-weight:500; font-size:0.74rem; line-height:1.45;">Vinculado a NotebookLM (Google). Requiere iniciar sesi&oacute;n con cualquier cuenta de Gmail.</span>
                 </div>
                 <div class="service-logo">
                     <img src="imagenes/servicios/GECO%20CHAT.png" alt="GECO Chat">

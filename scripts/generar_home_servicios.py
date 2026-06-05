@@ -43,6 +43,8 @@ def generar_index():
             "archivo": "gestion_conocimiento_alertas_2025.html",
             "imagen": "imagenes/servicios/alertas.png",
             "desc": "Sistema de identificaci&oacute;n y seguimiento de alertas tempranas para la protecci&oacute;n integral de la poblaci&oacute;n joven.",
+            # Parche Seguro no es un servicio, es una iniciativa transversal a los tres servicios
+            "rotulo": "Iniciativa transversal",
         },
     ]
 
@@ -53,8 +55,12 @@ def generar_index():
     tarjetas = ""
     for i, s in enumerate(servicios):
         color = colores[i]
+        # Rotulo opcional (ej. Parche Seguro como iniciativa transversal)
+        rotulo = s.get("rotulo", "")
+        rotulo_html = f'<span class="card-rotulo">{rotulo}</span>' if rotulo else ""
         tarjetas += f"""
             <a class="service-card" href="{s['archivo']}" style="--accent:{color};">
+                {rotulo_html}
                 <div class="service-desc">{s['desc']}</div>
                 <div class="service-logo">
                     <img src="{s['imagen']}" alt="{s['alt']}">
@@ -200,6 +206,27 @@ def generar_index():
             line-height: 1.4;
         }}
         .eyebrow-titulo span {{ color: #888; font-weight: 500; letter-spacing: 0.1em; }}
+        .eyebrow-sub {{
+            font-family: 'Figtree', sans-serif;
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 6px;
+            letter-spacing: 0.03em;
+        }}
+
+        /* Rotulo pequeno dentro de una tarjeta (Parche Seguro: transversal).
+           Etiqueta editorial: solo texto, sin caja, en el color de acento
+           del servicio. Distingue sin parecer un boton. */
+        .card-rotulo {{
+            align-self: center;
+            font-family: 'Figtree', sans-serif;
+            font-size: 0.68rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.13em;
+            color: var(--accent, #888);
+            margin-bottom: 12px;
+        }}
 
         /* Card del chat (NotebookLM): mismo estilo blanco de las
            service-card. La diferenciacion visual con los servicios reales
@@ -229,6 +256,46 @@ def generar_index():
            los logos de los servicios. */
         .chat-card .service-logo {{ height: 80px; margin-bottom: -40px; }}
 
+        /* Tarjeta de Unidades operativas, estilo Distrito Joven: fondo
+           morado texturizado (Fondo 1.png) con la ilustracion halftone de
+           edificios (iconografia propia SDIS) apoyada sobre una franja
+           crema que lleva el enunciado. Pieza con mas caracter que el resto. */
+        .uo-card {{
+            display: block;
+            width: 100%;
+            max-width: 520px;
+            background: #663A93 url('imagenes/Fondo 1.png') center/cover no-repeat;
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 6px 26px rgba(0,0,0,0.12);
+            padding: 30px 0 0;
+            overflow: hidden;
+            text-align: center;
+        }}
+        .uo-card:hover {{ transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.16); border-color: transparent; }}
+        .uo-card .uo-ilustracion {{ padding: 0 24px; }}
+        .uo-card .uo-ilustracion img {{ width: 100%; max-width: 380px; height: auto; display: block; margin: 0 auto; position: relative; z-index: 2; }}
+        /* El texto va sobre el morado, con un resaltado crema pegado a las
+           palabras (highlight), no una franja de lado a lado, como en el
+           afiche Distrito Joven. box-decoration-break: clone hace que el
+           resaltado abrace cada linea por separado. */
+        .uo-banner {{ padding: 2px 26px 30px; text-align: center; }}
+        .uo-banner p {{
+            display: inline;
+            margin: 0;
+            font-family: 'Anton', 'Segoe UI', sans-serif;
+            font-weight: 400;
+            text-transform: uppercase;
+            font-size: 1.4rem;
+            letter-spacing: 0.01em;
+            line-height: 1.7;
+            color: #5a4a8c;
+            background: #f4f5de;
+            padding: 0.08em 0.3em;
+            -webkit-box-decoration-break: clone;
+            box-decoration-break: clone;
+        }}
+
         @media (max-width: 700px) {{
             .services-grid {{ grid-template-columns: 1fr; gap: 40px; padding: 30px 0 30px; }}
             .main {{ padding: 35px 20px 40px; }}
@@ -243,9 +310,31 @@ def generar_index():
         <img src="imagenes/Header - gestor.jpeg" alt="Gestor de conocimiento - SDIS Juventud">
     </div>
     <main class="main">
-        <div class="services-grid">
+        <section class="seccion">
+            <header class="seccion-eyebrow">
+                <span class="eyebrow-titulo">Servicios de la Subdirecci&oacute;n <span>para la Juventud</span></span>
+                <div class="eyebrow-sub">3 servicios y 1 iniciativa transversal</div>
+            </header>
+            <div class="services-grid">
 {tarjetas}
-        </div>
+            </div>
+        </section>
+
+        <section class="seccion">
+            <header class="seccion-eyebrow">
+                <span class="eyebrow-titulo">Unidades operativas <span>espacios f&iacute;sicos en Bogot&aacute;</span></span>
+            </header>
+            <div class="chat-wrapper">
+            <a class="service-card uo-card" href="unidades_operativas.html">
+                <div class="uo-ilustracion">
+                    <img src="imagenes/contexto1.png" alt="Espacios f&iacute;sicos de la Subdirecci&oacute;n">
+                </div>
+                <div class="uo-banner">
+                    <p>D&oacute;nde tiene presencia f&iacute;sica la Subdirecci&oacute;n para la Juventud en Bogot&aacute;</p>
+                </div>
+            </a>
+            </div>
+        </section>
 
         <section class="seccion">
             <header class="seccion-eyebrow">

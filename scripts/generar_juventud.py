@@ -658,23 +658,28 @@ if os.path.exists(directorio_excel) and os.path.exists(geojson_path):
 
     locs_con_casa = set(normalizar(l) for l in df_mapa["Localidad"].unique())
 
-    m = folium.Map(location=[4.624, -74.105], zoom_start=11, tiles="CartoDB positron", width="100%", height="100%")
+    m = folium.Map(location=[4.55, -74.15], zoom_start=10, tiles="CartoDB positron", width="100%", height="100%")
 
     def style_localidad(feature):
         nombre = normalizar(feature["properties"]["nombre"])
         if nombre in locs_con_casa:
             return {"fillColor": "#d5d5d5", "color": "#253C5C", "weight": 1.5, "fillOpacity": 0.35}
         else:
-            return {"fillColor": "#ffffff", "color": "#ccc", "weight": 1, "fillOpacity": 0.1}
+            # Localidades sin casa (incluida Sumapaz): se dibujan igual, con
+            # borde gris visible, para ver el croquis completo de Bogota.
+            return {"fillColor": "#ececec", "color": "#7a7a7a", "weight": 1.4, "fillOpacity": 0.45}
 
-    folium.GeoJson(localidades_gj, name="Localidades", style_function=style_localidad,
-        tooltip=folium.GeoJsonTooltip(fields=["nombre"], aliases=["Localidad:"])).add_to(m)
+    gj_layer = folium.GeoJson(localidades_gj, name="Localidades", style_function=style_localidad,
+        tooltip=folium.GeoJsonTooltip(fields=["nombre"], aliases=["Localidad:"]))
+    gj_layer.add_to(m)
+    # Encuadrar a toda Bogota (incluida Sumapaz), no solo la zona urbana.
+    m.fit_bounds(gj_layer.get_bounds())
 
     for _, row in df_mapa.iterrows():
         if pd.notna(row.get("Latitud")) and pd.notna(row.get("Longitud")):
             popup_html = f'<div style="font-family:Arial; min-width:200px;"><strong style="color:#253C5C; font-size:14px;">{row["Casa de Juventud"]}</strong><br><span style="color:#666; font-size:12px;">📍 {row["Localidad"]}</span><br><span style="font-size:11px;">{row["Dirección"]}</span><br><span style="font-size:11px; color:#888;">Barrio: {row["Barrio"]}</span></div>'
             folium.CircleMarker(location=[row["Latitud"], row["Longitud"]], radius=7, color="#253C5C",
-                fill=True, fill_color="#c0392b", fill_opacity=0.9, weight=2,
+                fill=True, fill_color="#253C5C", fill_opacity=0.9, weight=2,
                 popup=folium.Popup(popup_html, max_width=250), tooltip=row["Casa de Juventud"]).add_to(m)
 
     ruta_mapa = os.path.join(BASE, "mapa_casas_juventud.html")
@@ -1081,10 +1086,10 @@ CSS = CSS + "\n        " + CSS_REPORTE_POLITICAS.replace("\n", "\n        ")
 # el PAD Víctimas, que ya aparece confirmado en esta sección.
 _POLITICAS_EN_REVISION_CASAS = []
 
-# Productos del Excel de Reportes Externos hoja "Casas de Juventud"
-# que NO son específicos de un eje sino del servicio Casas como tal,
-# y por lo tanto se muestran en esta sección (no en Bienestar/Cultura/
-# Inclusión/Liderazgo). Estos quedan excluidos del eje Bienestar vía
+# NOTA: desde el cambio pedido por Felipe, esta lista ya NO filtra la
+# sección de políticas de la página general (ahora se leen todas). Se
+# conserva solo como documentación de cuáles temas son de nivel servicio
+# y quedan excluidos del eje Bienestar vía
 # Configuracion_politicas_bienestar.xlsx hoja Exclusiones.
 _TEMAS_NIVEL_SERVICIO_CASAS = [
     "Negra, Afrocolombiana",  # producto 1.3.9 Casa de la juventud que implementa enfoque diferencial étnico
@@ -1100,7 +1105,11 @@ filas_politicas_casas = leer_politicas(
     hoja_externos="Casas de Juventud",
     patron_responsable_ppdj=r"Casas de Juventud|Todos",
     pendientes_revision=_POLITICAS_EN_REVISION_CASAS,
-    temas_externos_incluir=_TEMAS_NIVEL_SERVICIO_CASAS,
+    # Felipe pidió que la página general de Casas liste TODAS las políticas
+    # asociadas al servicio, igual que JCO y Forjar. Por eso ya no se filtra
+    # con la lista blanca _TEMAS_NIVEL_SERVICIO_CASAS: se lee la hoja completa
+    # "Casas de Juventud". Cada eje sigue mostrando solo las suyas (sin cambio).
+    temas_externos_incluir=None,
     temas_mapeo_general_incluir=["1.3.12", "6.1.8", "6.3.15"],
 )
 cards_politicas_casas = html_cards(filas_politicas_casas)
@@ -1466,9 +1475,6 @@ html = f"""<!DOCTYPE html>
                 <p style="color:#666; margin-bottom:20px;">Casas de Juventud en Bogotá.</p>
                 <div style="margin-bottom:20px;">
                     <a href="https://servicios.sdis.gov.co/index.php/casas-juventud" target="_blank" style="font-family:'Anton','Figtree',sans-serif; font-weight:400; font-size:1.05rem; line-height:1.15; letter-spacing:0.5px; background:#c7eb91; color:#5d5e95; padding:9px 14px 7px; display:inline-block; text-align:center; max-width:100%; text-decoration:none;">Link de agendamiento de actividades en Casas de Juventud</a>
-                </div>
-                <div style="text-align:center; margin-bottom:25px;">
-                    <img src="imagenes/Casas%20Mapa.jpg" alt="Mapa de Casas de Juventud" style="max-width:100%; border-radius:12px;">
                 </div>
                 <div style="text-align:center; margin-bottom:25px;">
                     <iframe src="mapa_casas_juventud.html" style="width:100%; height:500px; border:none; border-radius:12px;"></iframe>

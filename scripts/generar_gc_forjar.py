@@ -550,7 +550,7 @@ if os.path.exists(directorio_excel):
         return texto
 
     geojson_path = os.path.join(DATOS, "localidades_bogota.geojson")
-    m = folium.Map(location=[4.624, -74.105], zoom_start=11, tiles="CartoDB positron", width="100%", height="100%")
+    m = folium.Map(location=[4.55, -74.15], zoom_start=10, tiles="CartoDB positron", width="100%", height="100%")
 
     if os.path.exists(geojson_path):
         with open(geojson_path, encoding="utf-8") as f:
@@ -562,10 +562,15 @@ if os.path.exists(directorio_excel):
             if nombre in locs_forjar:
                 return {"fillColor": "#d5e8e8", "color": "#5f9ea0", "weight": 2, "fillOpacity": 0.4}
             else:
-                return {"fillColor": "#f0f0f0", "color": "#999", "weight": 1.5, "fillOpacity": 0.2}
+                # Localidades sin unidad (incluida Sumapaz): se dibujan igual,
+                # con borde gris visible, para ver el croquis completo de Bogota.
+                return {"fillColor": "#ececec", "color": "#7a7a7a", "weight": 1.4, "fillOpacity": 0.45}
 
-        folium.GeoJson(localidades_gj, name="Localidades", style_function=_style_loc,
-            tooltip=folium.GeoJsonTooltip(fields=["nombre"], aliases=["Localidad:"])).add_to(m)
+        gj_layer = folium.GeoJson(localidades_gj, name="Localidades", style_function=_style_loc,
+            tooltip=folium.GeoJsonTooltip(fields=["nombre"], aliases=["Localidad:"]))
+        gj_layer.add_to(m)
+        # Encuadrar a toda Bogota (incluida Sumapaz), no solo la zona urbana.
+        m.fit_bounds(gj_layer.get_bounds())
 
     for _, row in df_dir.iterrows():
         lat, lon = row.get("Latitud"), row.get("Longitud")

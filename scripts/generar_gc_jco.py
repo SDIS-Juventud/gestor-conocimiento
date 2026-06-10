@@ -27,7 +27,11 @@ from _comun.reporte_politicas import (
 # ============================================================
 # Inventario de documentación oficial de JCO.
 # Los metadatos y URLs viven en `enlaces/enlaces.xlsx`, hoja
-# `jco_documentacion` (columnas: CATEGORIA, LABEL, FECHA, URL).
+# `jco_documentacion` (columnas: CATEGORIA, LABEL, FECHA, URL,
+# JCO, PARCEROS, LOS DOS). Las últimas tres marcan con X a qué
+# servicio pertenece cada documento, según la guía del equipo
+# (2026-06): la sección Documentación se separa en tres bloques
+# (JCO vigente, antecesor Parceros/SSPB y transversales).
 # Para agregar/quitar/renombrar documentos basta editar el Excel.
 # Las categorías se definen aquí porque incluyen estilos visuales
 # (ícono Lucide y color) que no es necesario versionar en Excel.
@@ -38,6 +42,8 @@ CATEGORIAS_DOCS = {
     "instructivo":     {"label": "Instructivo pago",  "icon": "clipboard-list", "color": "#1e9da3"},
     "convenio":        {"label": "Convenio 1285-2025","icon": "handshake",      "color": "#f58b53"},
     "manual-parceros": {"label": "Manual Parceros",   "icon": "archive",        "color": "#1e7895"},
+    "convenio-parceros": {"label": "Convenios Parceros", "icon": "file-text",   "color": "#b5651d"},
+    "mesa-gis":        {"label": "Mesa GIS (MO SSPB)", "icon": "users",         "color": "#5b7c99"},
     "portafolios":     {"label": "Portafolios SDIS",  "icon": "library",        "color": "#f4676e"},
     "normativo":       {"label": "Marco normativo",   "icon": "scale",          "color": "#1eaf76"},
 }
@@ -50,8 +56,10 @@ POWERBI_SRC = powerbi_src(_BASE_JCO)
 
 def _cargar_documentos_desde_excel():
     """Lee la hoja jco_documentacion de enlaces.xlsx y devuelve una lista de
-    tuplas (categoria, label, fecha, url) en el orden del Excel. Si la hoja
-    no existe o falla la lectura, devuelve [] y avisa por stdout."""
+    tuplas (categoria, label, fecha, url, servicio) en el orden del Excel,
+    donde servicio es 'jco', 'parceros' o 'ambos' según las columnas
+    JCO / PARCEROS / LOS DOS. Si la hoja no existe o falla la lectura,
+    devuelve [] y avisa por stdout."""
     if not os.path.exists(_XLSX_JCO_DOCS):
         print(f"enlaces/enlaces.xlsx no encontrado; sección Documentación quedará vacía")
         return []
@@ -60,34 +68,57 @@ def _cargar_documentos_desde_excel():
     except Exception as e:
         print(f"No se pudo leer hoja 'jco_documentacion': {e}")
         return []
+    def _texto(valor):
+        # Celdas vacías llegan como NaN; str(NaN) daría el texto "nan"
+        return "" if pd.isna(valor) else str(valor).strip()
+
     docs = []
     for _, fila in df.iterrows():
-        cat = str(fila.get("CATEGORIA", "")).strip()
-        label = str(fila.get("LABEL", "")).strip()
-        fecha = str(fila.get("FECHA", "")).strip()
-        url = str(fila.get("URL", "")).strip()
+        cat = _texto(fila.get("CATEGORIA"))
+        label = _texto(fila.get("LABEL"))
+        fecha = _texto(fila.get("FECHA"))
+        url = _texto(fila.get("URL"))
         if not cat or not label or not url:
             continue
         if cat not in CATEGORIAS_DOCS:
             print(f"  ! Categoría desconocida '{cat}' en fila '{label}' (se ignora)")
             continue
-        docs.append((cat, label, fecha, url))
+        if _texto(fila.get("JCO")) == "X":
+            servicio = "jco"
+        elif _texto(fila.get("PARCEROS")) == "X":
+            servicio = "parceros"
+        elif _texto(fila.get("LOS DOS")) == "X":
+            servicio = "ambos"
+        else:
+            print(f"  ! Fila '{label}' sin marca JCO/PARCEROS/LOS DOS (va a Transversales)")
+            servicio = "ambos"
+        docs.append((cat, label, fecha, url, servicio))
     print(f"Documentación JCO desde enlaces.xlsx: {len(docs)} documentos")
     return docs
 
 DOCUMENTOS_JCO = _cargar_documentos_desde_excel()
 
 
-def _generar_bloques_documentos():
-    """Devuelve el HTML con un bloque por cada categoría: subtítulo de color +
-    grid de cards. Cada card es un <a> que abre el PDF en nueva pestaña."""
+# Cuando una misma categoría tiene documentos en dos bloques, el subtítulo
+# puede diferenciarse aquí. Los portafolios mantienen el nombre general
+# (la versión ya se ve en cada card).
+_ETIQUETAS_POR_SERVICIO = {
+    ("parceros", "instructivo"): "Instructivo pago Parceros",
+}
+
+
+def _generar_bloques_documentos(servicio):
+    """Devuelve el HTML de las categorías cuyos documentos pertenecen al
+    servicio dado ('jco', 'parceros' o 'ambos'): subtítulo de color + grid
+    de cards. Cada card es un <a> que abre el PDF en nueva pestaña."""
     bloques = []
     for cat, meta in CATEGORIAS_DOCS.items():
-        docs_cat = [d for d in DOCUMENTOS_JCO if d[0] == cat]
+        docs_cat = [d for d in DOCUMENTOS_JCO if d[0] == cat and d[4] == servicio]
         if not docs_cat:
             continue
+        etiqueta = _ETIQUETAS_POR_SERVICIO.get((servicio, cat), meta["label"])
         cards = []
-        for _, label, fecha, ruta in docs_cat:
+        for _, label, fecha, ruta, _serv in docs_cat:
             # URLs http/https ya vienen codificadas (ej. SharePoint); las locales sí necesitan quote().
             if ruta.startswith(("http://", "https://")):
                 url = ruta
@@ -104,13 +135,46 @@ def _generar_bloques_documentos():
                 f'                            </a>'
             )
         bloque = (
-            f'                    <h3 class="docs-grupo-titulo" style="color:{meta["color"]};">{meta["label"]} <span class="docs-grupo-conteo">({len(docs_cat)})</span></h3>\n'
+            f'                    <h3 class="docs-grupo-titulo" style="color:{meta["color"]};">{etiqueta} <span class="docs-grupo-conteo">({len(docs_cat)})</span></h3>\n'
             f'                    <div class="docs-grid">\n'
             + "\n".join(cards)
             + '\n                    </div>'
         )
         bloques.append(bloque)
     return "\n\n".join(bloques)
+
+
+def _generar_documentos_por_servicio():
+    """Arma la sección Documentación según la guía del equipo (2026-06):
+    píldoras de filtro (mismo patrón que el portafolio de Forjar) y un
+    contenedor por servicio — JCO vigente, antecesor Parceros (SSPB) y
+    transversales. Sin filtro activo se ve todo; al hacer clic en una
+    píldora se muestra solo ese bloque (clic de nuevo deselecciona)."""
+    pildoras = [
+        ("jco", "JCO"),
+        ("parceros", "Parceros (SSPB)"),
+        ("ambos", "Transversales"),
+    ]
+    fila_pildoras = (
+        '                    <div class="docs-filter-pills">\n'
+        + "\n".join(
+            f'                        <span class="docs-pill" data-servicio="{serv}" '
+            f'onclick="filterDocsServicio(\'{serv}\', this)">{texto}</span>'
+            for serv, texto in pildoras
+        )
+        + '\n                    </div>'
+    )
+    partes = [fila_pildoras]
+    for servicio, _texto in pildoras:
+        bloques = _generar_bloques_documentos(servicio)
+        if not bloques:
+            continue
+        partes.append(
+            f'                    <div class="docs-servicio-bloque" data-servicio="{servicio}">\n'
+            + bloques
+            + '\n                    </div>'
+        )
+    return "\n\n".join(partes)
 
 
 # ============================================================
@@ -434,6 +498,16 @@ EXTRAS_CSS_JCO = """\
     font-size: 1.05rem;
     margin: 28px 0 12px;
 }
+/* P&iacute;ldoras de filtro por servicio (JCO / Parceros SSPB / Transversales),
+   mismo patr&oacute;n que el portafolio de Forjar: sin filtro activo se ve todo,
+   clic en una p&iacute;ldora muestra solo ese bloque, clic de nuevo deselecciona. */
+.docs-filter-pills { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 20px; }
+.docs-pill { padding: 6px 16px; border-radius: 100px; font-size: 0.78rem; font-weight: 500; cursor: pointer; border: 1.5px solid #e5e0d3; background: #fff; color: #666; transition: all 0.18s; }
+.docs-pill:hover { border-color: #663a93; color: #663a93; }
+.docs-pill.active { color: #fff; }
+.docs-pill[data-servicio="jco"].active { background: #663a93; border-color: #663a93; }
+.docs-pill[data-servicio="parceros"].active { background: #1e7895; border-color: #1e7895; }
+.docs-pill[data-servicio="ambos"].active { background: #1eaf76; border-color: #1eaf76; }
 .docs-grupo-conteo { color: #888; font-weight: 500; font-size: 0.85rem; letter-spacing: 0; margin-left: 4px; }
 .docs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-bottom: 8px; }
 .docs-card {
@@ -1190,22 +1264,24 @@ SECCION_GESTION_DATOS = """\
             </div>"""
 
 # --- Documentación ---
-# Lista cronológica y temática de la documentación oficial del servicio JCO y
-# su antecesor Parceros. Los 45 PDFs viven en `Documentación JCO/` agrupados
-# en 6 carpetas; este bloque los expone como cards linkeadas para que el equipo
-# (y la Contraloría) pueda navegarlos directo desde el gestor. Cada categoría
-# abre con su subtítulo de color y muestra sus documentos en grid.
+# Documentación oficial del servicio, separada en tres bloques según la guía
+# del equipo (2026-06): JCO (vigente), antecesor Parceros por Bogotá / SSPB
+# (2021-2023) y transversales (resoluciones que aplican a los dos). La
+# pertenencia de cada documento vive en las columnas JCO / PARCEROS / LOS DOS
+# del Excel. Los PDFs viven en `Documentación JCO/` agrupados en 8 carpetas;
+# este bloque los expone como cards linkeadas para que el equipo (y la
+# Contraloría) pueda navegarlos directo desde el gestor.
 SECCION_DOCUMENTACION = """\
             <div class="content-section" id="documentacion">
                 <div class="card">
                     <h2 class="card-title">Documentaci&oacute;n</h2>
-                    <p style="line-height:1.7;">Documentos oficiales del servicio J&oacute;venes con Oportunidades y su antecesor Parceros por Bogot&aacute;: manuales del servicio, instructivos de pago, documentaci&oacute;n del Convenio 1285-2025, portafolios de servicios SDIS (cronolog&iacute;a completa) y marco normativo.</p>
+                    <p style="line-height:1.7;">Documentos oficiales del servicio J&oacute;venes con Oportunidades y su antecesor Parceros por Bogot&aacute;, organizados en tres bloques: la documentaci&oacute;n vigente de JCO, la documentaci&oacute;n hist&oacute;rica de Parceros por Bogot&aacute; (SSPB) y las resoluciones transversales que aplican a los dos servicios.</p>
 
 %%BLOQUES_DOCS%%
                 </div>
             </div>"""
 
-SECCION_DOCUMENTACION = SECCION_DOCUMENTACION.replace("%%BLOQUES_DOCS%%", _generar_bloques_documentos())
+SECCION_DOCUMENTACION = SECCION_DOCUMENTACION.replace("%%BLOQUES_DOCS%%", _generar_documentos_por_servicio())
 
 # --- Estadísticas ---
 SECCION_ESTADISTICAS = f"""\
@@ -1253,6 +1329,19 @@ function showContent(id) {
     if (el) el.classList.add('active');
     if (event && event.target && event.target.classList.contains('sidebar-item')) {
         event.target.classList.add('active');
+    }
+}
+function filterDocsServicio(servicio, el) {
+    var yaActiva = el.classList.contains('active');
+    document.querySelectorAll('.docs-filter-pills .docs-pill').forEach(function(p) { p.classList.remove('active'); });
+    if (yaActiva) {
+        // Clic en la pildora activa: deseleccionar y volver a mostrar todo.
+        document.querySelectorAll('.docs-servicio-bloque').forEach(function(b) { b.style.display = ''; });
+    } else {
+        el.classList.add('active');
+        document.querySelectorAll('.docs-servicio-bloque').forEach(function(b) {
+            b.style.display = (b.dataset.servicio === servicio) ? '' : 'none';
+        });
     }
 }"""
 

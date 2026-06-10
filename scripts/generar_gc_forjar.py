@@ -657,7 +657,7 @@ SECCION_MODALIDADES = """\
 # =====================================================================
 # Proceso operativo: etapas del flujo, documentos y actores.
 # Texto y estructura vienen de datos/forjar_proceso_operativo.xlsx (3 hojas).
-# Los enlaces de los documentos vienen de enlaces/enlaces.xlsx (Hoja1) filtrando
+# Los enlaces de los documentos vienen de enlaces/enlaces.xlsx (hoja "generales") filtrando
 # HTML="Forjar" y SECCION que empiece con "Proceso Operativo".
 # =====================================================================
 SECCION_PROCESO_OPERATIVO = """\
@@ -942,7 +942,7 @@ else:
 # Cargar enlaces de documentos desde enlaces/enlaces.xlsx
 enlaces_excel = os.path.join(BASE, "enlaces", "enlaces.xlsx")
 if os.path.exists(enlaces_excel):
-    df_enlaces = pd.read_excel(enlaces_excel, sheet_name="Hoja1")
+    df_enlaces = pd.read_excel(enlaces_excel, sheet_name="generales")
     mask = (
         df_enlaces["HTML"].astype(str).str.strip().str.lower() == "forjar"
     ) & (

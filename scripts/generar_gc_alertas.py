@@ -600,7 +600,7 @@ SECCION_PROTOCOLOS = SECCION_PROTOCOLOS.replace("<!--CONTACTO_PARCHE-->", _conta
 
 # =====================================================================
 # Protocolos: cards con los PDFs de protocolos de atencion.
-# Los enlaces vienen de enlaces/enlaces.xlsx (Hoja1) filtrando HTML="Alertas"
+# Los enlaces vienen de enlaces/enlaces.xlsx (hoja "generales") filtrando HTML="Alertas"
 # y SECCION que empiece con "Protocolos".
 # =====================================================================
 SECCION_ENLACES_PROTOCOLOS = """\
@@ -642,7 +642,7 @@ _ICONO_DESCARGA_SVG = (
 # Cargar protocolos desde enlaces/enlaces.xlsx
 enlaces_excel = os.path.join(BASE, "enlaces", "enlaces.xlsx")
 if os.path.exists(enlaces_excel):
-    df_enlaces = pd.read_excel(enlaces_excel, sheet_name="Hoja1")
+    df_enlaces = pd.read_excel(enlaces_excel, sheet_name="generales")
     mask = (
         df_enlaces["HTML"].astype(str).str.strip().str.lower() == "alertas"
     ) & (

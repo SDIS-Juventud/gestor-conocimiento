@@ -41,29 +41,19 @@ _ENLACES_PATH = Path(__file__).resolve().parents[2] / "enlaces" / "enlaces.xlsx"
 
 
 def _cargar_enlaces():
-    """Lee enlaces/enlaces.xlsx y devuelve {seccion: url}.
+    """Lee enlaces/enlaces.xlsx (hoja "generales", columnas HTML | SECCION |
+    ENLACE) y devuelve {seccion: url}.
 
-    Si el archivo no existe o no tiene filas validas, devuelve un dict vacio
-    y los botones simplemente no se renderizan (los gestores siguen funcionando).
-
-    Busca la hoja cuyas columnas A/B/C sean HTML/SECCION/ENLACE (sin asumir
-    que sea la primera ni la activa, porque el Excel se editó y la hoja
-    activa quedó apuntando a otra cosa). De fallback usa 'Hoja1'.
+    Si el archivo o la hoja no existen, devuelve un dict vacio y los botones
+    simplemente no se renderizan (los gestores siguen funcionando).
     """
     if not _ENLACES_PATH.exists():
         return {}
     wb = openpyxl.load_workbook(_ENLACES_PATH, data_only=True)
-    ws = None
-    for nombre in wb.sheetnames:
-        prueba = wb[nombre]
-        h1 = str(prueba.cell(1, 1).value or "").strip().upper()
-        h2 = str(prueba.cell(1, 2).value or "").strip().upper()
-        h3 = str(prueba.cell(1, 3).value or "").strip().upper()
-        if h1 == "HTML" and h2 == "SECCION" and h3 == "ENLACE":
-            ws = prueba
-            break
-    if ws is None:
-        ws = wb["Hoja1"] if "Hoja1" in wb.sheetnames else wb.active
+    if "generales" not in wb.sheetnames:
+        print('  ! enlaces.xlsx no tiene hoja "generales"; botones de aliados sin enlace')
+        return {}
+    ws = wb["generales"]
     enlaces = {}
     for r in range(2, ws.max_row + 1):
         seccion = ws.cell(r, 2).value

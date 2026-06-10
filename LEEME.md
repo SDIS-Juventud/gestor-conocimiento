@@ -72,10 +72,10 @@ La pestaña Proceso operativo de Forjar lee de dos Excels:
     - `etapas` (id, titulo, subtitulo, descripcion_breve, descripcion_panel)
     - `actividades` (etapa_id, actividad, registro, responsable)
     - `actores` (nombre, descripcion)
-- `enlaces/enlaces.xlsx` Hoja1 — para los enlaces a documentos. Filas con HTML="Forjar" y SECCION="Proceso Operativo - <Etapa> - <Nombre> (<código opcional>)". Las etapas válidas son Ingreso, Permanencia, Egreso, Post-Egreso (RAE).
+- `enlaces/enlaces.xlsx` hoja "generales" — para los enlaces a documentos. Filas con HTML="Forjar" y SECCION="Proceso Operativo - <Etapa> - <Nombre> (<código opcional>)". Las etapas válidas son Ingreso, Permanencia, Egreso, Post-Egreso (RAE).
 
 Para agregar un nuevo documento o formulario:
-1. Abrir `enlaces/enlaces.xlsx` Hoja1.
+1. Abrir `enlaces/enlaces.xlsx` hoja "generales".
 2. Agregar una fila nueva: HTML="Forjar", SECCION siguiendo el patrón, ENLACE con la URL.
 3. Si la URL es de `forms.office.com`, el script la marca como formulario; cualquier otra URL se marca como descarga.
 4. Correr `python scripts/generar_gc_forjar.py`.
@@ -86,10 +86,10 @@ Para cambiar el texto de una etapa, una actividad o un actor: editar la celda co
 
 ### Cambiar la pestaña "Protocolos" de Alertas
 
-La pestaña Protocolos del HTML de Alertas lee de `enlaces/enlaces.xlsx` Hoja1, filtrando filas con HTML="Alertas" y SECCION que empiece con "Protocolos - ".
+La pestaña Protocolos del HTML de Alertas lee de `enlaces/enlaces.xlsx` hoja "generales", filtrando filas con HTML="Alertas" y SECCION que empiece con "Protocolos - ".
 
 Para agregar un nuevo protocolo:
-1. Abrir `enlaces/enlaces.xlsx` Hoja1.
+1. Abrir `enlaces/enlaces.xlsx` hoja "generales".
 2. Agregar una fila nueva: HTML="Alertas", SECCION="Protocolos - Nombre del documento", ENLACE con la URL del PDF.
 3. Correr `python scripts/generar_gc_alertas.py`.
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Lector del enlace del tablero de Power BI.
 
-El enlace vive en enlaces/enlaces.xlsx (Hoja1), en la fila cuya SECCION es
+El enlace vive en enlaces/enlaces.xlsx (hoja "generales"), en la fila cuya SECCION es
 "Tablero Power BI". De esta forma se gestiona desde el Excel y nunca queda
 escrito dentro del codigo de los generadores.
 
@@ -26,7 +26,7 @@ def powerbi_src(base_dir, servicio="Todos"):
     if not os.path.exists(ruta):
         print("  ! enlaces.xlsx no encontrado: el tablero quedara sin enlace")
         return ""
-    df = pd.read_excel(ruta, sheet_name="Hoja1")
+    df = pd.read_excel(ruta, sheet_name="generales")
     mask = df["SECCION"].astype(str).str.strip().str.lower() == _SECCION_POWERBI
     filas = df[mask]
     if filas.empty:

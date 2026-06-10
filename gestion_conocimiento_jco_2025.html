@@ -385,6 +385,16 @@ body { font-family: 'Figtree', 'Segoe UI', sans-serif; background-color: #ffffff
     font-size: 1.05rem;
     margin: 28px 0 12px;
 }
+/* P&iacute;ldoras de filtro por servicio (JCO / Parceros SSPB / Transversales),
+   mismo patr&oacute;n que el portafolio de Forjar: sin filtro activo se ve todo,
+   clic en una p&iacute;ldora muestra solo ese bloque, clic de nuevo deselecciona. */
+.docs-filter-pills { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 20px; }
+.docs-pill { padding: 6px 16px; border-radius: 100px; font-size: 0.78rem; font-weight: 500; cursor: pointer; border: 1.5px solid #e5e0d3; background: #fff; color: #666; transition: all 0.18s; }
+.docs-pill:hover { border-color: #663a93; color: #663a93; }
+.docs-pill.active { color: #fff; }
+.docs-pill[data-servicio="jco"].active { background: #663a93; border-color: #663a93; }
+.docs-pill[data-servicio="parceros"].active { background: #1e7895; border-color: #1e7895; }
+.docs-pill[data-servicio="ambos"].active { background: #1eaf76; border-color: #1eaf76; }
 .docs-grupo-conteo { color: #888; font-weight: 500; font-size: 0.85rem; letter-spacing: 0; margin-left: 4px; }
 .docs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-bottom: 8px; }
 .docs-card {
@@ -1010,8 +1020,15 @@ body { font-family: 'Figtree', 'Segoe UI', sans-serif; background-color: #ffffff
             <div class="content-section" id="documentacion">
                 <div class="card">
                     <h2 class="card-title">Documentaci&oacute;n</h2>
-                    <p style="line-height:1.7;">Documentos oficiales del servicio J&oacute;venes con Oportunidades y su antecesor Parceros por Bogot&aacute;: manuales del servicio, instructivos de pago, documentaci&oacute;n del Convenio 1285-2025, portafolios de servicios SDIS (cronolog&iacute;a completa) y marco normativo.</p>
+                    <p style="line-height:1.7;">Documentos oficiales del servicio J&oacute;venes con Oportunidades y su antecesor Parceros por Bogot&aacute;, organizados en tres bloques: la documentaci&oacute;n vigente de JCO, la documentaci&oacute;n hist&oacute;rica de Parceros por Bogot&aacute; (SSPB) y las resoluciones transversales que aplican a los dos servicios.</p>
 
+                    <div class="docs-filter-pills">
+                        <span class="docs-pill" data-servicio="jco" onclick="filterDocsServicio('jco', this)">JCO</span>
+                        <span class="docs-pill" data-servicio="parceros" onclick="filterDocsServicio('parceros', this)">Parceros (SSPB)</span>
+                        <span class="docs-pill" data-servicio="ambos" onclick="filterDocsServicio('ambos', this)">Transversales</span>
+                    </div>
+
+                    <div class="docs-servicio-bloque" data-servicio="jco">
                     <h3 class="docs-grupo-titulo" style="color:#663a93;">Manual JCO <span class="docs-grupo-conteo">(2)</span></h3>
                     <div class="docs-grid">
                             <a class="docs-card" href="https://sdisgovco.sharepoint.com/:b:/s/SubdireccindeJuventudPoliticaPblica/IQA5Jv2BidpGQKDMpxTqgDJCAdTSeeRsURI3YW0QNxiKXFM?e=BAtT2s" target="_blank">
@@ -1128,108 +1145,8 @@ body { font-family: 'Figtree', 'Segoe UI', sans-serif; background-color: #ffffff
                             </a>
                     </div>
 
-                    <h3 class="docs-grupo-titulo" style="color:#1e7895;">Manual Parceros <span class="docs-grupo-conteo">(3)</span></h3>
+                    <h3 class="docs-grupo-titulo" style="color:#f4676e;">Portafolios SDIS <span class="docs-grupo-conteo">(17)</span></h3>
                     <div class="docs-grid">
-                            <a class="docs-card" href="https://sdisgovco.sharepoint.com/:b:/s/SubdireccindeJuventudPoliticaPblica/IQAsUfrN1E3jRL8UWA1SdKtVAfcwr2IuchKV75vNWvCHLgU?e=paaWFt" target="_blank">
-                                <div class="docs-icono" style="color:#1e7895;"><i data-lucide="archive"></i></div>
-                                <div class="docs-info">
-                                    <p class="docs-meta">2021-09</p>
-                                    <p class="docs-name">Manual funcionamiento SSSEJ</p>
-                                    <span class="docs-link">Abrir PDF &rarr;</span>
-                                </div>
-                            </a>
-                            <a class="docs-card" href="https://sdisgovco.sharepoint.com/:b:/s/SubdireccindeJuventudPoliticaPblica/IQAd2AgBK55YQqo1yXGKGfewATxeYzT72eEieBW4DaMzxkc?e=RU7o6K" target="_blank">
-                                <div class="docs-icono" style="color:#1e7895;"><i data-lucide="archive"></i></div>
-                                <div class="docs-info">
-                                    <p class="docs-meta">2022-10-14</p>
-                                    <p class="docs-name">Manual operativo Parceros (final)</p>
-                                    <span class="docs-link">Abrir PDF &rarr;</span>
-                                </div>
-                            </a>
-                            <a class="docs-card" href="https://sdisgovco.sharepoint.com/:b:/s/SubdireccindeJuventudPoliticaPblica/IQAniPAjaCp8SqWzXSpE3IfuAcMTCkyc19ZndMagnyjMxlE?e=Z29HYB" target="_blank">
-                                <div class="docs-icono" style="color:#1e7895;"><i data-lucide="archive"></i></div>
-                                <div class="docs-info">
-                                    <p class="docs-meta">2024-03-08</p>
-                                    <p class="docs-name">Manual servicio Parceros v0</p>
-                                    <span class="docs-link">Abrir PDF &rarr;</span>
-                                </div>
-                            </a>
-                    </div>
-
-                    <h3 class="docs-grupo-titulo" style="color:#f4676e;">Portafolios SDIS <span class="docs-grupo-conteo">(26)</span></h3>
-                    <div class="docs-grid">
-                            <a class="docs-card" href="https://sdisgovco.sharepoint.com/:b:/s/SubdireccindeJuventudPoliticaPblica/IQD7ydwC9WKxSp8vvwTZKGKLAbjrzNT4uTae9CHSWifWqvM?e=of9cpA" target="_blank">
-                                <div class="docs-icono" style="color:#f4676e;"><i data-lucide="library"></i></div>
-                                <div class="docs-info">
-                                    <p class="docs-meta">2021-08-05</p>
-                                    <p class="docs-name">Portafolio SDIS v1</p>
-                                    <span class="docs-link">Abrir PDF &rarr;</span>
-                                </div>
-                            </a>
-                            <a class="docs-card" href="https://sdisgovco.sharepoint.com/:b:/s/SubdireccindeJuventudPoliticaPblica/IQADdfQaXjZCTr7Ld1PvarkZAQsjp2bWsLStg5iRGpkyK2o?e=2YeodP" target="_blank">
-                                <div class="docs-icono" style="color:#f4676e;"><i data-lucide="library"></i></div>
-                                <div class="docs-info">
-                                    <p class="docs-meta">2021-10-28</p>
-                                    <p class="docs-name">Portafolio SDIS v2</p>
-                                    <span class="docs-link">Abrir PDF &rarr;</span>
-                                </div>
-                            </a>
-                            <a class="docs-card" href="https://sdisgovco.sharepoint.com/:b:/s/SubdireccindeJuventudPoliticaPblica/IQADdfQaXjZCTr7Ld1PvarkZAQsjp2bWsLStg5iRGpkyK2o?e=2YeodP" target="_blank">
-                                <div class="docs-icono" style="color:#f4676e;"><i data-lucide="library"></i></div>
-                                <div class="docs-info">
-                                    <p class="docs-meta">2022-01-25</p>
-                                    <p class="docs-name">Portafolio SDIS v3</p>
-                                    <span class="docs-link">Abrir PDF &rarr;</span>
-                                </div>
-                            </a>
-                            <a class="docs-card" href="https://sdisgovco.sharepoint.com/:b:/s/SubdireccindeJuventudPoliticaPblica/IQADdfQaXjZCTr7Ld1PvarkZAQsjp2bWsLStg5iRGpkyK2o?e=2YeodP" target="_blank">
-                                <div class="docs-icono" style="color:#f4676e;"><i data-lucide="library"></i></div>
-                                <div class="docs-info">
-                                    <p class="docs-meta">2023-02-08</p>
-                                    <p class="docs-name">Portafolio SDIS v4</p>
-                                    <span class="docs-link">Abrir PDF &rarr;</span>
-                                </div>
-                            </a>
-                            <a class="docs-card" href="https://sdisgovco.sharepoint.com/:b:/s/SubdireccindeJuventudPoliticaPblica/IQB91htwyKEOQ5C9BLCt_u9FAbv6L4IUr_RMXqZ9oSl4Zd8?e=gy4ADr" target="_blank">
-                                <div class="docs-icono" style="color:#f4676e;"><i data-lucide="library"></i></div>
-                                <div class="docs-info">
-                                    <p class="docs-meta">2023-03-15</p>
-                                    <p class="docs-name">Portafolio SDIS v5</p>
-                                    <span class="docs-link">Abrir PDF &rarr;</span>
-                                </div>
-                            </a>
-                            <a class="docs-card" href="https://sdisgovco.sharepoint.com/:b:/s/SubdireccindeJuventudPoliticaPblica/IQBHDg3FekfxTbpz4iJa5L6-AZmBDILxsH50lagIWhwKwHQ?e=HevbPV" target="_blank">
-                                <div class="docs-icono" style="color:#f4676e;"><i data-lucide="library"></i></div>
-                                <div class="docs-info">
-                                    <p class="docs-meta">2023-06-14</p>
-                                    <p class="docs-name">Portafolio SDIS v6</p>
-                                    <span class="docs-link">Abrir PDF &rarr;</span>
-                                </div>
-                            </a>
-                            <a class="docs-card" href="https://sdisgovco.sharepoint.com/:b:/s/SubdireccindeJuventudPoliticaPblica/IQBo99k2oTocQbamseB7IgwuAUIoai-3WBXFbW574FTDfkE?e=g30V1e" target="_blank">
-                                <div class="docs-icono" style="color:#f4676e;"><i data-lucide="library"></i></div>
-                                <div class="docs-info">
-                                    <p class="docs-meta">2023-11-16</p>
-                                    <p class="docs-name">Portafolio SDIS v7</p>
-                                    <span class="docs-link">Abrir PDF &rarr;</span>
-                                </div>
-                            </a>
-                            <a class="docs-card" href="https://sdisgovco.sharepoint.com/:b:/s/SubdireccindeJuventudPoliticaPblica/IQBo99k2oTocQbamseB7IgwuAUIoai-3WBXFbW574FTDfkE?e=g30V1e" target="_blank">
-                                <div class="docs-icono" style="color:#f4676e;"><i data-lucide="library"></i></div>
-                                <div class="docs-info">
-                                    <p class="docs-meta">2023-11-23</p>
-                                    <p class="docs-name">Portafolio SDIS v8</p>
-                                    <span class="docs-link">Abrir PDF &rarr;</span>
-                                </div>
-                            </a>
-                            <a class="docs-card" href="https://sdisgovco.sharepoint.com/:b:/s/SubdireccindeJuventudPoliticaPblica/IQAjVKKgc9sSRplOdOqb5KJTARG5Grc-V1zp1ta75BpRQcE?e=2bs2na" target="_blank">
-                                <div class="docs-icono" style="color:#f4676e;"><i data-lucide="library"></i></div>
-                                <div class="docs-info">
-                                    <p class="docs-meta">2024-07-22</p>
-                                    <p class="docs-name">Portafolio SDIS v9</p>
-                                    <span class="docs-link">Abrir PDF &rarr;</span>
-                                </div>
-                            </a>
                             <a class="docs-card" href="https://sdisgovco.sharepoint.com/:b:/s/SubdireccindeJuventudPoliticaPblica/IQBlxZP_q9Z7SZZtwhrnVfG0ATCAzpHsX2piBgJtSsRkkUA?e=rEd9yZ" target="_blank">
                                 <div class="docs-icono" style="color:#f4676e;"><i data-lucide="library"></i></div>
                                 <div class="docs-info">
@@ -1367,7 +1284,127 @@ body { font-family: 'Figtree', 'Segoe UI', sans-serif; background-color: #ffffff
                                 </div>
                             </a>
                     </div>
+                    </div>
 
+                    <div class="docs-servicio-bloque" data-servicio="parceros">
+                    <h3 class="docs-grupo-titulo" style="color:#1e9da3;">Instructivo pago Parceros <span class="docs-grupo-conteo">(1)</span></h3>
+                    <div class="docs-grid">
+                            <a class="docs-card" href="https://sdisgovco.sharepoint.com/:b:/s/SubdireccindeJuventudPoliticaPblica/IQAJjSZ_tvgpRY3_PRhUb5ZiARevL1J9isc2mzSlQVfzhPc?e=Lw7KJL" target="_blank">
+                                <div class="docs-icono" style="color:#1e9da3;"><i data-lucide="clipboard-list"></i></div>
+                                <div class="docs-info">
+                                    <p class="docs-meta">2024-03-08</p>
+                                    <p class="docs-name">Instructivo pagos Parceros v0</p>
+                                    <span class="docs-link">Abrir PDF &rarr;</span>
+                                </div>
+                            </a>
+                    </div>
+
+                    <h3 class="docs-grupo-titulo" style="color:#1e7895;">Manual Parceros <span class="docs-grupo-conteo">(3)</span></h3>
+                    <div class="docs-grid">
+                            <a class="docs-card" href="https://sdisgovco.sharepoint.com/:b:/s/SubdireccindeJuventudPoliticaPblica/IQAsUfrN1E3jRL8UWA1SdKtVAfcwr2IuchKV75vNWvCHLgU?e=paaWFt" target="_blank">
+                                <div class="docs-icono" style="color:#1e7895;"><i data-lucide="archive"></i></div>
+                                <div class="docs-info">
+                                    <p class="docs-meta">2021-09</p>
+                                    <p class="docs-name">Manual funcionamiento SSSEJ</p>
+                                    <span class="docs-link">Abrir PDF &rarr;</span>
+                                </div>
+                            </a>
+                            <a class="docs-card" href="https://sdisgovco.sharepoint.com/:b:/s/SubdireccindeJuventudPoliticaPblica/IQAd2AgBK55YQqo1yXGKGfewATxeYzT72eEieBW4DaMzxkc?e=RU7o6K" target="_blank">
+                                <div class="docs-icono" style="color:#1e7895;"><i data-lucide="archive"></i></div>
+                                <div class="docs-info">
+                                    <p class="docs-meta">2022-10-14</p>
+                                    <p class="docs-name">Manual operativo Parceros (final)</p>
+                                    <span class="docs-link">Abrir PDF &rarr;</span>
+                                </div>
+                            </a>
+                            <a class="docs-card" href="https://sdisgovco.sharepoint.com/:b:/s/SubdireccindeJuventudPoliticaPblica/IQAniPAjaCp8SqWzXSpE3IfuAcMTCkyc19ZndMagnyjMxlE?e=Z29HYB" target="_blank">
+                                <div class="docs-icono" style="color:#1e7895;"><i data-lucide="archive"></i></div>
+                                <div class="docs-info">
+                                    <p class="docs-meta">2024-03-08</p>
+                                    <p class="docs-name">Manual servicio Parceros v0</p>
+                                    <span class="docs-link">Abrir PDF &rarr;</span>
+                                </div>
+                            </a>
+                    </div>
+
+                    <h3 class="docs-grupo-titulo" style="color:#f4676e;">Portafolios SDIS <span class="docs-grupo-conteo">(9)</span></h3>
+                    <div class="docs-grid">
+                            <a class="docs-card" href="https://sdisgovco.sharepoint.com/:b:/s/SubdireccindeJuventudPoliticaPblica/IQD7ydwC9WKxSp8vvwTZKGKLAbjrzNT4uTae9CHSWifWqvM?e=of9cpA" target="_blank">
+                                <div class="docs-icono" style="color:#f4676e;"><i data-lucide="library"></i></div>
+                                <div class="docs-info">
+                                    <p class="docs-meta">2021-08-05</p>
+                                    <p class="docs-name">Portafolio SDIS v1</p>
+                                    <span class="docs-link">Abrir PDF &rarr;</span>
+                                </div>
+                            </a>
+                            <a class="docs-card" href="https://sdisgovco.sharepoint.com/:b:/s/SubdireccindeJuventudPoliticaPblica/IQADdfQaXjZCTr7Ld1PvarkZAQsjp2bWsLStg5iRGpkyK2o?e=2YeodP" target="_blank">
+                                <div class="docs-icono" style="color:#f4676e;"><i data-lucide="library"></i></div>
+                                <div class="docs-info">
+                                    <p class="docs-meta">2021-10-28</p>
+                                    <p class="docs-name">Portafolio SDIS v2</p>
+                                    <span class="docs-link">Abrir PDF &rarr;</span>
+                                </div>
+                            </a>
+                            <a class="docs-card" href="https://sdisgovco.sharepoint.com/:b:/s/SubdireccindeJuventudPoliticaPblica/IQADdfQaXjZCTr7Ld1PvarkZAQsjp2bWsLStg5iRGpkyK2o?e=2YeodP" target="_blank">
+                                <div class="docs-icono" style="color:#f4676e;"><i data-lucide="library"></i></div>
+                                <div class="docs-info">
+                                    <p class="docs-meta">2022-01-25</p>
+                                    <p class="docs-name">Portafolio SDIS v3</p>
+                                    <span class="docs-link">Abrir PDF &rarr;</span>
+                                </div>
+                            </a>
+                            <a class="docs-card" href="https://sdisgovco.sharepoint.com/:b:/s/SubdireccindeJuventudPoliticaPblica/IQADdfQaXjZCTr7Ld1PvarkZAQsjp2bWsLStg5iRGpkyK2o?e=2YeodP" target="_blank">
+                                <div class="docs-icono" style="color:#f4676e;"><i data-lucide="library"></i></div>
+                                <div class="docs-info">
+                                    <p class="docs-meta">2023-02-08</p>
+                                    <p class="docs-name">Portafolio SDIS v4</p>
+                                    <span class="docs-link">Abrir PDF &rarr;</span>
+                                </div>
+                            </a>
+                            <a class="docs-card" href="https://sdisgovco.sharepoint.com/:b:/s/SubdireccindeJuventudPoliticaPblica/IQB91htwyKEOQ5C9BLCt_u9FAbv6L4IUr_RMXqZ9oSl4Zd8?e=gy4ADr" target="_blank">
+                                <div class="docs-icono" style="color:#f4676e;"><i data-lucide="library"></i></div>
+                                <div class="docs-info">
+                                    <p class="docs-meta">2023-03-15</p>
+                                    <p class="docs-name">Portafolio SDIS v5</p>
+                                    <span class="docs-link">Abrir PDF &rarr;</span>
+                                </div>
+                            </a>
+                            <a class="docs-card" href="https://sdisgovco.sharepoint.com/:b:/s/SubdireccindeJuventudPoliticaPblica/IQBHDg3FekfxTbpz4iJa5L6-AZmBDILxsH50lagIWhwKwHQ?e=HevbPV" target="_blank">
+                                <div class="docs-icono" style="color:#f4676e;"><i data-lucide="library"></i></div>
+                                <div class="docs-info">
+                                    <p class="docs-meta">2023-06-14</p>
+                                    <p class="docs-name">Portafolio SDIS v6</p>
+                                    <span class="docs-link">Abrir PDF &rarr;</span>
+                                </div>
+                            </a>
+                            <a class="docs-card" href="https://sdisgovco.sharepoint.com/:b:/s/SubdireccindeJuventudPoliticaPblica/IQBo99k2oTocQbamseB7IgwuAUIoai-3WBXFbW574FTDfkE?e=g30V1e" target="_blank">
+                                <div class="docs-icono" style="color:#f4676e;"><i data-lucide="library"></i></div>
+                                <div class="docs-info">
+                                    <p class="docs-meta">2023-11-16</p>
+                                    <p class="docs-name">Portafolio SDIS v7</p>
+                                    <span class="docs-link">Abrir PDF &rarr;</span>
+                                </div>
+                            </a>
+                            <a class="docs-card" href="https://sdisgovco.sharepoint.com/:b:/s/SubdireccindeJuventudPoliticaPblica/IQBo99k2oTocQbamseB7IgwuAUIoai-3WBXFbW574FTDfkE?e=g30V1e" target="_blank">
+                                <div class="docs-icono" style="color:#f4676e;"><i data-lucide="library"></i></div>
+                                <div class="docs-info">
+                                    <p class="docs-meta">2023-11-23</p>
+                                    <p class="docs-name">Portafolio SDIS v8</p>
+                                    <span class="docs-link">Abrir PDF &rarr;</span>
+                                </div>
+                            </a>
+                            <a class="docs-card" href="https://sdisgovco.sharepoint.com/:b:/s/SubdireccindeJuventudPoliticaPblica/IQAjVKKgc9sSRplOdOqb5KJTARG5Grc-V1zp1ta75BpRQcE?e=2bs2na" target="_blank">
+                                <div class="docs-icono" style="color:#f4676e;"><i data-lucide="library"></i></div>
+                                <div class="docs-info">
+                                    <p class="docs-meta">2024-07-22</p>
+                                    <p class="docs-name">Portafolio SDIS v9</p>
+                                    <span class="docs-link">Abrir PDF &rarr;</span>
+                                </div>
+                            </a>
+                    </div>
+                    </div>
+
+                    <div class="docs-servicio-bloque" data-servicio="ambos">
                     <h3 class="docs-grupo-titulo" style="color:#1eaf76;">Marco normativo <span class="docs-grupo-conteo">(4)</span></h3>
                     <div class="docs-grid">
                             <a class="docs-card" href="https://sdisgovco.sharepoint.com/:b:/s/SubdireccindeJuventudPoliticaPblica/IQBDU9zg25sfSq7Kl3ePzHjdAaLjqr2yi2FwyZNeHDnyFTQ?e=i3E3Uj" target="_blank">
@@ -1402,6 +1439,7 @@ body { font-family: 'Figtree', 'Segoe UI', sans-serif; background-color: #ffffff
                                     <span class="docs-link">Abrir PDF &rarr;</span>
                                 </div>
                             </a>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -1720,6 +1758,19 @@ function showContent(id) {
     if (el) el.classList.add('active');
     if (event && event.target && event.target.classList.contains('sidebar-item')) {
         event.target.classList.add('active');
+    }
+}
+function filterDocsServicio(servicio, el) {
+    var yaActiva = el.classList.contains('active');
+    document.querySelectorAll('.docs-filter-pills .docs-pill').forEach(function(p) { p.classList.remove('active'); });
+    if (yaActiva) {
+        // Clic en la pildora activa: deseleccionar y volver a mostrar todo.
+        document.querySelectorAll('.docs-servicio-bloque').forEach(function(b) { b.style.display = ''; });
+    } else {
+        el.classList.add('active');
+        document.querySelectorAll('.docs-servicio-bloque').forEach(function(b) {
+            b.style.display = (b.dataset.servicio === servicio) ? '' : 'none';
+        });
     }
 }
 </script>

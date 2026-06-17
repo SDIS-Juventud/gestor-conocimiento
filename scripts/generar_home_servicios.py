@@ -22,25 +22,25 @@ def generar_index():
     servicios = [
         {
             "alt": "Casas de Juventud",
-            "archivo": "gestion_conocimiento_juventud_2025.html",
+            "archivo": "html/gestion_conocimiento_juventud.html",
             "imagen": "imagenes/servicios/casas-de-juventud.png",
             "desc": "Espacios distritales para j&oacute;venes entre 14 y 28 a&ntilde;os. Oferta integral a trav&eacute;s de 5 ejes: bienestar, cultura, inclusi&oacute;n, liderazgo y SIDICU.",
         },
         {
             "alt": "J&oacute;venes con oportunidades",
-            "archivo": "gestion_conocimiento_jco_2025.html",
+            "archivo": "html/gestion_conocimiento_jco.html",
             "imagen": "imagenes/servicios/jovenes-con-oportunidades.png",
             "desc": "Formaci&oacute;n, apoyo psicosocial, transferencias monetarias condicionadas y acompa&ntilde;amiento laboral para j&oacute;venes de 14 a 28 a&ntilde;os en condici&oacute;n de vulnerabilidad.",
         },
         {
             "alt": "Servicio Forjar Restaurativo",
-            "archivo": "gestion_conocimiento_forjar_2025.html",
+            "archivo": "html/gestion_conocimiento_forjar.html",
             "imagen": "imagenes/servicios/forjar.png",
             "desc": "Servicio de atenci&oacute;n integral, especializada y diferencial que se brinda a adolescentes/j&oacute;venes vinculados al SRPA y sus redes familiares, en el marco de modalidades de atenci&oacute;n no privativas de la libertad, desde un enfoque pedag&oacute;gico y restaurativo.",
         },
         {
             "alt": "Parche seguro",
-            "archivo": "gestion_conocimiento_alertas_2025.html",
+            "archivo": "html/gestion_conocimiento_alertas.html",
             "imagen": "imagenes/servicios/alertas.png",
             "desc": "Sistema de identificaci&oacute;n y seguimiento de alertas tempranas para la protecci&oacute;n integral de la poblaci&oacute;n joven.",
             # Parche Seguro no es un servicio, es una iniciativa transversal a los tres servicios
@@ -348,7 +348,7 @@ def generar_index():
                 <span class="eyebrow-titulo">Unidades operativas <span>espacios f&iacute;sicos en Bogot&aacute;</span></span>
             </header>
             <div class="chat-wrapper">
-            <a class="service-card uo-card" href="unidades_operativas.html">
+            <a class="service-card uo-card" href="html/unidades_operativas.html">
                 <div class="uo-ilustracion">
                     <img src="imagenes/contexto1.png" alt="Espacios f&iacute;sicos de la Subdirecci&oacute;n">
                 </div>

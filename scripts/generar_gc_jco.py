@@ -625,11 +625,11 @@ HEADER = """\
             <div class="subtitle">Subdirecci&oacute;n para la Juventud | SDIS</div>
         </div>
         <div class="header-btns">
-            <a class="home-btn" href="index.html" title="Todos los servicios">
+            <a class="home-btn" href="../index.html" title="Todos los servicios">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F8F4E1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             </a>
             <div class="home-btn" onclick="showContent('welcome')" title="Inicio J&oacute;venes con Oportunidades">
-                <img src="imagenes/servicios/jovenes-con-oportunidades.png" alt="J&oacute;venes con Oportunidades" style="height:32px; border-radius:16px; object-fit:contain; vertical-align:middle;">
+                <img src="../imagenes/servicios/jovenes-con-oportunidades.png" alt="J&oacute;venes con Oportunidades" style="height:32px; border-radius:16px; object-fit:contain; vertical-align:middle;">
             </div>
         </div>
     </header>"""
@@ -698,7 +698,7 @@ SECCION_WELCOME = """\
                     <div style="font-family:'Anton','Figtree',sans-serif; font-weight:400; font-size:1.9rem; line-height:1.05; letter-spacing:1px; text-transform:uppercase; background:#2d2a28; color:#f4f5de; padding:14px 24px 11px; margin:0 auto 28px; display:block; width:fit-content; max-width:100%; text-align:center;">J&oacute;venes con Oportunidades</div>
                     <p>J&oacute;venes con Oportunidades (SJO) es un servicio de la Secretar&iacute;a Distrital de Integraci&oacute;n Social, operado por la Subdirecci&oacute;n para la Juventud, en el que se desarrolla una estrategia intersectorial junto a la Secretar&iacute;a de Educaci&oacute;n del Distrito, la Secretar&iacute;a Distrital de Desarrollo Econ&oacute;mico y la Agencia Distrital para la Educaci&oacute;n Superior, la Ciencia y la Tecnolog&iacute;a &mdash; Atenea, orientada a la inclusi&oacute;n social y productiva de j&oacute;venes entre 14 y 28 a&ntilde;os en situaci&oacute;n de pobreza extrema, moderada o vulnerabilidad por inseguridad alimentaria. J&oacute;venes con Oportunidades articula una oferta con acompa&ntilde;amiento psicosocial, acceso a formaci&oacute;n, intermediaci&oacute;n laboral y transferencias monetarias condicionadas en un proceso continuo.</p>
                     <div style="margin:30px auto 0; max-width:450px;">
-                        <img src="imagenes/Jovenes con oportunidades.png" alt="J&oacute;venes con Oportunidades" style="width:100%; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.1);">
+                        <img src="../imagenes/Jovenes con oportunidades.png" alt="J&oacute;venes con Oportunidades" style="width:100%; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.1);">
                     </div>
                 </div>
             </div>"""
@@ -717,7 +717,7 @@ SECCION_A_TENER_EN_CUENTA = """\
                     <p style="line-height:1.7; margin-bottom:8px;">La tabla compara las dos etapas del componente de transferencias y formaci&oacute;n para enganche laboral; m&aacute;s abajo se profundiza en aspectos transversales (financiaci&oacute;n, condicionalidad, intermediaci&oacute;n).</p>
 
                     <div class="comp-tabla">
-                        <img class="comp-mano-decor" src="imagenes/manos/3.png" alt="">
+                        <img class="comp-mano-decor" src="../imagenes/manos/3.png" alt="">
                         <div class="comp-tabla-grid">
                             <div class="comp-header comp-header-1">Caracter&iacute;stica</div>
                             <div class="comp-header comp-header-2">Parceros por Bogot&aacute;<br>2021&ndash;2023</div>
@@ -1424,7 +1424,9 @@ def generar_html():
 if __name__ == "__main__":
     # Raíz del proyecto (un nivel arriba de scripts/)
     directorio = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    archivo_salida = os.path.join(directorio, "gestion_conocimiento_jco_2025.html")
+    archivo_salida = os.path.join(directorio, "html", "gestion_conocimiento_jco.html")
+    # Asegura que exista la carpeta html/ (ahi viven las paginas generadas).
+    os.makedirs(os.path.dirname(archivo_salida), exist_ok=True)
 
     html = generar_html()
 

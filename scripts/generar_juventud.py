@@ -34,6 +34,8 @@ from _comun.reporte_politicas import (
 # Raíz del proyecto (un nivel arriba de scripts/)
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATOS = os.path.join(BASE, "datos")
+# Asegura que exista la carpeta html/ (ahi viven las paginas generadas).
+os.makedirs(os.path.join(BASE, "html"), exist_ok=True)
 PROYECTO = os.path.dirname(BASE)  # directorio padre del proyecto
 
 # Iframe de Power BI (el enlace vive en enlaces/enlaces.xlsx, no en el codigo)
@@ -456,7 +458,7 @@ if os.path.exists(equipo_excel):
 
     # Imagen de estructura del servicio
     equipo_html += '                <div style="text-align:center; margin:20px 0 30px; background:#fff; border-radius:12px; padding:20px;">\n'
-    equipo_html += '                    <img src="imagenes/servicios%20sdis%20juventud.png" alt="Estructura del servicio" style="max-width:100%;">\n'
+    equipo_html += '                    <img src="../imagenes/servicios%20sdis%20juventud.png" alt="Estructura del servicio" style="max-width:100%;">\n'
     equipo_html += '                </div>\n'
 
     # 1. Coordinadora (desde Excel)
@@ -682,7 +684,7 @@ if os.path.exists(directorio_excel) and os.path.exists(geojson_path):
                 fill=True, fill_color="#253C5C", fill_opacity=0.9, weight=2,
                 popup=folium.Popup(popup_html, max_width=250), tooltip=row["Casa de Juventud"]).add_to(m)
 
-    ruta_mapa = os.path.join(BASE, "mapa_casas_juventud.html")
+    ruta_mapa = os.path.join(BASE, "html", "mapa_casas_juventud.html")
     m.save(ruta_mapa)
 
     # Folium asigna IDs hexadecimales aleatorios (32 chars) al mapa y a cada
@@ -743,25 +745,25 @@ print(f"Edad: {dict(edad)}")
 EJES_INFO = {
     "BIENESTAR": {
         "id": "bienestar",
-        "imagen": "imagenes/bienestar.png",
+        "imagen": "../imagenes/bienestar.png",
         "desc": "Acciones de prevencion integral que incluyen prevencion de consumo de SPA, prevencion de violencias basadas en genero VBG, derechos sexuales y reproductivos DDSSYR, salud mental y orientacion psicosocial.",
         "actuacion": "Prevencion Integral (464) — Ruta: 12",
     },
     "CULTURA": {
         "id": "cultura",
-        "imagen": "imagenes/cultura.png",
+        "imagen": "../imagenes/cultura.png",
         "desc": "Formacion artistica, uso de espacios para practicas artisticas y culturales, deportes, eventos y aprovechamiento del tiempo libre con enfasis en intereses juveniles.",
         "actuacion": "Manejo Adecuado de Tiempo Libre (1003) — Ruta: 10",
     },
     "INCLUSIÓN SOCIAL Y PRODUCTIVA": {
         "id": "inclusion",
-        "imagen": "imagenes/inclusion.png",
+        "imagen": "../imagenes/inclusion.png",
         "desc": "Formacion para el proyecto de vida, emprendimiento y empleabilidad, educacion financiera, orientacion socio-ocupacional y habilidades TIC para la inclusion laboral.",
         "actuacion": "Formacion para el Proyecto de Vida (1005) — Ruta: 8",
     },
     "LIDERAZGO Y PARTICIPACIÓN": {
         "id": "liderazgo",
-        "imagen": "imagenes/liderazgo.png",
+        "imagen": "../imagenes/liderazgo.png",
         "desc": "Socializacion de politica publica de juventud, asesoria juridica, liderazgo juvenil, derechos humanos, voluntariado intergeneracional y participacion ciudadana.",
         "actuacion": "Asesoria Juridica y Participacion (1004), Politica Publica de Juventud (739), Voluntariado Intergeneracional (1007) — Ruta: 5",
     },
@@ -776,10 +778,10 @@ sidebar_ejes = ""
 quick_links = ""
 
 ejes_html = {
-    "BIENESTAR": "ejes/Bienestar.html",
-    "CULTURA": "ejes/Cultura.html",
-    "INCLUSIÓN SOCIAL Y PRODUCTIVA": "ejes/Inclusion.html",
-    "LIDERAZGO Y PARTICIPACIÓN": "ejes/Liderazgo.html",
+    "BIENESTAR": "../ejes/Bienestar.html",
+    "CULTURA": "../ejes/Cultura.html",
+    "INCLUSIÓN SOCIAL Y PRODUCTIVA": "../ejes/Inclusion.html",
+    "LIDERAZGO Y PARTICIPACIÓN": "../ejes/Liderazgo.html",
 }
 
 for eje in ORDEN_EJES:
@@ -1131,11 +1133,11 @@ html = f"""<!DOCTYPE html>
             <div class="subtitle">Subdirecci&oacute;n para la Juventud | SDIS</div>
         </div>
         <div style="display:flex; align-items:center; gap:15px;">
-            <a class="home-btn" href="index.html" title="Todos los servicios" style="text-decoration:none; color:#F8F4E1;">
+            <a class="home-btn" href="../index.html" title="Todos los servicios" style="text-decoration:none; color:#F8F4E1;">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F8F4E1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             </a>
             <div class="home-btn" onclick="showContent('welcome')" title="Inicio Casas de Juventud">
-                <img src="imagenes/servicios/casas-de-juventud.png" alt="Casas de Juventud" style="height:32px; border-radius:16px; object-fit:contain; vertical-align:middle;">
+                <img src="../imagenes/servicios/casas-de-juventud.png" alt="Casas de Juventud" style="height:32px; border-radius:16px; object-fit:contain; vertical-align:middle;">
             </div>
         </div>
     </header>
@@ -1169,9 +1171,9 @@ html = f"""<!DOCTYPE html>
 {quick_links}                </div>
 
                 <div style="margin-top:20px; display:flex; justify-content:center;">
-                    <a class="quick-link" href="ejes/SIDICU.html" style="max-width:400px; width:100%; padding:15px 20px; text-decoration:none; color:inherit;">
+                    <a class="quick-link" href="../ejes/SIDICU.html" style="max-width:400px; width:100%; padding:15px 20px; text-decoration:none; color:inherit;">
                         <div class="sidicu-img" style="width:100%; height:180px; border-radius:12px; overflow:hidden; border:3px solid #DFE6F0; box-shadow:0 4px 15px rgba(102,58,147,0.15); transition:border-color 0.3s, transform 0.3s; margin-bottom:12px;">
-                            <img src="imagenes/sidicu.png" alt="SIDICU" style="width:100%; height:100%; object-fit:cover;">
+                            <img src="../imagenes/sidicu.png" alt="SIDICU" style="width:100%; height:100%; object-fit:cover;">
                         </div>
                         <div class="quick-link-title" style="font-size:1.1rem;">SIDICU — Sistema Distrital del Cuidado</div>
                     </a>
@@ -1252,7 +1254,7 @@ html = f"""<!DOCTYPE html>
                 <p style="line-height:1.7; margin-bottom:8px;">El servicio Casas de Juventud cambi&oacute; sustancialmente entre la administraci&oacute;n anterior y el modelo vigente desde 2026. La tabla resume las cinco transformaciones principales; debajo se desarrolla cada una en detalle.</p>
 
                 <div class="comp-tabla">
-                    <img class="comp-mano-decor" src="imagenes/manos/3.png" alt="">
+                    <img class="comp-mano-decor" src="../imagenes/manos/3.png" alt="">
                     <div class="comp-tabla-grid">
                         <div class="comp-header comp-header-1">Caracter&iacute;stica</div>
                         <div class="comp-header comp-header-2">Modelo anterior</div>
@@ -1543,7 +1545,7 @@ html = f"""<!DOCTYPE html>
                 
             
                 <div style="text-align:center; margin:25px 0 10px;">
-                    <img src="imagenes/SIRBE%20informacion.png" alt="Flujo de información SIRBE" style="max-width:100%; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+                    <img src="../imagenes/SIRBE%20informacion.png" alt="Flujo de información SIRBE" style="max-width:100%; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
                 </div>
 
                 <h3 class="card-subtitle" style="margin-top:30px;">A tener en cuenta</h3>
@@ -1640,7 +1642,7 @@ html = f"""<!DOCTYPE html>
 html = html.replace("%%SVG_DIAGRAMA_CASAS%%", svg_diagrama_casas())
 
 # Guardar
-salida = os.path.join(BASE, "gestion_conocimiento_juventud_2025.html")
+salida = os.path.join(BASE, "html", "gestion_conocimiento_juventud.html")
 with open(salida, "w", encoding="utf-8") as f:
     f.write(html)
 

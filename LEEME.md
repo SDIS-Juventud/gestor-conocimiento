@@ -2,7 +2,7 @@
 
 Este proyecto genera los HTML del gestor de conocimiento de los cuatro servicios de la Subdirección para la Juventud: Casas de Juventud, Forjar, Jóvenes con Oportunidades (JCO) y Alertas.
 
-Todos los HTML de la raíz son **generados automáticamente** por scripts de Python. No se deben editar a mano: si se editan, los cambios se pierden la próxima vez que se regenere el archivo.
+Todos los HTML son **generados automáticamente** por scripts de Python. El `index.html` (home) queda en la raíz y las demás páginas viven en la carpeta `html/`. No se deben editar a mano: si se editan, los cambios se pierden la próxima vez que se regenere el archivo.
 
 ## Estructura del proyecto
 
@@ -16,26 +16,33 @@ gestor-conocimiento-2025/
 ├── archivo/            ← versiones históricas y artefactos jubilados. Solo lectura.
 ├── Notes/              ← vault Obsidian del proyecto. No se sube a git.
 │
-├── index.html                              ← generado, NO editar
-├── gestion_conocimiento_juventud_2025.html ← generado, NO editar
-├── gestion_conocimiento_forjar_2025.html   ← generado, NO editar
-├── gestion_conocimiento_jco_2025.html      ← generado, NO editar
-├── gestion_conocimiento_alertas_2025.html  ← generado, NO editar
-├── mapa_casas_juventud.html                ← generado, NO editar
-└── mapa_forjar.html                        ← generado, NO editar
+├── index.html          ← generado, NO editar. Única página en la raíz (home).
+└── html/               ← el resto de las páginas generadas (NO editar):
+    ├── gestion_conocimiento_juventud.html
+    ├── gestion_conocimiento_forjar.html
+    ├── gestion_conocimiento_jco.html
+    ├── gestion_conocimiento_alertas.html
+    ├── unidades_operativas.html
+    ├── mapa_casas_juventud.html
+    ├── mapa_forjar.html
+    └── mapa_unidades_operativas.html
 ```
+
+Cada página de `html/` referencia los recursos de la raíz con `../` (por ejemplo `../imagenes/...`, `../ejes/...`, `../index.html`). Los mapas viven junto a sus páginas en `html/`, por eso los `iframe` que los embeben usan solo el nombre del archivo.
 
 ## Qué genera qué
 
 | Salida | Generador | Insumos |
 |---|---|---|
 | `index.html` | `scripts/generar_home_servicios.py` | (contenido hardcoded en el script) |
-| `gestion_conocimiento_juventud_2025.html` | `scripts/generar_juventud.py` | `datos/equipo_casas_juventud.xlsx`, `datos/directorio_casas_juventud.xlsx`, base SIRBE limpia, `datos/localidades_bogota.geojson` |
-| `gestion_conocimiento_forjar_2025.html` | `scripts/generar_gc_forjar.py` | `datos/equipo_forjar.xlsx`, `datos/directorio_forjar.xlsx`, `datos/forjar_proceso_operativo.xlsx`, `enlaces/enlaces.xlsx` (filas con HTML="Forjar") |
-| `gestion_conocimiento_jco_2025.html` | `scripts/generar_gc_jco.py` | (contenido hardcoded) |
-| `gestion_conocimiento_alertas_2025.html` | `scripts/generar_gc_alertas.py` | `enlaces/enlaces.xlsx` (filas con HTML="Alertas" y SECCION="Protocolos - ...") |
-| `mapa_casas_juventud.html` | `scripts/generar_juventud.py` (efecto colateral) | `datos/directorio_casas_juventud.xlsx`, `datos/localidades_bogota.geojson` |
-| `mapa_forjar.html` | `scripts/generar_gc_forjar.py` (efecto colateral) | `datos/directorio_forjar.xlsx`, `datos/localidades_bogota.geojson` |
+| `html/gestion_conocimiento_juventud.html` | `scripts/generar_juventud.py` | `datos/equipo_casas_juventud.xlsx`, `datos/directorio_casas_juventud.xlsx`, base SIRBE limpia, `datos/localidades_bogota.geojson` |
+| `html/gestion_conocimiento_forjar.html` | `scripts/generar_gc_forjar.py` | `datos/equipo_forjar.xlsx`, `datos/directorio_forjar.xlsx`, `datos/forjar_proceso_operativo.xlsx`, `enlaces/enlaces.xlsx` (filas con HTML="Forjar") |
+| `html/gestion_conocimiento_jco.html` | `scripts/generar_gc_jco.py` | (contenido hardcoded) |
+| `html/gestion_conocimiento_alertas.html` | `scripts/generar_gc_alertas.py` | `enlaces/enlaces.xlsx` (filas con HTML="Alertas" y SECCION="Protocolos - ...") |
+| `html/unidades_operativas.html` | `scripts/generar_unidades_operativas.py` | `datos/directorio_casas_juventud.xlsx`, `datos/directorio_forjar.xlsx`, `datos/localidades_bogota.geojson` |
+| `html/mapa_casas_juventud.html` | `scripts/generar_juventud.py` (efecto colateral) | `datos/directorio_casas_juventud.xlsx`, `datos/localidades_bogota.geojson` |
+| `html/mapa_forjar.html` | `scripts/generar_gc_forjar.py` (efecto colateral) | `datos/directorio_forjar.xlsx`, `datos/localidades_bogota.geojson` |
+| `html/mapa_unidades_operativas.html` | `scripts/generar_unidades_operativas.py` (efecto colateral) | `datos/directorio_casas_juventud.xlsx`, `datos/directorio_forjar.xlsx`, `datos/localidades_bogota.geojson` |
 
 ## Cómo hacer cambios comunes
 
@@ -45,14 +52,14 @@ gestor-conocimiento-2025/
 2. Editar la fila del cambio (Nombre, Cargo, etc.).
 3. Guardar.
 4. Correr: `python scripts/generar_juventud.py`
-5. Abrir `gestion_conocimiento_juventud_2025.html` en el navegador para verificar.
+5. Abrir `html/gestion_conocimiento_juventud.html` en el navegador para verificar.
 
 ### Cambiar el directorio de casas o forjar
 
 1. Editar `datos/directorio_casas_juventud.xlsx` o `datos/directorio_forjar.xlsx`.
 2. Regenerar:
    - Para casas: `python scripts/generar_juventud.py`
-   - Para forjar: `python scripts/generar_gc_forjar.py` (regenera HTML + `mapa_forjar.html`)
+   - Para forjar: `python scripts/generar_gc_forjar.py` (regenera HTML + `html/mapa_forjar.html`)
 
 ### Cambiar contenido de texto de juventud / forjar / jco / alertas
 
@@ -109,11 +116,12 @@ Cuando hay cambios que afectan al home o al CSS compartido, conviene regenerar t
 
 ```bash
 cd gestor-conocimiento-2025
-python scripts/generar_home_servicios.py     # index.html
-python scripts/generar_juventud.py           # juventud + mapa_casas
-python scripts/generar_gc_forjar.py          # forjar + mapa_forjar
-python scripts/generar_gc_jco.py             # jco
-python scripts/generar_gc_alertas.py         # alertas
+python scripts/generar_home_servicios.py        # index.html (raíz)
+python scripts/generar_juventud.py              # html/juventud + html/mapa_casas
+python scripts/generar_gc_forjar.py             # html/forjar + html/mapa_forjar
+python scripts/generar_gc_jco.py                # html/jco
+python scripts/generar_gc_alertas.py            # html/alertas
+python scripts/generar_unidades_operativas.py   # html/unidades + html/mapa_unidades
 ```
 
 ## Qué está en `archivo/`

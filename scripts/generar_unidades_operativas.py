@@ -19,6 +19,8 @@ import folium
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATOS = os.path.join(BASE, "datos")
+# Asegura que exista la carpeta html/ (ahi viven las paginas generadas).
+os.makedirs(os.path.join(BASE, "html"), exist_ok=True)
 
 # Colores por servicio (mismos que en los mapas individuales).
 # Casas usa su azul de pagina (#253C5C); se evito el rojo porque suele
@@ -170,7 +172,7 @@ def generar_mapa_combinado():
     )
     m.get_root().html.add_child(leyenda)
 
-    ruta_mapa = os.path.join(BASE, "mapa_unidades_operativas.html")
+    ruta_mapa = os.path.join(BASE, "html", "mapa_unidades_operativas.html")
     m.save(ruta_mapa)
     _estabilizar_ids(ruta_mapa)
     return len(df_casas), len(df_forjar)
@@ -260,7 +262,7 @@ def generar_pagina(df_casas=None, df_forjar=None):
             <div class="subtitle">Subdirecci&oacute;n para la Juventud | SDIS</div>
         </div>
         <div class="header-btns">
-            <a class="home-btn" href="index.html" title="Todos los servicios">
+            <a class="home-btn" href="../index.html" title="Todos los servicios">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F8F4E1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             </a>
         </div>
@@ -282,13 +284,13 @@ def generar_pagina(df_casas=None, df_forjar=None):
         </div>
     </main>
     <footer style="background:#3a3a3a; padding:18px 30px; display:flex; justify-content:space-between; align-items:center;">
-        <img src="imagenes/Footer1.png" alt="Distrito Joven" style="height:40px; object-fit:contain;">
-        <img src="imagenes/Footer2.png" alt="Secretar&iacute;a de Integraci&oacute;n Social" style="height:40px; object-fit:contain;">
+        <img src="../imagenes/Footer1.png" alt="Distrito Joven" style="height:40px; object-fit:contain;">
+        <img src="../imagenes/Footer2.png" alt="Secretar&iacute;a de Integraci&oacute;n Social" style="height:40px; object-fit:contain;">
     </footer>
 </body>
 </html>"""
     html = html.replace("%%TABLA_CASAS%%", tabla_casas).replace("%%TABLA_FORJAR%%", tabla_forjar)
-    ruta = os.path.join(BASE, "unidades_operativas.html")
+    ruta = os.path.join(BASE, "html", "unidades_operativas.html")
     with open(ruta, "w", encoding="utf-8") as f:
         f.write(html)
 

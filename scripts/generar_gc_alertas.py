@@ -18,12 +18,14 @@ from _comun.tablero import powerbi_src
 
 # Raíz del proyecto (un nivel arriba de scripts/)
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# Asegura que exista la carpeta html/ (ahi viven las paginas generadas).
+os.makedirs(os.path.join(BASE, "html"), exist_ok=True)
 
 # Iframe de Power BI (el enlace vive en enlaces/enlaces.xlsx, no en el codigo)
 POWERBI_SRC = powerbi_src(BASE)
 # ─── Configuración ───────────────────────────────────────────────────────────
 
-NOMBRE_ARCHIVO = "gestion_conocimiento_alertas_2025.html"
+NOMBRE_ARCHIVO = "gestion_conocimiento_alertas.html"
 TITULO_PAGINA = "Gestor de conocimiento - Parche seguro"
 TITULO_HEADER = "Gestor de conocimiento - Parche seguro"
 SUBTITULO_HEADER = "Subdirecci&oacute;n para la Juventud | SDIS"
@@ -192,11 +194,11 @@ HEADER_HTML = f"""\
             <div class="subtitle">{SUBTITULO_HEADER}</div>
         </div>
         <div class="header-btns">
-            <a class="home-btn" href="index.html" title="Todos los servicios">
+            <a class="home-btn" href="../index.html" title="Todos los servicios">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F8F4E1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             </a>
             <div class="home-btn" onclick="showContent('welcome')" title="Inicio Parche seguro">
-                <img src="imagenes/servicios/alertas.png" alt="Parche seguro" style="height:32px; border-radius:16px; object-fit:contain; vertical-align:middle;">
+                <img src="../imagenes/servicios/alertas.png" alt="Parche seguro" style="height:32px; border-radius:16px; object-fit:contain; vertical-align:middle;">
             </div>
         </div>
     </header>"""
@@ -250,7 +252,7 @@ SECCION_WELCOME = """\
                     <div style="font-family:'Anton','Figtree',sans-serif; font-weight:400; font-size:1.9rem; line-height:1.05; letter-spacing:1px; text-transform:uppercase; background:#2d2a28; color:#f4f5de; padding:14px 24px 11px; margin:0 auto 28px; display:block; width:fit-content; max-width:100%; text-align:center;">Parche seguro</div>
                     <p>Sistema de identificaci&oacute;n y seguimiento de alertas tempranas para la protecci&oacute;n integral de la poblaci&oacute;n joven. A partir del triage psicosocial, el equipo identifica situaciones de riesgo y activa los protocolos de atenci&oacute;n correspondientes.</p>
                     <div style="margin:30px auto 0; max-width:450px;">
-                        <img src="imagenes/alertas.jpeg" alt="Parche seguro" style="width:100%; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,0.06);">
+                        <img src="../imagenes/alertas.jpeg" alt="Parche seguro" style="width:100%; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,0.06);">
                     </div>
                 </div>
             </div>"""
@@ -390,17 +392,17 @@ SECCION_TRIAGE = """\
 
                     <div class="atc-grid">
                         <article class="atc-card">
-                            <div class="atc-mano"><img src="imagenes/manos/3.png" alt="Mano se&ntilde;alando"></div>
+                            <div class="atc-mano"><img src="../imagenes/manos/3.png" alt="Mano se&ntilde;alando"></div>
                             <h3 class="atc-titulo atc-titulo-1">Alertas inmediatas</h3>
                             <p class="atc-texto">Situaciones que ponen en riesgo inminente la vida o la integridad del o la joven y requieren atenci&oacute;n prioritaria. Los j&oacute;venes son canalizados a las Salas de Escucha Especializadas.</p>
                         </article>
                         <article class="atc-card">
-                            <div class="atc-mano"><img src="imagenes/manos/5.png" alt="Mano apuntando"></div>
+                            <div class="atc-mano"><img src="../imagenes/manos/5.png" alt="Mano apuntando"></div>
                             <h3 class="atc-titulo atc-titulo-4">Alertas mediatas</h3>
                             <p class="atc-texto">Situaciones que desmejoran la calidad de vida y afectan el bienestar integral, sin implicar riesgo para la vida. Se canalizan a las Salas de Escucha Psicosocial.</p>
                         </article>
                         <article class="atc-card">
-                            <div class="atc-mano"><img src="imagenes/manos/4.png" alt="Mano OK"></div>
+                            <div class="atc-mano"><img src="../imagenes/manos/4.png" alt="Mano OK"></div>
                             <h3 class="atc-titulo atc-titulo-2">Te conectamos</h3>
                             <p class="atc-texto">Situaciones que impiden el goce de derechos fundamentales o limitan el acceso a ofertas. Habilitan la vinculaci&oacute;n del joven a programas y estrategias de otras entidades distritales.</p>
                         </article>
@@ -744,7 +746,7 @@ HTML_COMPLETO = f"""\
 def main():
     """Genera el archivo HTML en la raíz del proyecto."""
     directorio = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    ruta_salida = os.path.join(directorio, NOMBRE_ARCHIVO)
+    ruta_salida = os.path.join(directorio, "html", NOMBRE_ARCHIVO)
 
     with open(ruta_salida, "w", encoding="utf-8") as f:
         f.write(HTML_COMPLETO)

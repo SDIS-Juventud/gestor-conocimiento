@@ -60,7 +60,7 @@ CSS_IMPRESION = """
 # Por cada PDF, lista de HTMLs a unir (primero el principal, luego los extras)
 GRUPOS = {
     "03_casas_de_juventud.pdf": [
-        "gestion_conocimiento_juventud_2025.html",
+        "html/gestion_conocimiento_juventud.html",
         "ejes/Bienestar.html",
         "ejes/Cultura.html",
         "ejes/Inclusion.html",
@@ -68,14 +68,14 @@ GRUPOS = {
         "ejes/SIDICU.html",
     ],
     "04_jco.pdf": [
-        "gestion_conocimiento_jco_2025.html",
+        "html/gestion_conocimiento_jco.html",
     ],
     "05_forjar.pdf": [
-        "gestion_conocimiento_forjar_2025.html",
+        "html/gestion_conocimiento_forjar.html",
         "forjar/forjar-restaurativo (HTML de Valentina).html",
     ],
     "06_parche_seguro.pdf": [
-        "gestion_conocimiento_alertas_2025.html",
+        "html/gestion_conocimiento_alertas.html",
     ],
 }
 

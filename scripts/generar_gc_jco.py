@@ -22,6 +22,8 @@ from _comun.reporte_politicas import (
     CSS_REPORTE_POLITICAS,
     leer_politicas,
     html_cards,
+    bloque_acuerdos,
+    ACUERDOS_JCO,
 )
 
 # ============================================================
@@ -1303,12 +1305,14 @@ SECCION_REPORTE_POLITICAS = """\
                     <h2 class="card-title">Reporte a pol&iacute;ticas</h2>
 
                     <div class="jp-callout">
-                        El servicio <strong>J&oacute;venes con Oportunidades</strong> reporta de manera transversal a varias <strong>pol&iacute;ticas p&uacute;blicas distritales</strong> y a varios <strong>planes intersectoriales</strong>, m&aacute;s all&aacute; de la Pol&iacute;tica P&uacute;blica Distrital de Juventud.
+                        El servicio reporta de manera transversal a varias <strong>pol&iacute;ticas p&uacute;blicas distritales</strong> y a varios <strong>planes intersectoriales</strong>, m&aacute;s all&aacute; de la Pol&iacute;tica P&uacute;blica Distrital de Juventud.
                     </div>
 
                     <div class="jp-grid">
 %%CARDS_POLITICAS%%
                     </div>
+
+%%BLOQUE_ACUERDOS%%
                 </div>
             </div>"""
 
@@ -1371,6 +1375,8 @@ def generar_html():
     )
     seccion_reporte_politicas = SECCION_REPORTE_POLITICAS.replace(
         "%%CARDS_POLITICAS%%", html_cards(filas_politicas)
+    ).replace(
+        "%%BLOQUE_ACUERDOS%%", bloque_acuerdos(ACUERDOS_JCO)
     )
 
     secciones = "\n\n".join([

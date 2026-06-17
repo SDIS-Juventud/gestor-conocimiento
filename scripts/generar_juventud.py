@@ -29,6 +29,8 @@ from _comun.reporte_politicas import (
     CSS_REPORTE_POLITICAS,
     leer_politicas,
     html_cards,
+    bloque_acuerdos,
+    ACUERDOS_CASAS,
 )
 
 # Raíz del proyecto (un nivel arriba de scripts/)
@@ -1115,6 +1117,8 @@ filas_politicas_casas = leer_politicas(
     temas_mapeo_general_incluir=["1.3.12", "6.1.8", "6.3.15"],
 )
 cards_politicas_casas = html_cards(filas_politicas_casas)
+# Recuadro de acuerdos del Concejo de Bogotá (va antes de las políticas).
+bloque_acuerdos_casas = bloque_acuerdos(ACUERDOS_CASAS)
 
 html = f"""<!DOCTYPE html>
 <html lang="es">
@@ -1565,12 +1569,14 @@ html = f"""<!DOCTYPE html>
                 <h2 class="card-title">Reporte a pol&iacute;ticas</h2>
 
                 <div class="jp-callout">
-                    Esta secci&oacute;n lista los productos a los que reporta el servicio <strong>Casas de Juventud</strong> de manera transversal &mdash; principalmente los de la <strong>Pol&iacute;tica P&uacute;blica Distrital de Juventud</strong>. Para productos espec&iacute;ficos por eje, ver el <em>Reporte a pol&iacute;ticas</em> dentro de cada eje (Bienestar, Cultura, Inclusi&oacute;n, Liderazgo).
+                    El servicio reporta de manera transversal a varias <strong>pol&iacute;ticas p&uacute;blicas distritales</strong> y a varios <strong>planes intersectoriales</strong>. Se listan en general para el servicio; para productos espec&iacute;ficos por eje, ver la secci&oacute;n <em>Reporte a pol&iacute;ticas</em> dentro de cada eje (Bienestar, Cultura, Inclusi&oacute;n, Liderazgo).
                 </div>
 
                 <div class="jp-grid">
 {cards_politicas_casas}
                 </div>
+
+{bloque_acuerdos_casas}
             </div></div>
 
 {seccion_aliados_casas()}

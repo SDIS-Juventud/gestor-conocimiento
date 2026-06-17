@@ -25,6 +25,8 @@ from _comun.reporte_politicas import (
     CSS_REPORTE_POLITICAS,
     leer_politicas,
     html_cards,
+    bloque_acuerdos,
+    ACUERDOS_FORJAR,
 )
 
 # CSS extras del servicio. La l&iacute;nea de tiempo en chevrones encadenados
@@ -1154,12 +1156,14 @@ SECCION_REPORTE_POLITICAS = """            <div class="content-section" id="repo
                     <h2 class="card-title">Reporte a pol&iacute;ticas</h2>
 
                     <div class="jp-callout">
-                        El <strong>Servicio Forjar Restaurativo</strong> reporta de manera transversal a varias <strong>pol&iacute;ticas p&uacute;blicas distritales</strong> y a varios <strong>planes intersectoriales</strong>.
+                        El servicio reporta de manera transversal a varias <strong>pol&iacute;ticas p&uacute;blicas distritales</strong> y a varios <strong>planes intersectoriales</strong>.
                     </div>
 
                     <div class="jp-grid">
 %%CARDS_POLITICAS%%
                     </div>
+
+%%BLOQUE_ACUERDOS%%
                 </div>
             </div>"""
 
@@ -1231,6 +1235,8 @@ def ensamblar_html():
     )
     seccion_reporte_politicas = SECCION_REPORTE_POLITICAS.replace(
         "%%CARDS_POLITICAS%%", html_cards(filas_politicas)
+    ).replace(
+        "%%BLOQUE_ACUERDOS%%", bloque_acuerdos(ACUERDOS_FORJAR)
     )
 
     secciones = "\n\n".join([

@@ -25,6 +25,8 @@ from pathlib import Path
 
 import openpyxl
 
+from _comun.reporte_politicas import bloque_acuerdos, ACUERDOS_CASAS_BIENESTAR, INTRO_ACUERDOS_EJE
+
 
 # Marcadores adicionales para la nueva pestaña "Reporte a políticas"
 MARKER_POL_INI = "<!-- ====== INICIO BLOQUE REPORTE POLITICAS GENERADO POR SCRIPT ====== -->"
@@ -620,6 +622,7 @@ def _html_seccion_politicas():
         MARKER_POL_INI + "\n" + intro + "\n\n"
         + "\n\n".join(bloques)
         + sin_codigo_html
+        + "\n\n" + bloque_acuerdos(ACUERDOS_CASAS_BIENESTAR, intro=INTRO_ACUERDOS_EJE, fondo_card="#f5efd2")
         + "\n                " + MARKER_POL_FIN
     )
 

@@ -51,6 +51,115 @@ CSS_REPORTE_POLITICAS = """
 """
 
 
+# =====================================================================
+# Recuadro de acuerdos del Concejo de Bogotá (pedido de Felipe, junio 2026)
+# =====================================================================
+# Va al inicio de la sección "Reporte a políticas", ANTES de las tarjetas de
+# políticas, porque los acuerdos son más generales. Felipe se refiere a estas
+# tarjetas como los "cuadros amarillos" (su color es un crema pálido).
+#
+# Cada acuerdo es una tupla (titulo, descriptor, reporte):
+#   - titulo: el número del acuerdo (encabezado de la tarjeta)
+#   - descriptor: nota corta del acuerdo, o "" si no aplica
+#   - reporte: qué acciones del servicio se reportan a ese acuerdo
+_CONCEJO = "del Concejo de Bogotá"
+
+# Acuerdos individuales reutilizables: (titulo, descriptor, reporte). Cada
+# acuerdo se define una sola vez aquí y luego se compone por página según a
+# qué servicios o ejes aplica:
+#   - 534 y 817 (prevención de SPA): página general de Casas y eje Bienestar.
+#   - 589 (SPI): todos los servicios y ejes.
+#   - 880 (inclusión productiva): Jóvenes con Oportunidades (SJO) y Casas (CDJ).
+#   - 887 (caracterización): Forjar.
+_AC_534 = (f"Acuerdo 534 de 2013 {_CONCEJO}", "",
+           "Acciones de prevención de SPA.")
+_AC_817 = (f"Acuerdo 817 de 2021 {_CONCEJO}", "",
+           "Acciones de prevención de SPA.")
+_AC_589 = (f"Acuerdo 589 de 2015 {_CONCEJO}", "",
+           "Todas las actividades reportadas en el seguimiento del proyecto de inversión (SPI).")
+_AC_880 = (f"Acuerdo 880 de 2023 {_CONCEJO}", "",
+           "Acciones de inclusión productiva.")
+_AC_887 = (f"Acuerdo 887 de 2023 {_CONCEJO}", "",
+           "Caracterización de jóvenes en atención al servicio.")
+
+# Casas de Juventud: página general del servicio. Agrupa todo el servicio, por
+# eso suma las dos tarjetas de prevención de SPA (534, 817) además de SPI (589)
+# e inclusión productiva (880).
+ACUERDOS_CASAS = [_AC_534, _AC_589, _AC_817, _AC_880]
+
+# Eje Bienestar: prevención de SPA (534, 817) y SPI (589). NO lleva inclusión
+# productiva (880); eso es de la página general del servicio, no del eje.
+ACUERDOS_CASAS_BIENESTAR = [_AC_534, _AC_589, _AC_817]
+
+# Ejes Cultura, Inclusión y Liderazgo: la prevención de SPA no aplica a estos
+# ejes, así que solo reportan SPI (589) e inclusión productiva (880).
+ACUERDOS_CASAS_EJES = [_AC_589, _AC_880]
+
+# Jóvenes con Oportunidades (SJO): SPI (589) e inclusión productiva (880).
+ACUERDOS_JCO = [_AC_589, _AC_880]
+
+# Forjar Restaurativo: SPI (589) y caracterización (887).
+ACUERDOS_FORJAR = [_AC_589, _AC_887]
+
+# Intro alterno para los ejes de Casas: dice "del eje" en vez de "del
+# servicio", porque a nivel de eje son las acciones propias del eje.
+INTRO_ACUERDOS_EJE = ("Estas acciones del eje se reportan a los siguientes "
+                      "<strong>acuerdos del Concejo de Bogotá</strong>:")
+
+
+def bloque_acuerdos(items, intro=None, titulo_seccion="Reporte a acuerdos", fondo_card="#fbf8ec"):
+    """Devuelve el HTML del recuadro de acuerdos del Concejo de Bogotá.
+
+    El bloque es autocontenido (estilos en línea) para verse igual en los
+    servicios (que usan tarjetas .jp-card) y en los ejes (que usan .rp-card),
+    sin depender del CSS particular de cada página. Cada acuerdo usa el mismo
+    formato que las tarjetas de políticas: cabecera oscura verde institucional
+    (#2F3E3C) con el título y cuerpo en fondo crema (#fbf8ec), una tarjeta por
+    acuerdo, sombra ligera y sin borde (línea SDIS).
+
+    items: lista de tuplas (titulo, descriptor, reporte).
+    intro: texto introductorio opcional; si es None se usa uno genérico.
+    titulo_seccion: encabezado de la sección (h2 .card-title; toma el color
+        del servicio en cada página). Pasar "" para omitirlo.
+    fondo_card: color de fondo de las tarjetas de acuerdo. Por defecto crema
+        (#fbf8ec, igual que las tarjetas .jp-card de los servicios). Los ejes
+        pasan "#f5efd2" para igualar el amarillo de sus tarjetas .rp-card.
+    """
+    if intro is None:
+        intro = ("Estas acciones del servicio se reportan a los siguientes "
+                 "<strong>acuerdos del Concejo de Bogotá</strong>:")
+    tarjetas = []
+    for titulo, descriptor, reporte in items:
+        # Cuerpo de la tarjeta: descriptor opcional (gris itálico) y el reporte.
+        cuerpo = []
+        if descriptor:
+            cuerpo.append(f'<p style="font-family:\'Figtree\',sans-serif; font-size:0.82rem; color:#6b6b6b; font-style:italic; line-height:1.4; margin:0 0 8px;">{descriptor}</p>')
+        cuerpo.append(f'<p style="font-family:\'Figtree\',sans-serif; font-size:0.92rem; color:#3a3a3a; line-height:1.55; margin:0;">{reporte}</p>')
+        # Tarjeta con cabecera oscura (recuadro verde institucional) + cuerpo
+        # crema, igual que las tarjetas de políticas (.jp-card).
+        partes = [
+            f'<div style="background:{fondo_card}; border-radius:12px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.04);">',
+            '    <div style="background:#2F3E3C; padding:16px 22px 14px;">',
+            f'        <p style="font-family:\'Antonio\',\'Anton\',\'Figtree\',sans-serif; font-weight:700; font-size:1.05rem; color:#F8F4E1; letter-spacing:0.01em; line-height:1.3; margin:0;">{titulo}</p>',
+            '    </div>',
+            '    <div style="padding:18px 22px 20px;">',
+        ]
+        partes += ['        ' + c for c in cuerpo]
+        partes += ['    </div>', '</div>']
+        tarjetas.append("\n".join("                            " + p for p in partes))
+    tarjetas_html = "\n".join(tarjetas)
+    titulo_html = f'                    <h2 class="card-title">{titulo_seccion}</h2>\n' if titulo_seccion else ""
+    return (
+        f'{titulo_html}'
+        '                    <div class="acuerdos-bloque" style="margin:0 0 24px;">\n'
+        f'                        <p style="color:#3a3a3a; line-height:1.7; font-size:0.95rem; max-width:820px; margin:0 0 14px;">{intro}</p>\n'
+        '                        <div style="display:grid; grid-template-columns:1fr; gap:12px;">\n'
+        f'{tarjetas_html}\n'
+        '                        </div>\n'
+        '                    </div>'
+    )
+
+
 def _limpiar_celda(valor):
     """Convierte NaN, '-', None y strings vacíos en cadena vacía. Los Excels
     tienen celdas inconsistentes (algunas con '-' explícito, otras vacías,
